@@ -303,12 +303,34 @@
 
                 // Display content
                 if (data) {
-                    const html = `
-                        <h1>${data.title}</h1>
-                        <ol>
-                            ${data.items.map(item => `<li>${item}</li>`).join('')}
-                        </ol>
-                    `;
+                    let html = `<h1>${data.title}</h1>`;
+                    let inList = false;
+
+                    data.items.forEach(item => {
+                        if (item.startsWith('<strong>')) {
+                            // Close list if open
+                            if (inList) {
+                                html += '</ol>';
+                                inList = false;
+                            }
+                            // Add section header
+                            html += `<h3>${item}</h3>`;
+                        } else {
+                            // Open list if needed
+                            if (!inList) {
+                                html += '<ol>';
+                                inList = true;
+                            }
+                            // Add list item
+                            html += `<li>${item}</li>`;
+                        }
+                    });
+
+                    // Close list if still open
+                    if (inList) {
+                        html += '</ol>';
+                    }
+
                     document.getElementById('question-content').innerHTML = html;
                 }
             });
