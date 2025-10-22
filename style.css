@@ -259,6 +259,23 @@ td a[href^="http"]::after {
     font-size: 1rem;
 }
 
+/* Smooth content transitions */
+.reading-pane > div {
+    animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Respect user's motion preferences for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .reading-pane > div {
+        animation: none !important;
+    }
+}
+
 /* Hamburger menu button - hidden on desktop */
 .hamburger {
     display: none;
