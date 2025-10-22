@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Analytics Test Page</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BFD7WNPCNP"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-BFD7WNPCNP');
+
+        // Log to console for debugging
+        console.log('Google Analytics initialized with ID: G-BFD7WNPCNP');
+        console.log('dataLayer:', window.dataLayer);
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f4f4f4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Analytics Test Page</h1>
+
+    <div class="test-section">
+        <h2>Tracking ID</h2>
+        <p><strong>G-BFD7WNPCNP</strong></p>
+    </div>
+
+    <div class="test-section">
+        <h2>Quick Tests</h2>
+        <p>Open your browser's Developer Console (F12) to see debug information.</p>
+
+        <button onclick="testEvent()">Send Test Event</button>
+        <button onclick="checkDataLayer()">Check DataLayer</button>
+
+        <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Troubleshooting Checklist</h2>
+        <ol>
+            <li>Open Developer Tools (F12) and check the Console for any errors</li>
+            <li>Go to Network tab and filter by "gtag" - you should see requests to Google Analytics</li>
+            <li>Check if ad blockers or privacy extensions are blocking the requests</li>
+            <li>Verify the property G-BFD7WNPCNP exists in your Google Analytics account</li>
+            <li>Wait 24-48 hours for new properties to start showing data</li>
+            <li>Use the Google Analytics DebugView in real-time to see events</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>Real-time Verification</h2>
+        <p>To verify tracking is working:</p>
+        <ol>
+            <li>Go to <a href="https://analytics.google.com" target="_blank">Google Analytics</a></li>
+            <li>Select your property (G-BFD7WNPCNP)</li>
+            <li>Go to Reports → Realtime</li>
+            <li>Keep this page open and you should see yourself as an active user</li>
+        </ol>
+    </div>
+
+    <script>
+        function testEvent() {
+            if (typeof gtag === 'function') {
+                gtag('event', 'test_button_click', {
+                    'event_category': 'engagement',
+                    'event_label': 'Test Event from GA Test Page'
+                });
+                showResult('✓ Test event sent! Check Google Analytics Realtime Events.', 'success');
+                console.log('Test event sent to GA');
+            } else {
+                showResult('✗ gtag function not found. Analytics may be blocked.', 'error');
+            }
+        }
+
+        function checkDataLayer() {
+            const results = document.getElementById('results');
+            if (window.dataLayer) {
+                showResult('✓ dataLayer exists with ' + window.dataLayer.length + ' items', 'success');
+                console.log('dataLayer contents:', window.dataLayer);
+            } else {
+                showResult('✗ dataLayer not found', 'error');
+            }
+        }
+
+        function showResult(message, type) {
+            const results = document.getElementById('results');
+            results.innerHTML = `<p class="${type}">${message}</p>`;
+        }
+
+        // Auto-check on load
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                checkDataLayer();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
