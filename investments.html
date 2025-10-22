@@ -4,7 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investments - Alan James Curtis</title>
+    <meta name="description" content="Portfolio of investments across funds, tech startups, and crypto projects by Alan James Curtis.">
     <link rel="stylesheet" href="/style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Investments - Alan James Curtis">
+    <meta property="og:description" content="Portfolio of investments across funds, tech startups, and crypto projects.">
+    <meta property="og:image" content="https://yourdomain.com/og-image.jpg">
+    <meta property="og:url" content="https://yourdomain.com/investments.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Investments - Alan James Curtis">
+    <meta name="twitter:description" content="Portfolio of investments across funds, tech startups, and crypto projects.">
+    <meta name="twitter:image" content="https://yourdomain.com/og-image.jpg">
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -45,12 +61,13 @@
 
             <div class="reading-pane">
                 <div id="investment-content">
-                    <p style="color: #666;">Select a category to view investments</p>
+                    <p class="empty-state">Select a category to view investments</p>
                 </div>
             </div>
         </main>
     </div>
 
+    <script src="/main.js"></script>
     <script>
         const investments = {
             'funds': {
@@ -135,51 +152,23 @@
             }
         };
 
-        document.querySelectorAll('[data-category]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const category = e.target.dataset.category;
-                const data = investments[category];
-
-                // Update active state
-                document.querySelectorAll('[data-category]').forEach(l => l.classList.remove('active'));
-                e.target.classList.add('active');
-
-                // Display content
-                if (data) {
-                    const html = `
-                        <h1>${data.title}</h1>
-                        <ul class="investment-list">
-                            ${data.items.map(item => `
-                                <li>
-                                    <a href="${item.url}" class="external-link" target="_blank">${item.name}</a>
-                                    ${item.status ? `<span class="investment-status">${item.status}</span>` : ''}
-                                </li>
-                            `).join('')}
-                        </ul>
-                    `;
-                    document.getElementById('investment-content').innerHTML = html;
-                }
-            });
-        });
-    </script>
-
-    <script>
-        // Mobile menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const nav = document.getElementById('nav');
-
-        if (hamburger) {
-            hamburger.addEventListener('click', () => {
-                nav.classList.toggle('active');
-            });
-        }
-
-        // Close menu when clicking nav links on mobile
-        document.querySelectorAll('#nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                nav.classList.remove('active');
-            });
+        // Initialize router
+        Router.init({
+            attribute: 'data-category',
+            datasetKey: 'category',
+            contentId: 'investment-content',
+            data: investments,
+            render: (data) => `
+                <h1>${data.title}</h1>
+                <ul class="investment-list">
+                    ${data.items.map(item => `
+                        <li>
+                            <a href="${item.url}" class="external-link" target="_blank">${item.name}</a>
+                            ${item.status ? `<span class="investment-status">${item.status}</span>` : ''}
+                        </li>
+                    `).join('')}
+                </ul>
+            `
         });
     </script>
 </body>

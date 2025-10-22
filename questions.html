@@ -4,7 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questions - Alan James Curtis</title>
+    <meta name="description" content="Key questions for entrepreneurs, investors, and leaders on business formation, product, market, and execution.">
     <link rel="stylesheet" href="/style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Questions - Alan James Curtis">
+    <meta property="og:description" content="Key questions for entrepreneurs, investors, and leaders on business formation, product, market, and execution.">
+    <meta property="og:image" content="https://yourdomain.com/og-image.jpg">
+    <meta property="og:url" content="https://yourdomain.com/questions.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Questions - Alan James Curtis">
+    <meta name="twitter:description" content="Key questions for entrepreneurs, investors, and leaders on business formation, product, market, and execution.">
+    <meta name="twitter:image" content="https://yourdomain.com/og-image.jpg">
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -52,12 +68,13 @@
 
             <div class="reading-pane">
                 <div id="question-content">
-                    <p style="color: #666;">Select a category to view questions</p>
+                    <p class="empty-state">Select a category to view questions</p>
                 </div>
             </div>
         </main>
     </div>
 
+    <script src="/main.js"></script>
     <script>
         const questions = {
             'business-formation': {
@@ -291,46 +308,43 @@
             }
         };
 
-        document.querySelectorAll('[data-section]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = e.target.dataset.section;
-                const data = questions[section];
+        // Initialize router
+        Router.init({
+            attribute: 'data-section',
+            datasetKey: 'section',
+            contentId: 'question-content',
+            data: questions,
+            render: (data) => {
+                let html = `<h1>${data.title}</h1>`;
+                let inList = false;
 
-                // Update active state
-                document.querySelectorAll('[data-section]').forEach(l => l.classList.remove('active'));
-                e.target.classList.add('active');
+                data.items.forEach(item => {
+                    if (item.startsWith('<strong>')) {
+                        // Close list if open
+                        if (inList) {
+                            html += '</ol>';
+                            inList = false;
+                        }
+                        // Add section header
+                        html += `<h3>${item}</h3>`;
+                    } else {
+                        // Open list if needed
+                        if (!inList) {
+                            html += '<ol>';
+                            inList = true;
+                        }
+                        // Add list item
+                        html += `<li>${item}</li>`;
+                    }
+                });
 
-                // Display content
-                if (data) {
-                    const html = `
-                        <h1>${data.title}</h1>
-                        <ol>
-                            ${data.items.map(item => `<li>${item}</li>`).join('')}
-                        </ol>
-                    `;
-                    document.getElementById('question-content').innerHTML = html;
+                // Close list if still open
+                if (inList) {
+                    html += '</ol>';
                 }
-            });
-        });
-    </script>
 
-    <script>
-        // Mobile menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const nav = document.getElementById('nav');
-
-        if (hamburger) {
-            hamburger.addEventListener('click', () => {
-                nav.classList.toggle('active');
-            });
-        }
-
-        // Close menu when clicking nav links on mobile
-        document.querySelectorAll('#nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                nav.classList.remove('active');
-            });
+                return html;
+            }
         });
     </script>
 </body>

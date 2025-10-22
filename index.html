@@ -61,23 +61,6 @@
         </main>
     </div>
 
-    <script>
-        // Mobile menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const nav = document.getElementById('nav');
-
-        if (hamburger) {
-            hamburger.addEventListener('click', () => {
-                nav.classList.toggle('active');
-            });
-        }
-
-        // Close menu when clicking nav links on mobile
-        document.querySelectorAll('#nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                nav.classList.remove('active');
-            });
-        });
-    </script>
+    <script src="/main.js"></script>
 </body>
 </html>

@@ -4,7 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Writing - Alan James Curtis</title>
+    <meta name="description" content="Essays and thoughts on entrepreneurship, leadership, business operating systems, and life philosophy by Alan James Curtis.">
     <link rel="stylesheet" href="/style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Writing - Alan James Curtis">
+    <meta property="og:description" content="Essays and thoughts on entrepreneurship, leadership, business operating systems, and life philosophy.">
+    <meta property="og:image" content="https://yourdomain.com/og-image.jpg">
+    <meta property="og:url" content="https://yourdomain.com/writing.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Writing - Alan James Curtis">
+    <meta name="twitter:description" content="Essays and thoughts on entrepreneurship, leadership, business operating systems, and life philosophy.">
+    <meta name="twitter:image" content="https://yourdomain.com/og-image.jpg">
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -59,56 +75,76 @@
 
             <div class="reading-pane">
                 <div id="article-content">
-                    <p style="color: #666;">Select an article to read</p>
+                    <p class="empty-state">Select an article to read</p>
                 </div>
             </div>
         </main>
     </div>
 
+    <script src="/main.js"></script>
     <script>
-        document.querySelectorAll('[data-article]').forEach(link => {
-            link.addEventListener('click', async (e) => {
-                e.preventDefault();
-                const article = e.target.dataset.article;
+        // Custom handler for writing articles (with async fetch)
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadArticle = async (article) => {
+                const contentEl = document.getElementById('article-content');
 
-                // Update active state
-                document.querySelectorAll('[data-article]').forEach(l => l.classList.remove('active'));
-                e.target.classList.add('active');
+                // Show loading state
+                showLoading('article-content');
 
-                // Fetch and display content
                 try {
                     const response = await fetch(`/writing/${article}.html`);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
                     const html = await response.text();
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
                     const content = doc.querySelector('main.content');
 
                     if (content) {
-                        document.getElementById('article-content').innerHTML = content.innerHTML;
+                        contentEl.innerHTML = content.innerHTML;
+                    } else {
+                        throw new Error('Article content not found');
                     }
                 } catch (error) {
-                    document.getElementById('article-content').innerHTML = '<p>Error loading article</p>';
+                    showError('article-content', `Failed to load article: ${error.message}`);
                 }
-            });
-        });
-    </script>
+            };
 
-    <script>
-        // Mobile menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const nav = document.getElementById('nav');
+            // Load article from hash
+            const loadFromHash = () => {
+                const hash = window.location.hash.slice(1);
+                if (hash) {
+                    loadArticle(hash);
+                    updateActiveState(hash);
+                }
+            };
 
-        if (hamburger) {
-            hamburger.addEventListener('click', () => {
-                nav.classList.toggle('active');
-            });
-        }
+            // Update active state
+            const updateActiveState = (article) => {
+                document.querySelectorAll('[data-article]').forEach(l => l.classList.remove('active'));
+                const activeLink = document.querySelector(`[data-article="${article}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            };
 
-        // Close menu when clicking nav links on mobile
-        document.querySelectorAll('#nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                nav.classList.remove('active');
+            // Set up click handlers
+            document.querySelectorAll('[data-article]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const article = e.target.dataset.article;
+                    window.location.hash = article;
+                });
             });
+
+            // Handle hash changes
+            window.addEventListener('hashchange', loadFromHash);
+
+            // Load initial article from hash
+            loadFromHash();
         });
     </script>
 </body>
