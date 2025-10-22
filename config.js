@@ -5,7 +5,7 @@ const SITE_CONFIG = {
     // Google Analytics tracking ID
     // Get your tracking ID from https://analytics.google.com/
     // Format: G-XXXXXXXXXX
-    googleAnalyticsId: 'G-XXXXXXXXXX',
+    googleAnalyticsId: 'G-BFD7WNPCNP',
 
     // Your domain (used for Open Graph tags)
     // Example: 'https://alanjamescurtis.com'
