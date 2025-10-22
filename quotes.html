@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes - Alan James Curtis</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <aside>
+            <h1>Alan James Curtis</h1>
+
+            <nav>
+                <ul>
+                    <li><a href="/">Welcome</a></li>
+                    <li><a href="/bio.html">Bio</a></li>
+                    <li><a href="/writing.html">Writing</a></li>
+                    <li><a href="/questions.html">Questions</a></li>
+                    <li><a href="/investments.html">Investments</a></li>
+                    <li><a href="/quotes.html" class="active">Quotes</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content split-view">
+            <div class="list-pane">
+                <h1>Quotes</h1>
+                <ul class="post-list">
+                    <li><a href="#" data-category="business">Business</a></li>
+                    <li><a href="#" data-category="communication">Communication</a></li>
+                    <li><a href="#" data-category="leadership">Leadership</a></li>
+                    <li><a href="#" data-category="philosophy">Philosophy</a></li>
+                    <li><a href="#" data-category="thinking">Thinking</a></li>
+                </ul>
+            </div>
+
+            <div class="reading-pane">
+                <div id="quote-content">
+                    <p style="color: #666;">Select a category to view quotes</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const quotes = {
+            'business': {
+                title: 'Business',
+                items: [
+                    'Take a simple idea and take it seriously',
+                    'Culture is not a noun, it\'s a verb. It means to maintain conditions suitable for growth'
+                ]
+            },
+            'communication': {
+                title: 'Communication',
+                items: [
+                    'A person\'s success in life can be measured by the number of uncomfortable conversations they are willing to have',
+                    'Can I be wildly candid with you?',
+                    'Get to the point!',
+                    'Don\'t pull your punches!'
+                ]
+            },
+            'leadership': {
+                title: 'Leadership',
+                items: [
+                    'Do the basics excellently',
+                    'Say the thing, the taboo thing, that no one else wants to say but everyone is thinking'
+                ]
+            },
+            'philosophy': {
+                title: 'Philosophy',
+                items: [
+                    'I\'m not interested in whether the glass is half empty or half full. I\'m interested in figuring out how to fill the glass',
+                    'The brain is a factory, not a warehouse'
+                ]
+            },
+            'thinking': {
+                title: 'Thinking',
+                items: [
+                    'You\'ve got to have models in your head and you\'ve got to array you experience – both vicarious and direct – onto this latticework of mental models….fortunately, it isn\'t that tough—because eighty or ninety important models will carry about 90% of the freight in making you a worldly wise person. And, of those, only a mere handful really carry very heavy freight - Charlie Munger',
+                    'Noise → Data → Information → Knowledge → Understanding → Wisdom. Spend less time at the top of the funnel trying to accumulate data and information and more time converting understanding to wisdom - Dee Hock',
+                    'Invert, always invert',
+                    'Run the simulation - think it through in detail, scenario plan'
+                ]
+            }
+        };
+
+        document.querySelectorAll('[data-category]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const category = e.target.dataset.category;
+                const data = quotes[category];
+
+                // Update active state
+                document.querySelectorAll('[data-category]').forEach(l => l.classList.remove('active'));
+                e.target.classList.add('active');
+
+                // Display content
+                if (data) {
+                    const html = `
+                        <h1>${data.title}</h1>
+                        <ul>
+                            ${data.items.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                    `;
+                    document.getElementById('quote-content').innerHTML = html;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
