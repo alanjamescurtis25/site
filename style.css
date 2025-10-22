@@ -24,10 +24,12 @@ aside h1 {
     font-weight: 500;
     margin-bottom: 1.5rem;
     text-align: left;
+    padding: 0;
 }
 
 nav ul {
     list-style: none;
+    padding: 0;
 }
 
 nav li {
@@ -146,6 +148,11 @@ td {
 
 .list-pane h1 {
     text-align: left;
+    padding: 0;
+}
+
+.list-pane ul {
+    padding: 0;
 }
 
 .reading-pane {
