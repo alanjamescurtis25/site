@@ -50,7 +50,7 @@ nav a.active {
 main {
     margin-left: 280px;
     padding: 2rem;
-    max-width: 800px;
+    max-width: 1000px;
 }
 
 h1, h2, h3 {
@@ -207,9 +207,80 @@ td a[href^="http"]::after {
         height: auto;
         border-right: none;
         border-bottom: 1px solid #333;
+        padding: 1.5rem 1rem;
+    }
+
+    aside h1 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    nav li {
+        margin-bottom: 0.5rem;
+    }
+
+    nav a {
+        padding: 0.75rem 0;
+        font-size: 1rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .post-list a {
+        padding: 0.75rem 0;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
     }
 
     main {
         margin-left: 0;
+        padding: 1.5rem 1rem;
+    }
+
+    .split-view {
+        flex-direction: column;
+    }
+
+    .list-pane {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #333;
+        padding: 1.5rem 1rem;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+
+    .reading-pane {
+        width: 100%;
+        height: auto;
+        padding: 1.5rem 1rem;
+        overflow-y: visible;
+    }
+
+    h1, h2, h3 {
+        font-size: 1.1rem;
+    }
+
+    p, li {
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+
+    th, td {
+        padding: 0.4rem 0.3rem 0.4rem 0;
+    }
+
+    /* Make tables horizontally scrollable on mobile */
+    .reading-pane table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 }
