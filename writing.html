@@ -22,31 +22,65 @@
             </nav>
         </aside>
 
-        <!-- Content -->
-        <main class="content">
-            <h1>Writing</h1>
-            
-            <ul class="post-list">
-                <li><a href="/writing/annual-retro.html">Annual Retro</a></li>
-                <li><a href="/writing/asset-classes.html">Asset Classes</a></li>
-                <li><a href="/writing/business-operating-systems.html">Business Operating Systems</a></li>
-                <li><a href="/writing/communities-of-practice.html">Communities of Practice</a></li>
-                <li><a href="/writing/culture.html">Culture</a></li>
-                <li><a href="/writing/entropy-golf.html">Entropy Golf</a></li>
-                <li><a href="/writing/family-strategy.html">Family Strategy</a></li>
-                <li><a href="/writing/growth-strategies.html">Growth Strategies</a></li>
-                <li><a href="/writing/health-and-wellness-gear.html">Health and Wellness Gear</a></li>
-                <li><a href="/writing/latticework.html">Latticework</a></li>
-                <li><a href="/writing/leadership.html">Leadership</a></li>
-                <li><a href="/writing/metrics.html">Metrics</a></li>
-                <li><a href="/writing/quotes.html">Quotes</a></li>
-                <li><a href="/writing/seven-basic-plots.html">Seven Basic Plots</a></li>
-                <li><a href="/writing/talent-investing.html">Talent Investing</a></li>
-                <li><a href="/writing/therapy.html">Therapy</a></li>
-                <li><a href="/writing/truth.html">Truth</a></li>
-                <li><a href="/writing/user-manual.html">User Manual</a></li>
-            </ul>
+        <main class="content split-view">
+            <div class="list-pane">
+                <h1>Writing</h1>
+                <ul class="post-list">
+                    <li><a href="#" data-article="annual-retro">Annual Retro</a></li>
+                    <li><a href="#" data-article="asset-classes">Asset Classes</a></li>
+                    <li><a href="#" data-article="business-operating-systems">Business Operating Systems</a></li>
+                    <li><a href="#" data-article="communities-of-practice">Communities of Practice</a></li>
+                    <li><a href="#" data-article="culture">Culture</a></li>
+                    <li><a href="#" data-article="entropy-golf">Entropy Golf</a></li>
+                    <li><a href="#" data-article="family-strategy">Family Strategy</a></li>
+                    <li><a href="#" data-article="growth-strategies">Growth Strategies</a></li>
+                    <li><a href="#" data-article="health-and-wellness-gear">Health and Wellness Gear</a></li>
+                    <li><a href="#" data-article="latticework">Latticework</a></li>
+                    <li><a href="#" data-article="leadership">Leadership</a></li>
+                    <li><a href="#" data-article="metrics">Metrics</a></li>
+                    <li><a href="#" data-article="quotes">Quotes</a></li>
+                    <li><a href="#" data-article="seven-basic-plots">Seven Basic Plots</a></li>
+                    <li><a href="#" data-article="talent-investing">Talent Investing</a></li>
+                    <li><a href="#" data-article="therapy">Therapy</a></li>
+                    <li><a href="#" data-article="truth">Truth</a></li>
+                    <li><a href="#" data-article="user-manual">User Manual</a></li>
+                </ul>
+            </div>
+
+            <div class="reading-pane">
+                <div id="article-content">
+                    <p style="color: #666;">Select an article to read</p>
+                </div>
+            </div>
         </main>
     </div>
+
+    <script>
+        document.querySelectorAll('[data-article]').forEach(link => {
+            link.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const article = e.target.dataset.article;
+
+                // Update active state
+                document.querySelectorAll('[data-article]').forEach(l => l.classList.remove('active'));
+                e.target.classList.add('active');
+
+                // Fetch and display content
+                try {
+                    const response = await fetch(`/writing/${article}.html`);
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const content = doc.querySelector('main.content');
+
+                    if (content) {
+                        document.getElementById('article-content').innerHTML = content.innerHTML;
+                    }
+                } catch (error) {
+                    document.getElementById('article-content').innerHTML = '<p>Error loading article</p>';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

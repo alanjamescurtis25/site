@@ -90,6 +90,32 @@ li {
     padding: 0;
 }
 
+.post-list a.active {
+    color: #fff;
+}
+
+.split-view {
+    display: flex;
+    gap: 0;
+    padding: 0;
+    max-width: none;
+}
+
+.list-pane {
+    width: 300px;
+    padding: 2rem;
+    border-right: 1px solid #333;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+.reading-pane {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    height: 100vh;
+}
+
 .investment-section {
     margin-bottom: 2rem;
 }
