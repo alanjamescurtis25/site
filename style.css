@@ -167,6 +167,7 @@ td a[href^="http"]::after {
 .list-pane h1 {
     text-align: left;
     padding: 0;
+    margin-bottom: 1.5rem;
 }
 
 .list-pane ul {
