@@ -28,7 +28,20 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-BFD7WNPCNP');
+
+        // Check if this is internal traffic (localhost or debug mode)
+        // and mark it for filtering in GA4
+        var isInternal = window.location.hostname === 'localhost' ||
+                         window.location.hostname === '127.0.0.1' ||
+                         window.location.search.includes('ga_debug=1');
+
+        if (isInternal) {
+            gtag('config', 'G-BFD7WNPCNP', {
+                'traffic_type': 'internal'
+            });
+        } else {
+            gtag('config', 'G-BFD7WNPCNP');
+        }
     </script>
 </head>
 <body>
