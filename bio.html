@@ -106,6 +106,13 @@
                 nav.classList.toggle('active');
             });
         }
+
+        // Close menu when clicking nav links on mobile
+        document.querySelectorAll('#nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+            });
+        });
     </script>
 </body>
 </html>
