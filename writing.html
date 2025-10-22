@@ -5,13 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Writing - Alan James Curtis</title>
     <link rel="stylesheet" href="/style.css">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
 </head>
 <body>
     <div class="container">
         <aside>
             <h1>Alan James Curtis</h1>
+            <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
 
-            <nav>
+            <nav id="nav">
                 <ul>
                     <li><a href="/">Welcome</a></li>
                     <li><a href="/bio.html">Bio</a></li>
@@ -39,7 +49,6 @@
                     <li><a href="#" data-article="latticework">Latticework</a></li>
                     <li><a href="#" data-article="leadership">Leadership</a></li>
                     <li><a href="#" data-article="metrics">Metrics</a></li>
-                    <li><a href="#" data-article="quotes">Quotes</a></li>
                     <li><a href="#" data-article="seven-basic-plots">Seven Basic Plots</a></li>
                     <li><a href="#" data-article="talent-investing">Talent Investing</a></li>
                     <li><a href="#" data-article="therapy">Therapy</a></li>
@@ -80,6 +89,25 @@
                 } catch (error) {
                     document.getElementById('article-content').innerHTML = '<p>Error loading article</p>';
                 }
+            });
+        });
+    </script>
+
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const nav = document.getElementById('nav');
+
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                nav.classList.toggle('active');
+            });
+        }
+
+        // Close menu when clicking nav links on mobile
+        document.querySelectorAll('#nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
             });
         });
     </script>

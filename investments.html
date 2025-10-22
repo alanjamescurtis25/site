@@ -5,13 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investments - Alan James Curtis</title>
     <link rel="stylesheet" href="/style.css">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
 </head>
 <body>
     <div class="container">
         <aside>
             <h1>Alan James Curtis</h1>
+            <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
 
-            <nav>
+            <nav id="nav">
                 <ul>
                     <li><a href="/">Welcome</a></li>
                     <li><a href="/bio.html">Bio</a></li>
@@ -88,7 +98,7 @@
                     { name: 'Acre', url: 'https://acre.fi/' },
                     { name: 'Agora', url: 'https://www.voteagora.com' },
                     { name: 'Anzen', url: 'https://anzenprotocol.xyz/' },
-                    { name: 'Berachain ($BERA)', url: 'https://www.berachain.com/' },
+                    { name: 'Berachain', url: 'https://www.berachain.com/', status: '($BERA)' },
                     { name: 'BitPay', url: 'http://www.bitpay.com' },
                     { name: 'BitWave', url: 'https://www.bitwave.io' },
                     { name: 'Brale', url: 'https://brale.xyz/' },
@@ -101,12 +111,12 @@
                     { name: 'Ebisu', url: 'https://ebisu.finance/' },
                     { name: 'Empiric Network', url: 'https://empiric.network', status: '(acquired)' },
                     { name: 'Flashbots', url: 'https://docs.flashbots.net' },
-                    { name: 'Fragmetric ($FRAG)', url: 'https://blog.fragmetric.xyz/' },
+                    { name: 'Fragmetric', url: 'https://blog.fragmetric.xyz/', status: '($FRAG)' },
                     { name: 'Jarsy', url: 'https://www.jarsy.com/' },
                     { name: 'Liquifi', url: 'https://www.liquifi.finance', status: '(acquired)' },
                     { name: 'Merit Systems', url: 'https://www.merit.systems/' },
                     { name: 'Mezo', url: 'https://mezo.org/' },
-                    { name: 'Movement ($MOVE)', url: 'https://movementlabs.xyz/' },
+                    { name: 'Movement', url: 'https://movementlabs.xyz/', status: '($MOVE)' },
                     { name: 'Multisig Media', url: 'https://multisig.media', status: '(acquired)' },
                     { name: 'Nation', url: 'https://nation.io/' },
                     { name: 'Nomad', url: 'https://www.nomad.xyz', status: '(acquired)' },
@@ -114,13 +124,13 @@
                     { name: 'OpenSea', url: 'https://opensea.io' },
                     { name: 'Othentic', url: 'https://www.othentic.xyz/' },
                     { name: 'Pinetree', url: 'https://pinetree.so/' },
-                    { name: 'PowerLoom ($POWER)', url: 'https://powerloom.io' },
+                    { name: 'PowerLoom', url: 'https://powerloom.io', status: '($POWER)' },
                     { name: 'Reverie', url: 'https://www.reverie.ooo' },
                     { name: 'SeaShell', url: 'https://www.seashell.com', status: '(acquired)' },
                     { name: 'Sense Finance', url: 'https://sense.finance' },
-                    { name: 'Solayer ($LAYER)', url: 'https://solayer.org/' },
-                    { name: 'Zero Gravity ($0G)', url: 'https://0g.ai/' },
-                    { name: 'Zircuit ($ZRC)', url: 'https://www.zircuit.com/' }
+                    { name: 'Solayer', url: 'https://solayer.org/', status: '($LAYER)' },
+                    { name: 'Zero Gravity', url: 'https://0g.ai/', status: '($0G)' },
+                    { name: 'Zircuit', url: 'https://www.zircuit.com/', status: '($ZRC)' }
                 ]
             }
         };
@@ -150,6 +160,25 @@
                     `;
                     document.getElementById('investment-content').innerHTML = html;
                 }
+            });
+        });
+    </script>
+
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const nav = document.getElementById('nav');
+
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                nav.classList.toggle('active');
+            });
+        }
+
+        // Close menu when clicking nav links on mobile
+        document.querySelectorAll('#nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
             });
         });
     </script>

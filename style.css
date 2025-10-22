@@ -205,7 +205,25 @@ td a[href^="http"]::after {
     color: #666;
 }
 
+/* Hamburger menu button - hidden on desktop */
+.hamburger {
+    display: none;
+}
+
 @media (max-width: 768px) {
+    .hamburger {
+        display: block;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0;
+        position: absolute;
+        top: 1.5rem;
+        right: 1rem;
+    }
+
     aside {
         position: relative;
         width: 100%;
@@ -220,6 +238,16 @@ td a[href^="http"]::after {
         margin-bottom: 1rem;
     }
 
+    /* Hide nav by default on mobile */
+    nav {
+        display: none;
+    }
+
+    /* Show nav when active */
+    nav.active {
+        display: block;
+    }
+
     nav li {
         margin-bottom: 0.5rem;
     }
@@ -230,6 +258,10 @@ td a[href^="http"]::after {
         min-height: 44px;
         display: flex;
         align-items: center;
+    }
+
+    .post-list li {
+        margin-bottom: 0.5rem;
     }
 
     .post-list a {
