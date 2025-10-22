@@ -10,11 +10,6 @@
     <div class="container">
         <aside>
             <h1>Alan James Curtis</h1>
-            <div class="social-links">
-                <a href="https://twitter.com/alanjamescurtis" target="_blank">𝕏</a>
-                <a href="https://linkedin.com/in/alanjamescurtis" target="_blank">in</a>
-                <a href="mailto:alan@example.com">✉</a>
-            </div>
 
             <nav>
                 <ul>
@@ -27,85 +22,138 @@
             </nav>
         </aside>
 
-        <!-- Content -->
-        <main class="content">
-            <h1>Questions</h1>
-            
-            <h2>Business Formation</h2>
-            <ol>
-                <li>What is your "Thiel-ian" secret? The one belief you have that no one else does?</li>
-                <li>What are your assumptions or leaps of faith?</li>
-                <li>What is abundant and what is scarce?</li>
-                <li>When has this happened before in history? Why now?</li>
-                <li>How quickly and cheaply can you get feedback?</li>
-                <li>Is it proven? Better? New? Need two of the three for biz to work.</li>
-                <li>What is the go-to-market strategy?</li>
-            </ol>
+        <main class="content split-view">
+            <div class="list-pane">
+                <h1>Questions</h1>
+                <ul class="post-list">
+                    <li><a href="#" data-section="business-formation">Business Formation</a></li>
+                    <li><a href="#" data-section="product">Product</a></li>
+                    <li><a href="#" data-section="market">Market</a></li>
+                    <li><a href="#" data-section="business-model">Business Model</a></li>
+                    <li><a href="#" data-section="execution">Execution</a></li>
+                    <li><a href="#" data-section="people">People</a></li>
+                    <li><a href="#" data-section="risks">Risks</a></li>
+                    <li><a href="#" data-section="brainstorming">Brainstorming</a></li>
+                </ul>
+            </div>
 
-            <h2>Product</h2>
-            <ol>
-                <li>Is this a pain reliever or a vitamin?</li>
-                <li>Is the product a 10x improvement?</li>
-                <li>How fast can the user get to the core interaction?</li>
-                <li>What layer of the value chain does the company operate at? Infrastructure, platform, app?</li>
-                <li>What are the substitutes and/or complements of the product?</li>
-            </ol>
-
-            <h2>Market</h2>
-            <ol>
-                <li>How large is the market with a bottom-up analysis?</li>
-                <li>How fast is the market growing (new or maturing)?</li>
-                <li>Is the market saturated? Is the market a winner-takes-all or a winner-takes-most market?</li>
-                <li>Is the company scalable? How quickly can the company scale? What are the barriers to scale?</li>
-                <li>Is the company anti-fragile? Countercyclical?</li>
-                <li>Can you monopolize a niche and expand quickly (Thiel) or vertically integrate in large, highly fragmented industry with low NPS (Rabois)</li>
-            </ol>
-
-            <h2>Business Model</h2>
-            <ol>
-                <li>What is the business model?</li>
-                <li>Will the unit economics of the company make sense over the long-term?</li>
-                <li>What are expected gross margins?</li>
-            </ol>
-
-            <h2>Execution</h2>
-            <ol>
-                <li>How quickly is the company executing?</li>
-                <li>Where are the bottlenecks and constraints?</li>
-                <li>What metrics must be measured?</li>
-            </ol>
-
-            <h2>People</h2>
-            <ol>
-                <li>Will this be the team to win the category globally?</li>
-                <li>Does the team have team-market-fit?</li>
-                <li>Does the company have a founder-CEO?</li>
-                <li>Is the company raising the bar with each hire? Recruiting the un-recruitable?</li>
-                <li>What is not being said? Where is the fear, uncertainty, and doubt?</li>
-            </ol>
-
-            <h2>Risks</h2>
-            <ol>
-                <li>Execution?</li>
-                <li>Regulation / Legal?</li>
-                <li>Technical / Platform?</li>
-                <li>Market?</li>
-                <li>Business Model?</li>
-                <li>Financial?</li>
-                <li>Team / People?</li>
-            </ol>
-
-            <h2>Brainstorming</h2>
-            <ol>
-                <li>If you were forced to increase your prices by 10x, what would you have to do to justify it?</li>
-                <li>If all your customers vanished, and you had to earn your growth and brand from scratch, what would you do?</li>
-                <li>If you were never allowed to provide tech support, in any form, what would have to change?</li>
-                <li>What would be the most fun thing to build in business?</li>
-                <li>If our biggest competitor got a billion dollars, what would we do?</li>
-                <li>If you could change anything about your product, what would it be?</li>
-                <li>What are you building that you wouldn't buy yourself?</li>
-            </ol>
+            <div class="reading-pane">
+                <div id="question-content">
+                    <p style="color: #666;">Select a category to view questions</p>
+                </div>
+            </div>
         </main>
     </div>
+
+    <script>
+        const questions = {
+            'business-formation': {
+                title: 'Business Formation',
+                items: [
+                    'What is your "Thiel-ian" secret? The one belief you have that no one else does?',
+                    'What are your assumptions or leaps of faith?',
+                    'What is abundant and what is scarce?',
+                    'When has this happened before in history? Why now?',
+                    'How quickly and cheaply can you get feedback?',
+                    'Is it proven? Better? New? Need two of the three for biz to work.',
+                    'What is the go-to-market strategy?'
+                ]
+            },
+            'product': {
+                title: 'Product',
+                items: [
+                    'Is this a pain reliever or a vitamin?',
+                    'Is the product a 10x improvement?',
+                    'How fast can the user get to the core interaction?',
+                    'What layer of the value chain does the company operate at? Infrastructure, platform, app?',
+                    'What are the substitutes and/or complements of the product?'
+                ]
+            },
+            'market': {
+                title: 'Market',
+                items: [
+                    'How large is the market with a bottom-up analysis?',
+                    'How fast is the market growing (new or maturing)?',
+                    'Is the market saturated? Is the market a winner-takes-all or a winner-takes-most market?',
+                    'Is the company scalable? How quickly can the company scale? What are the barriers to scale?',
+                    'Is the company anti-fragile? Countercyclical?',
+                    'Can you monopolize a niche and expand quickly (Thiel) or vertically integrate in large, highly fragmented industry with low NPS (Rabois)'
+                ]
+            },
+            'business-model': {
+                title: 'Business Model',
+                items: [
+                    'What is the business model?',
+                    'Will the unit economics of the company make sense over the long-term?',
+                    'What are expected gross margins?'
+                ]
+            },
+            'execution': {
+                title: 'Execution',
+                items: [
+                    'How quickly is the company executing?',
+                    'Where are the bottlenecks and constraints?',
+                    'What metrics must be measured?'
+                ]
+            },
+            'people': {
+                title: 'People',
+                items: [
+                    'Will this be the team to win the category globally?',
+                    'Does the team have team-market-fit?',
+                    'Does the company have a founder-CEO?',
+                    'Is the company raising the bar with each hire? Recruiting the un-recruitable?',
+                    'What is not being said? Where is the fear, uncertainty, and doubt?'
+                ]
+            },
+            'risks': {
+                title: 'Risks',
+                items: [
+                    'Execution?',
+                    'Regulation / Legal?',
+                    'Technical / Platform?',
+                    'Market?',
+                    'Business Model?',
+                    'Financial?',
+                    'Team / People?'
+                ]
+            },
+            'brainstorming': {
+                title: 'Brainstorming',
+                items: [
+                    'If you were forced to increase your prices by 10x, what would you have to do to justify it?',
+                    'If all your customers vanished, and you had to earn your growth and brand from scratch, what would you do?',
+                    'If you were never allowed to provide tech support, in any form, what would have to change?',
+                    'What would be the most fun thing to build in business?',
+                    'If our biggest competitor got a billion dollars, what would we do?',
+                    'If you could change anything about your product, what would it be?',
+                    'What are you building that you wouldn\'t buy yourself?'
+                ]
+            }
+        };
+
+        document.querySelectorAll('[data-section]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = e.target.dataset.section;
+                const data = questions[section];
+
+                // Update active state
+                document.querySelectorAll('[data-section]').forEach(l => l.classList.remove('active'));
+                e.target.classList.add('active');
+
+                // Display content
+                if (data) {
+                    const html = `
+                        <h1>${data.title}</h1>
+                        <ol>
+                            ${data.items.map(item => `<li>${item}</li>`).join('')}
+                        </ol>
+                    `;
+                    document.getElementById('question-content').innerHTML = html;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
