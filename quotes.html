@@ -4,7 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quotes - Alan James Curtis</title>
+    <meta name="description" content="Collection of quotes on business, investing, leadership, and life philosophy by Alan James Curtis.">
     <link rel="stylesheet" href="/style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Quotes - Alan James Curtis">
+    <meta property="og:description" content="Collection of quotes on business, investing, leadership, and life philosophy.">
+    <meta property="og:image" content="https://yourdomain.com/og-image.jpg">
+    <meta property="og:url" content="https://yourdomain.com/quotes.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Quotes - Alan James Curtis">
+    <meta name="twitter:description" content="Collection of quotes on business, investing, leadership, and life philosophy.">
+    <meta name="twitter:image" content="https://yourdomain.com/og-image.jpg">
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -51,12 +67,13 @@
 
             <div class="reading-pane">
                 <div id="quote-content">
-                    <p style="color: #666;">Select a category to view quotes</p>
+                    <p class="empty-state">Select a category to view quotes</p>
                 </div>
             </div>
         </main>
     </div>
 
+    <script src="/main.js"></script>
     <script>
         const quotes = {
             'business': {
@@ -180,46 +197,18 @@
             }
         };
 
-        document.querySelectorAll('[data-category]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const category = e.target.dataset.category;
-                const data = quotes[category];
-
-                // Update active state
-                document.querySelectorAll('[data-category]').forEach(l => l.classList.remove('active'));
-                e.target.classList.add('active');
-
-                // Display content
-                if (data) {
-                    const html = `
-                        <h1>${data.title}</h1>
-                        <ul>
-                            ${data.items.map(item => `<li>${item}</li>`).join('')}
-                        </ul>
-                    `;
-                    document.getElementById('quote-content').innerHTML = html;
-                }
-            });
-        });
-    </script>
-
-    <script>
-        // Mobile menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const nav = document.getElementById('nav');
-
-        if (hamburger) {
-            hamburger.addEventListener('click', () => {
-                nav.classList.toggle('active');
-            });
-        }
-
-        // Close menu when clicking nav links on mobile
-        document.querySelectorAll('#nav a').forEach(link => {
-            link.addEventListener('click', () => {
-                nav.classList.remove('active');
-            });
+        // Initialize router
+        Router.init({
+            attribute: 'data-category',
+            datasetKey: 'category',
+            contentId: 'quote-content',
+            data: quotes,
+            render: (data) => `
+                <h1>${data.title}</h1>
+                <ul>
+                    ${data.items.map(item => `<li>${item}</li>`).join('')}
+                </ul>
+            `
         });
     </script>
 </body>
