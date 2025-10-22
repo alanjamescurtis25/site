@@ -10,8 +10,9 @@
     <div class="container">
         <aside>
             <h1>Alan James Curtis</h1>
+            <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
 
-            <nav>
+            <nav id="nav">
                 <ul>
                     <li><a href="/">Welcome</a></li>
                     <li><a href="/bio.html" class="active">Bio</a></li>
@@ -94,5 +95,17 @@
             <p>Live free or die</p>
         </main>
     </div>
+
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const nav = document.getElementById('nav');
+
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                nav.classList.toggle('active');
+            });
+        }
+    </script>
 </body>
 </html>

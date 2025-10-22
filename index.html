@@ -10,8 +10,9 @@
     <div class="container">
         <aside>
             <h1>Alan James Curtis</h1>
+            <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
 
-            <nav>
+            <nav id="nav">
                 <ul>
                     <li><a href="/" class="active">Welcome</a></li>
                     <li><a href="/bio.html">Bio</a></li>
@@ -34,5 +35,17 @@
             <p>Thanks for stopping by and please reach out on <a href="https://twitter.com/alanjamescurtis" target="_blank">X</a>, <a href="https://linkedin.com/in/alanjamescurtis" target="_blank">LinkedIn</a>, or <a href="mailto:alanjamescurtis@gmail.com">email</a> if we should be working together!</p>
         </main>
     </div>
+
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const nav = document.getElementById('nav');
+
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                nav.classList.toggle('active');
+            });
+        }
+    </script>
 </body>
 </html>
