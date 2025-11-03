@@ -6,6 +6,7 @@
     <title>Investments - Alan James Curtis</title>
     <meta name="description" content="Portfolio of investments across funds, tech startups, and crypto projects by Alan James Curtis.">
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/bustling-world-v2.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -169,6 +170,24 @@
                     `).join('')}
                 </ul>
             `
+        });
+    </script>
+    <script src="/bustling-world-v2.js"></script>
+    <script>
+        // Apply saved persona theme to sub-pages
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedPersona = localStorage.getItem('bustling_v2_persona');
+            if (savedPersona) {
+                const themes = {
+                    'founder': 'persona-warlord',
+                    'operator': 'persona-strategist',
+                    'investor': 'persona-merchant',
+                    'dad': 'persona-scholar'
+                };
+                if (themes[savedPersona]) {
+                    document.body.className = themes[savedPersona];
+                }
+            }
         });
     </script>
 </body>

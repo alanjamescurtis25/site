@@ -6,6 +6,7 @@
     <title>Quotes - Alan James Curtis</title>
     <meta name="description" content="Collection of quotes on business, investing, leadership, and life philosophy by Alan James Curtis.">
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/bustling-world-v2.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -209,6 +210,24 @@
                     ${data.items.map(item => `<li>${item}</li>`).join('')}
                 </ul>
             `
+        });
+    </script>
+    <script src="/bustling-world-v2.js"></script>
+    <script>
+        // Apply saved persona theme to sub-pages
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedPersona = localStorage.getItem('bustling_v2_persona');
+            if (savedPersona) {
+                const themes = {
+                    'founder': 'persona-warlord',
+                    'operator': 'persona-strategist',
+                    'investor': 'persona-merchant',
+                    'dad': 'persona-scholar'
+                };
+                if (themes[savedPersona]) {
+                    document.body.className = themes[savedPersona];
+                }
+            }
         });
     </script>
 </body>

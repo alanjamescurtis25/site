@@ -1,0 +1,423 @@
+/**
+ * Imperial Throne Room Style
+ * 황궁 스타일 - Epic Eastern Palace Aesthetic
+ */
+
+:root {
+    /* Imperial Colors */
+    --imperial-gold: #d4af37;
+    --imperial-jade: #00a86b;
+    --imperial-red: #c41e3a;
+    --imperial-purple: #6b3aa0;
+    --imperial-black: #0a0a0a;
+
+    /* Material Colors */
+    --marble-white: #f8f6f0;
+    --bronze: #cd7f32;
+    --dark-wood: #2c1810;
+    --silk-red: #960018;
+
+    /* Lighting Effects */
+    --glow-gold: rgba(212, 175, 55, 0.4);
+    --shadow-deep: rgba(0, 0, 0, 0.8);
+    --ambient-light: rgba(255, 223, 0, 0.1);
+}
+
+/* Epic Background Architecture */
+body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Throne Room Background Layers */
+.throne-room-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: linear-gradient(180deg,
+        #0a0a0a 0%,
+        #1a1410 40%,
+        #2c1810 70%,
+        #1a0f08 100%);
+}
+
+/* Grand Hall Perspective */
+.imperial-hall {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    perspective: 1200px;
+    z-index: -1;
+}
+
+/* Floor Pattern */
+.throne-floor {
+    position: absolute;
+    bottom: 0;
+    left: -50%;
+    right: -50%;
+    height: 40%;
+    background:
+        linear-gradient(90deg,
+            transparent 0%,
+            var(--imperial-gold) 0.5%,
+            transparent 1%,
+            transparent 49%,
+            var(--imperial-gold) 49.5%,
+            transparent 50%),
+        linear-gradient(180deg,
+            var(--dark-wood) 0%,
+            #1a0f08 100%);
+    background-size: 100px 100%, 100% 100%;
+    transform: rotateX(75deg) translateZ(-100px);
+    opacity: 0.8;
+}
+
+.throne-floor::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center bottom,
+        var(--glow-gold) 0%,
+        transparent 70%);
+}
+
+/* Pillars */
+.pillar-left,
+.pillar-right {
+    position: absolute;
+    width: 120px;
+    height: 100%;
+    top: 0;
+    background: linear-gradient(180deg,
+        #2c1810 0%,
+        #1a0f08 50%,
+        #0a0a0a 100%);
+    box-shadow:
+        inset 0 0 50px rgba(0,0,0,0.5),
+        0 0 100px rgba(0,0,0,0.8);
+}
+
+.pillar-left {
+    left: 5%;
+    background: linear-gradient(90deg,
+        #0a0a0a 0%,
+        #2c1810 30%,
+        #1a0f08 80%,
+        transparent 100%);
+}
+
+.pillar-right {
+    right: 5%;
+    background: linear-gradient(-90deg,
+        #0a0a0a 0%,
+        #2c1810 30%,
+        #1a0f08 80%,
+        transparent 100%);
+}
+
+/* Golden Ornaments on Pillars */
+.pillar-left::before,
+.pillar-right::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 60px;
+    background: linear-gradient(180deg,
+        var(--imperial-gold) 0%,
+        var(--bronze) 50%,
+        var(--imperial-gold) 100%);
+    clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 80% 100%, 20% 100%, 0% 50%);
+    box-shadow: 0 10px 30px var(--glow-gold);
+}
+
+/* Ceiling with Skylight */
+.throne-ceiling {
+    position: absolute;
+    top: 0;
+    left: -20%;
+    right: -20%;
+    height: 35%;
+    background: linear-gradient(180deg,
+        #0a0a0a 0%,
+        #1a1410 70%,
+        transparent 100%);
+    transform: rotateX(-20deg) translateZ(50px);
+}
+
+.throne-ceiling::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 150px;
+    background: radial-gradient(ellipse at center,
+        var(--ambient-light) 0%,
+        var(--glow-gold) 30%,
+        transparent 70%);
+    filter: blur(20px);
+}
+
+/* Throne Steps Effect */
+.throne-steps {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 200px;
+    background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(212, 175, 55, 0.1) 50%,
+        rgba(212, 175, 55, 0.2) 100%);
+    clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+    filter: blur(10px);
+}
+
+/* Dramatic Light Rays from Ceiling */
+@keyframes lightRay {
+    0%, 100% {
+        opacity: 0.3;
+        transform: translateY(0) scaleY(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: translateY(20px) scaleY(1.1);
+    }
+}
+
+.light-ray {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg,
+        rgba(255, 223, 0, 0.4) 0%,
+        transparent 60%);
+    filter: blur(3px);
+    animation: lightRay 8s infinite ease-in-out;
+}
+
+.light-ray:nth-child(1) { left: 20%; animation-delay: 0s; }
+.light-ray:nth-child(2) { left: 40%; animation-delay: 2s; }
+.light-ray:nth-child(3) { left: 60%; animation-delay: 4s; }
+.light-ray:nth-child(4) { left: 80%; animation-delay: 6s; }
+
+/* Red Banners */
+.banner-left,
+.banner-right {
+    position: absolute;
+    width: 80px;
+    height: 60%;
+    top: 10%;
+    background: linear-gradient(180deg,
+        var(--silk-red) 0%,
+        #960018 90%,
+        #5a0010 100%);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.banner-left {
+    left: 10%;
+    transform: rotateY(20deg);
+}
+
+.banner-right {
+    right: 10%;
+    transform: rotateY(-20deg);
+}
+
+/* Golden Dragon Pattern on Banners */
+.banner-left::after,
+.banner-right::after {
+    content: '龍';
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 48px;
+    color: var(--imperial-gold);
+    text-shadow: 0 0 20px var(--glow-gold);
+    font-family: 'Noto Serif', serif;
+    opacity: 0.7;
+}
+
+/* Lanterns */
+.lantern {
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    background: linear-gradient(180deg,
+        var(--imperial-gold) 0%,
+        var(--imperial-red) 50%,
+        var(--imperial-gold) 100%);
+    border-radius: 20px;
+    box-shadow:
+        0 0 40px var(--glow-gold),
+        inset 0 0 20px rgba(255,255,255,0.3);
+}
+
+.lantern-1 { top: 25%; left: 15%; }
+.lantern-2 { top: 25%; right: 15%; }
+.lantern-3 { top: 45%; left: 18%; }
+.lantern-4 { top: 45%; right: 18%; }
+
+/* Ambient Particles */
+@keyframes floatParticle {
+    0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.6;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-100vh) translateX(50px);
+        opacity: 0;
+    }
+}
+
+.gold-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--imperial-gold);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--glow-gold);
+    animation: floatParticle 20s infinite linear;
+}
+
+.gold-particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+.gold-particle:nth-child(2) { left: 30%; animation-delay: 3s; }
+.gold-particle:nth-child(3) { left: 50%; animation-delay: 6s; }
+.gold-particle:nth-child(4) { left: 70%; animation-delay: 9s; }
+.gold-particle:nth-child(5) { left: 90%; animation-delay: 12s; }
+
+/* Character Selection Overlay Update */
+.character-select-overlay {
+    background: none;
+    backdrop-filter: blur(5px);
+}
+
+.character-select-overlay::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center,
+        transparent 0%,
+        rgba(0,0,0,0.4) 40%,
+        rgba(0,0,0,0.8) 100%);
+    z-index: -1;
+}
+
+/* Character Modal - Imperial Style */
+.character-select-modal {
+    background: linear-gradient(135deg,
+        rgba(26,20,16,0.95) 0%,
+        rgba(10,10,10,0.98) 100%);
+    border: 3px solid var(--imperial-gold);
+    box-shadow:
+        0 0 100px rgba(212,175,55,0.5),
+        inset 0 0 50px rgba(0,0,0,0.5);
+}
+
+/* Character Cards - Throne Room Style */
+.character-card {
+    background: linear-gradient(135deg,
+        rgba(26,20,16,0.9) 0%,
+        rgba(10,10,10,0.95) 100%);
+    border: 2px solid var(--bronze);
+    position: relative;
+    overflow: hidden;
+}
+
+.character-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg,
+        var(--imperial-gold),
+        transparent,
+        var(--imperial-gold));
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: -1;
+}
+
+.character-card:hover::before {
+    opacity: 1;
+}
+
+.character-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow:
+        0 20px 40px rgba(212,175,55,0.4),
+        0 0 60px rgba(212,175,55,0.3);
+}
+
+/* Main Container Updates */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Sidebar - Imperial Style */
+.sidebar {
+    background: linear-gradient(180deg,
+        rgba(26,20,16,0.95) 0%,
+        rgba(10,10,10,0.98) 100%);
+    border-right: 2px solid var(--imperial-gold);
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+}
+
+/* Content Area - Imperial Style */
+.content {
+    background: linear-gradient(135deg,
+        rgba(248,246,240,0.95) 0%,
+        rgba(235,229,214,0.98) 100%);
+    box-shadow:
+        inset 0 0 100px rgba(0,0,0,0.1),
+        0 0 50px rgba(0,0,0,0.5);
+}
+
+/* Navigation Links - Gold Accent */
+.nav-link:hover,
+.nav-link.active {
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(212,175,55,0.2) 50%,
+        transparent 100%);
+    border-left-color: var(--imperial-gold);
+}
+
+/* Add epic glow to important elements */
+.character-name {
+    text-shadow: 0 0 20px var(--glow-gold);
+}
+
+.stat-fill {
+    background: linear-gradient(90deg,
+        var(--bronze) 0%,
+        var(--imperial-gold) 50%,
+        var(--bronze) 100%);
+    box-shadow: 0 0 10px var(--glow-gold);
+}

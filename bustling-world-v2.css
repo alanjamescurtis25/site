@@ -1,0 +1,738 @@
+/**
+ * The Bustling World v2 - Character Selection System
+ * Professional Game-Inspired Portfolio
+ */
+
+/* ==================== CSS Variables ==================== */
+:root {
+    /* Founder Theme - Military/Topographical */
+    --founder-bg: #1E2C23;
+    --founder-accent: #A0A453;
+    --founder-text: #D8D8D8;
+
+    /* Operator Theme - Factory/Industrial */
+    --operator-bg: #1A1D20;
+    --operator-accent: #FFB800;
+    --operator-text: #EAEAEA;
+
+    /* Investor Theme - Finance/Wall Street */
+    --investor-bg: #EFEBE4;
+    --investor-accent: #C39F47;
+    --investor-text: #0A1D1A;
+
+    /* Dad Theme - Kitschy/Playful */
+    --dad-bg: #FFFBEF;
+    --dad-accent: #FF7F50;
+    --dad-text: #4A4A4A;
+
+    /* Typography */
+    --font-primary: 'Cinzel', serif;
+    --font-secondary: 'Cormorant Garamond', serif;
+    --font-display: 'Righteous', cursive;
+    --font-body: 'Montserrat', sans-serif;
+
+    /* Base Colors */
+    --bg-warm-1: rgba(232, 212, 176, 0.92);
+    --bg-warm-2: rgba(212, 193, 156, 0.92);
+    --bg-warm-3: rgba(196, 168, 120, 0.92);
+    --bg-warm-4: rgba(176, 144, 96, 0.92);
+
+    /* Shadows */
+    --shadow-card: 0 10px 30px rgba(0,0,0,0.2);
+    --shadow-hover: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+/* ==================== Base Styles ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    background: #f5f2e8;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ==================== Character Selection Overlay ==================== */
+.character-select-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    background:
+        linear-gradient(135deg,
+            var(--bg-warm-1) 0%,
+            var(--bg-warm-2) 30%,
+            var(--bg-warm-3) 70%,
+            var(--bg-warm-4) 100%),
+        url('/assets/pg.png') center center / cover no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ==================== Selection Modal ==================== */
+.character-select-modal {
+    width: 90%;
+    max-width: 1400px;
+    max-height: 90vh;
+    background: linear-gradient(135deg,
+        rgba(245, 242, 232, 0.98) 0%,
+        rgba(235, 229, 214, 0.98) 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+/* Scroll Header */
+.scroll-header {
+    padding: 40px 20px 30px;
+    text-align: center;
+    background: transparent;
+}
+
+.select-title {
+    font-family: var(--font-primary);
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: #2a2016;
+    margin: 0 0 10px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.select-subtitle {
+    font-family: var(--font-secondary);
+    font-size: 18px;
+    font-weight: 400;
+    color: #6b5d4f;
+    letter-spacing: 1px;
+}
+
+/* ==================== Character Grid ==================== */
+.character-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 20px 40px 40px;
+}
+
+/* ==================== Character Card ==================== */
+.character-card {
+    position: relative;
+    background: linear-gradient(135deg,
+        rgba(252, 248, 240, 0.98) 0%,
+        rgba(245, 240, 230, 0.98) 100%);
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-card);
+}
+
+.character-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Persona-specific hover backgrounds */
+.character-card[data-persona="founder"]:hover {
+    background: linear-gradient(135deg,
+        rgba(30, 44, 35, 0.9) 0%,
+        rgba(40, 54, 45, 0.85) 100%);
+}
+
+.character-card[data-persona="operator"]:hover {
+    background: linear-gradient(135deg,
+        rgba(26, 29, 32, 0.9) 0%,
+        rgba(36, 39, 42, 0.85) 100%);
+}
+
+.character-card[data-persona="investor"]:hover {
+    background: linear-gradient(135deg,
+        rgba(195, 159, 71, 0.15) 0%,
+        rgba(239, 235, 228, 0.95) 100%);
+}
+
+.character-card[data-persona="dad"]:hover {
+    background: linear-gradient(135deg,
+        rgba(255, 127, 80, 0.15) 0%,
+        rgba(255, 251, 239, 0.95) 100%);
+}
+
+/* Card Backgrounds */
+.card-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.15;
+    z-index: 0;
+}
+
+.warlord-bg {
+    background: linear-gradient(135deg, var(--founder-bg) 0%, var(--founder-accent) 100%);
+}
+
+.strategist-bg {
+    background: linear-gradient(135deg, var(--operator-bg) 0%, var(--operator-accent) 100%);
+}
+
+.merchant-bg {
+    background: linear-gradient(135deg, var(--investor-bg) 0%, var(--investor-accent) 100%);
+}
+
+.scholar-bg {
+    background: linear-gradient(135deg, var(--dad-bg) 0%, var(--dad-accent) 100%);
+}
+
+/* ==================== Character Portrait ==================== */
+.character-frame {
+    padding: 30px 20px 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.character-portrait {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    border: 3px solid rgba(196, 168, 120, 0.5);
+    background: #f0f0f0;
+    transition: all 0.4s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.character-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    transition: all 0.4s ease;
+    filter: brightness(1) contrast(1);
+}
+
+/* Portrait Hover Effects */
+.character-card:hover .character-portrait {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.character-card:hover .character-photo {
+    transform: scale(1.2);
+    filter: brightness(1.1) contrast(1.1) saturate(1.2);
+}
+
+/* Persona-specific Portrait Colors */
+.character-card[data-persona="founder"]:hover .character-portrait {
+    border-color: var(--founder-accent);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 30px rgba(160, 164, 83, 0.5);
+}
+
+.character-card[data-persona="operator"]:hover .character-portrait {
+    border-color: var(--operator-accent);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 30px rgba(255, 184, 0, 0.5);
+}
+
+.character-card[data-persona="investor"]:hover .character-portrait {
+    border-color: var(--investor-accent);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 30px rgba(195, 159, 71, 0.5);
+}
+
+.character-card[data-persona="dad"]:hover .character-portrait {
+    border-color: var(--dad-accent);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 30px rgba(255, 127, 80, 0.5);
+}
+
+/* ==================== Character Info ==================== */
+.character-info {
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.character-name {
+    font-family: var(--font-display);
+    font-size: 26px;
+    letter-spacing: 4px;
+    margin: 0;
+    color: #2a2016;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.character-title {
+    font-family: var(--font-primary);
+    font-size: 15px;
+    font-weight: 500;
+    color: #8a7660;
+    margin: 8px 0;
+    letter-spacing: 2px;
+    transition: color 0.3s;
+}
+
+.character-desc {
+    font-family: var(--font-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b5d4f;
+    line-height: 1.6;
+    margin: 15px 0;
+    transition: color 0.3s;
+}
+
+/* Hover text colors for dark backgrounds */
+.character-card[data-persona="founder"]:hover .character-title,
+.character-card[data-persona="operator"]:hover .character-title {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.character-card[data-persona="founder"]:hover .character-desc,
+.character-card[data-persona="operator"]:hover .character-desc {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.character-card[data-persona="founder"]:hover .stat-item,
+.character-card[data-persona="operator"]:hover .stat-item {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Persona-specific Name Colors on Hover */
+.character-card[data-persona="founder"]:hover .character-name {
+    color: var(--founder-accent);
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.3), 0 0 20px rgba(160, 164, 83, 0.5);
+    transform: scale(1.05);
+}
+
+.character-card[data-persona="operator"]:hover .character-name {
+    color: var(--operator-accent);
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.3), 0 0 20px rgba(255, 184, 0, 0.5);
+    transform: scale(1.05);
+}
+
+.character-card[data-persona="investor"]:hover .character-name {
+    color: var(--investor-accent);
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.3), 0 0 20px rgba(195, 159, 71, 0.5);
+    transform: scale(1.05);
+}
+
+.character-card[data-persona="dad"]:hover .character-name {
+    color: var(--dad-accent);
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.3), 0 0 20px rgba(255, 127, 80, 0.5);
+    transform: scale(1.05);
+}
+
+/* ==================== Character Stats ==================== */
+.character-stats {
+    margin-top: 15px;
+    padding: 10px 0;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 10px;
+    margin: 2px 0;
+    font-size: 12px;
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: #5a4a3a;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.stat-item::before {
+    content: '▸';
+    position: absolute;
+    left: 5px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    color: inherit;
+}
+
+.character-card:hover .stat-item {
+    padding-left: 15px;
+    color: #3a3020;
+}
+
+.character-card:hover .stat-item::before {
+    opacity: 1;
+}
+
+/* Light arrow colors for dark backgrounds */
+.character-card[data-persona="founder"]:hover .stat-item::before,
+.character-card[data-persona="operator"]:hover .stat-item::before {
+    color: var(--founder-accent);
+}
+
+.stat-item span {
+    font-family: var(--font-display);
+    font-weight: normal;
+    font-size: 14px;
+    color: #2a2a2a;
+    background: rgba(212, 175, 55, 0.15);
+    padding: 2px 10px;
+    border-radius: 4px;
+    min-width: 35px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Persona-specific Stat Colors */
+.warlord-bg ~ .character-frame ~ .character-info .stat-item span {
+    background: rgba(160, 164, 83, 0.2);
+}
+
+.character-card:hover .warlord-bg ~ .character-frame ~ .character-info .stat-item span {
+    background: var(--founder-accent);
+    color: var(--founder-bg);
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.strategist-bg ~ .character-frame ~ .character-info .stat-item span {
+    background: rgba(255, 184, 0, 0.2);
+}
+
+.character-card:hover .strategist-bg ~ .character-frame ~ .character-info .stat-item span {
+    background: var(--operator-accent);
+    color: var(--operator-bg);
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.merchant-bg ~ .character-frame ~ .character-info .stat-item span {
+    background: rgba(195, 159, 71, 0.2);
+}
+
+.character-card:hover .merchant-bg ~ .character-frame ~ .character-info .stat-item span {
+    background: var(--investor-accent);
+    color: var(--investor-text);
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.scholar-bg ~ .character-frame ~ .character-info .stat-item span {
+    background: rgba(255, 127, 80, 0.2);
+}
+
+.character-card:hover .scholar-bg ~ .character-frame ~ .character-info .stat-item span {
+    background: var(--dad-accent);
+    color: var(--dad-text);
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* ==================== Scroll Footer ==================== */
+.scroll-footer {
+    padding: 20px 20px 30px;
+    text-align: center;
+    background: transparent;
+}
+
+.footer-text {
+    font-family: var(--font-secondary);
+    font-size: 14px;
+    color: #8a7660;
+    letter-spacing: 0.5px;
+}
+
+/* ==================== Main Container ==================== */
+.container {
+    display: flex;
+    min-height: 100vh;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* ==================== Sidebar ==================== */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, rgba(245,242,232,0.95) 0%, rgba(235,229,214,0.95) 100%);
+    border-right: 1px solid rgba(26, 26, 26, 0.3);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.site-title {
+    font-family: var(--font-primary);
+    font-size: 24px;
+    color: #1a1a1a;
+    margin: 0 0 15px 0;
+    letter-spacing: 1px;
+}
+
+.persona-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    border: 1px solid rgba(26, 26, 26, 0.3);
+    background: rgba(255,255,255,0.5);
+    font-family: var(--font-body);
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: rgba(26, 26, 26, 0.6);
+    text-transform: uppercase;
+}
+
+/* ==================== Navigation ==================== */
+.navigation {
+    flex-grow: 1;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin: 10px 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #1a1a1a;
+    font-family: var(--font-body);
+    font-size: 14px;
+    border-radius: 0;
+    border-left: 3px solid transparent;
+    background: transparent;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background: rgba(255,255,255,0.3);
+    border-left-color: rgba(26, 26, 26, 0.3);
+}
+
+.nav-link.active {
+    background: rgba(255,255,255,0.5);
+    border-left-color: currentColor;
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(26, 26, 26, 0.6);
+}
+
+.nav-text {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* ==================== Main Content ==================== */
+.content {
+    flex: 1;
+    padding: 40px;
+    background: #fff;
+    overflow-y: auto;
+}
+
+.page-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.page-title {
+    font-family: var(--font-primary);
+    font-size: 32px;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.content-body {
+    font-family: var(--font-secondary);
+    font-size: 16px;
+    line-height: 1.8;
+    color: #333;
+}
+
+.intro-text {
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.text-link {
+    color: inherit;
+    text-decoration: underline;
+    transition: opacity 0.2s;
+}
+
+.text-link:hover {
+    opacity: 0.7;
+}
+
+/* ==================== Persona Switcher ==================== */
+.persona-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.persona-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.95);
+    border: 2px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s;
+    padding: 0;
+}
+
+.persona-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+.persona-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 10px;
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: #333;
+    transition: background 0.2s;
+    border-radius: 5px;
+}
+
+.dropdown-item:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: rgba(0,0,0,0.1);
+    margin: 10px 0;
+}
+
+/* ==================== Mobile Responsive ==================== */
+.hamburger {
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.hamburger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: #1a1a1a;
+    margin: 5px 0;
+    transition: all 0.3s;
+}
+
+@media (max-width: 768px) {
+    .character-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+}
+
+/* ==================== Persona Theme Classes ==================== */
+.persona-founder {
+    --theme-primary: var(--founder-bg);
+    --theme-accent: var(--founder-accent);
+    --theme-text: var(--founder-text);
+}
+
+.persona-operator {
+    --theme-primary: var(--operator-bg);
+    --theme-accent: var(--operator-accent);
+    --theme-text: var(--operator-text);
+}
+
+.persona-investor {
+    --theme-primary: var(--investor-bg);
+    --theme-accent: var(--investor-accent);
+    --theme-text: var(--investor-text);
+}
+
+.persona-dad {
+    --theme-primary: var(--dad-bg);
+    --theme-accent: var(--dad-accent);
+    --theme-text: var(--dad-text);
+}

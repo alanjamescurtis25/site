@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alan James Curtis</title>
+    <title>Alan James Curtis - Enter the Kingdom</title>
     <meta name="description" content="Founder, Operator, Investor, and Dad. Five exits, $100M+ raised, COO at EigenLayer, CTO at Core Scientific.">
-    <link rel="stylesheet" href="/style.css">
+
+    <!-- Premium Asian-inspired Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700&family=Righteous&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/bustling-world-v2.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -17,10 +24,6 @@
     <meta property="og:image" content="https://yourdomain.com/og-image.jpg">
     <meta property="og:url" content="https://yourdomain.com">
     <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Alan James Curtis">
-    <meta name="twitter:description" content="Founder. Operator. Investor. Dad.">
-    <meta name="twitter:image" content="https://yourdomain.com/og-image.jpg">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BFD7WNPCNP"></script>
@@ -32,35 +35,272 @@
     </script>
 </head>
 <body>
-    <div class="container">
-        <aside>
-            <h1>Alan James Curtis</h1>
-            <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+    <!-- Character Selection Overlay -->
+    <div id="characterSelect" class="character-select-overlay">
+        <div class="character-select-modal">
+            <div class="scroll-header">
+                <h1 class="select-title">CHOOSE YOUR CHARACTER</h1>
+                <p class="select-subtitle">Experience my portfolio through four unique perspectives</p>
+            </div>
 
-            <nav id="nav">
-                <ul>
-                    <li><a href="/" class="active">Welcome</a></li>
-                    <li><a href="/bio.html">Bio</a></li>
-                    <li><a href="/writing.html">Writing</a></li>
-                    <li><a href="/quotes.html">Quotes</a></li>
-                    <li><a href="/questions.html">Questions</a></li>
-                    <li><a href="/investments.html">Investments</a></li>
+            <div class="character-grid">
+                <!-- Warlord Character -->
+                <div class="character-card" data-persona="founder">
+                    <div class="card-background warlord-bg"></div>
+                    <div class="character-frame">
+                        <div class="character-portrait warlord-portrait">
+                            <img src="/assets/alan-2.jpeg" alt="Founder" class="character-photo">
+                        </div>
+                    </div>
+                    <div class="character-info">
+                        <h3 class="character-name">FOUNDER</h3>
+                        <p class="character-title">Startup Warrior</p>
+                        <p class="character-desc">Build companies, raise capital, conquer markets</p>
+                        <div class="character-stats">
+                            <div class="stat-item">Vision <span>95</span></div>
+                            <div class="stat-item">Execution <span>85</span></div>
+                            <div class="stat-item">Risk-Taking <span>80</span></div>
+                            <div class="stat-item">Technical <span>70</span></div>
+                            <div class="stat-item">Leadership <span>90</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategist Character -->
+                <div class="character-card" data-persona="operator">
+                    <div class="card-background strategist-bg"></div>
+                    <div class="character-frame">
+                        <div class="character-portrait strategist-portrait">
+                            <img src="/assets/alan-3.jpg" alt="Operator" class="character-photo">
+                        </div>
+                    </div>
+                    <div class="character-info">
+                        <h3 class="character-name">OPERATOR</h3>
+                        <p class="character-title">Systems Architect</p>
+                        <p class="character-desc">Scale operations, optimize systems, drive efficiency</p>
+                        <div class="character-stats">
+                            <div class="stat-item">Process <span>80</span></div>
+                            <div class="stat-item">Systems <span>100</span></div>
+                            <div class="stat-item">Risk-Taking <span>60</span></div>
+                            <div class="stat-item">Technical <span>95</span></div>
+                            <div class="stat-item">Leadership <span>85</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Merchant Character -->
+                <div class="character-card" data-persona="investor">
+                    <div class="card-background merchant-bg"></div>
+                    <div class="character-frame">
+                        <div class="character-portrait merchant-portrait">
+                            <img src="/assets/alan-1.jpg" alt="Investor" class="character-photo">
+                        </div>
+                    </div>
+                    <div class="character-info">
+                        <h3 class="character-name">INVESTOR</h3>
+                        <p class="character-title">Capital Allocator</p>
+                        <p class="character-desc">Identify value, deploy capital, build portfolios</p>
+                        <div class="character-stats">
+                            <div class="stat-item">Analysis <span>75</span></div>
+                            <div class="stat-item">Pattern <span>90</span></div>
+                            <div class="stat-item">Risk <span>95</span></div>
+                            <div class="stat-item">Technical <span>60</span></div>
+                            <div class="stat-item">Network <span>100</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scholar Character -->
+                <div class="character-card" data-persona="dad">
+                    <div class="card-background scholar-bg"></div>
+                    <div class="character-frame">
+                        <div class="character-portrait scholar-portrait">
+                            <img src="/assets/alan-4.jpg" alt="Dad" class="character-photo">
+                        </div>
+                    </div>
+                    <div class="character-info">
+                        <h3 class="character-name">DAD</h3>
+                        <p class="character-title">Life Mentor</p>
+                        <p class="character-desc">Share wisdom, nurture growth, build relationships</p>
+                        <div class="character-stats">
+                            <div class="stat-item">Empathy <span>90</span></div>
+                            <div class="stat-item">Balance <span>70</span></div>
+                            <div class="stat-item">Risk-Taking <span>40</span></div>
+                            <div class="stat-item">Technical <span>50</span></div>
+                            <div class="stat-item">Wisdom <span>100</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scroll-footer">
+                <p class="footer-text">Each perspective reveals different aspects of my journey</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Persona Switcher -->
+    <div id="personaSwitcher" class="persona-switcher hidden">
+        <button class="persona-btn" aria-label="Switch Persona">
+            <span class="current-persona-avatar">
+                <svg class="persona-icon" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="currentColor" opacity="0.2"/>
+                </svg>
+            </span>
+        </button>
+        <div class="persona-dropdown">
+            <button data-persona="founder" class="dropdown-item">
+                <span class="item-avatar">
+                    <svg viewBox="0 0 100 100" width="30" height="30">
+                        <path d="M50 20 L30 40 L30 60 L50 80 L70 60 L70 40 Z" fill="var(--founder-accent)" opacity="0.6"/>
+                        <path d="M50 10 L20 30 L20 70 L50 90 L80 70 L80 30 Z" stroke="var(--founder-accent)" fill="none" stroke-width="2"/>
+                    </svg>
+                </span>
+                <span>Founder</span>
+            </button>
+            <button data-persona="operator" class="dropdown-item">
+                <span class="item-avatar">
+                    <svg viewBox="0 0 100 100" width="30" height="30">
+                        <rect x="30" y="30" width="40" height="40" stroke="var(--operator-accent)" fill="none" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="10" fill="var(--operator-accent)" opacity="0.6"/>
+                    </svg>
+                </span>
+                <span>Operator</span>
+            </button>
+            <button data-persona="investor" class="dropdown-item">
+                <span class="item-avatar">
+                    <svg viewBox="0 0 100 100" width="30" height="30">
+                        <circle cx="50" cy="30" r="20" stroke="var(--investor-accent)" fill="none" stroke-width="2"/>
+                        <circle cx="35" cy="55" r="15" stroke="var(--investor-accent)" fill="var(--investor-accent)" opacity="0.3"/>
+                        <circle cx="65" cy="55" r="15" stroke="var(--investor-accent)" fill="var(--investor-accent)" opacity="0.3"/>
+                    </svg>
+                </span>
+                <span>Investor</span>
+            </button>
+            <button data-persona="dad" class="dropdown-item">
+                <span class="item-avatar">
+                    <svg viewBox="0 0 100 100" width="30" height="30">
+                        <rect x="35" y="20" width="30" height="40" stroke="var(--dad-accent)" fill="none" stroke-width="2"/>
+                        <path d="M30 65 Q50 75 70 65" stroke="var(--dad-accent)" fill="none" stroke-width="2"/>
+                        <circle cx="50" cy="80" r="5" fill="var(--dad-accent)" opacity="0.6"/>
+                    </svg>
+                </span>
+                <span>Dad</span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button id="resetSelection" class="dropdown-item reset-btn">
+                <span class="item-icon reset-icon"></span>
+                <span>Choose Again</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Site Container -->
+    <div class="container" id="mainContainer">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="site-title">Alan James Curtis</h1>
+                <div class="persona-badge" id="personaBadge">
+                    <span class="badge-text">Founder</span>
+                </div>
+            </div>
+
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav id="nav" class="navigation">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link active" data-page="welcome">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <path d="M10 2L2 8v10h6v-6h4v6h6V8z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Welcome</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/bio.html" class="nav-link" data-page="bio">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <rect x="4" y="2" width="12" height="16" stroke="currentColor" fill="none"/>
+                                    <line x1="7" y1="6" x2="13" y2="6" stroke="currentColor"/>
+                                    <line x1="7" y1="10" x2="13" y2="10" stroke="currentColor"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Bio</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/writing.html" class="nav-link" data-page="writing">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <path d="M14 2L18 6L8 16L2 18L4 12z" stroke="currentColor" fill="none"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Writing</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/quotes.html" class="nav-link" data-page="quotes">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <circle cx="10" cy="10" r="8" stroke="currentColor" fill="none"/>
+                                    <path d="M6 10Q10 6 14 10" stroke="currentColor" fill="none"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Quotes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/questions.html" class="nav-link" data-page="questions">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <circle cx="10" cy="8" r="6" stroke="currentColor" fill="none"/>
+                                    <circle cx="10" cy="16" r="1" fill="currentColor"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Questions</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/investments.html" class="nav-link" data-page="investments">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <polygon points="10,2 12,8 18,8 13,12 15,18 10,14 5,18 7,12 2,8 8,8" stroke="currentColor" fill="none"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Investments</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
+
         </aside>
 
-        <!-- Content -->
-        <main class="content">
-            <h1>Welcome</h1>
+        <!-- Main Content -->
+        <main class="content" id="mainContent">
+            <div class="page-header">
+                <h1 class="page-title" id="pageTitle">Welcome to the Kingdom</h1>
+            </div>
 
-            <p>Welcome to my personal website! This site's "job to be done" is to make me as <em>legible as possible</em>.</p>
+            <div class="content-body" id="contentBody">
+                <p class="intro-text">Welcome to my digital realm. This site exists to make my journey and expertise transparent and accessible.</p>
 
-            <p>A good place to start is with my <a href="/bio.html">bio</a>, my <a href="/writing/user-manual.html">user manual</a>, or my <a href="/writing/latticework.html">latticework</a>.</p>
+                <p>Begin with my <a href="/bio.html" class="text-link">chronicle</a> to understand my path, explore my <a href="/writing/user-manual.html" class="text-link">manual</a> for collaboration insights, or study my <a href="/writing/latticework.html" class="text-link">frameworks</a>.</p>
 
-            <p>Thanks for stopping by and please reach out on <a href="https://twitter.com/alanjamescurtis" target="_blank">X</a>, <a href="https://linkedin.com/in/alanjamescurtis" target="_blank">LinkedIn</a>, or <a href="mailto:alanjamescurtis@gmail.com">email</a> if we should be working together!</p>
+                <p>Connect through <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">X</a>, <a href="https://linkedin.com/in/alanjamescurtis" target="_blank" class="text-link">LinkedIn</a>, or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a> to explore opportunities.</p>
+            </div>
         </main>
     </div>
 
+    <!-- Scripts -->
     <script src="/main.js"></script>
+    <script src="/bustling-world-v2.js"></script>
 </body>
 </html>
