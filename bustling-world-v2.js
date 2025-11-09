@@ -14,6 +14,7 @@ class BustlingWorldV2 {
             founder: {
                 name: 'Founder',
                 theme: 'persona-founder',
+                image: '/assets/alan-2.jpeg',
                 content: {
                     title: 'Welcome to the War Room',
                     welcome: "Welcome, fellow builder! I'm a five-time founder with successful exits, over $100M raised, and a passion for creating companies that matter.",
@@ -24,6 +25,7 @@ class BustlingWorldV2 {
             operator: {
                 name: 'Operator',
                 theme: 'persona-operator',
+                image: '/assets/alan-3.jpg',
                 content: {
                     title: 'Strategic Operations Center',
                     welcome: "Systems thinking meets execution. Former COO at EigenLayer and CTO at Core Scientific, I specialize in scaling operations from startup to enterprise.",
@@ -34,6 +36,7 @@ class BustlingWorldV2 {
             investor: {
                 name: 'Investor',
                 theme: 'persona-investor',
+                image: '/assets/alan-1.jpg',
                 content: {
                     title: 'The Trading Hall',
                     welcome: "Capital allocation is both art and science. As an active investor and advisor, I help founders navigate from seed to scale.",
@@ -44,6 +47,7 @@ class BustlingWorldV2 {
             dad: {
                 name: 'Dad',
                 theme: 'persona-dad',
+                image: '/assets/alan-4.jpg',
                 content: {
                     title: "The Scholar's Sanctuary",
                     welcome: "Hey there! Beyond all the titles and ventures, I'm a dad first. Life's greatest ROI comes from family, relationships, and helping others grow.",
@@ -285,6 +289,13 @@ class BustlingWorldV2 {
             if (badgeText) {
                 badgeText.textContent = data.name;
             }
+        }
+
+        // Update profile image in persona switcher
+        const profileImg = document.getElementById('currentPersonaImage');
+        if (profileImg) {
+            profileImg.src = data.image;
+            profileImg.alt = data.name;
         }
 
         // Update content

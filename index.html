@@ -9,7 +9,7 @@
     <!-- Premium Asian-inspired Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Bebas+Neue&family=Montserrat:wght@300;400;500;600;700&family=Righteous&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Styles -->
     <link rel="stylesheet" href="/bustling-world-v2.css">
@@ -143,9 +143,7 @@
     <div id="personaSwitcher" class="persona-switcher hidden">
         <button class="persona-btn" aria-label="Switch Persona">
             <span class="current-persona-avatar">
-                <svg class="persona-icon" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="45" fill="currentColor" opacity="0.2"/>
-                </svg>
+                <img id="currentPersonaImage" class="persona-profile-img" src="/assets/alan-2.jpeg" alt="Current Persona">
             </span>
         </button>
         <div class="persona-dropdown">
@@ -190,7 +188,7 @@
             <div class="dropdown-divider"></div>
             <button id="resetSelection" class="dropdown-item reset-btn">
                 <span class="item-icon reset-icon"></span>
-                <span>Choose Again</span>
+                <span>Change Role</span>
             </button>
         </div>
     </div>

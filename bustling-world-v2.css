@@ -28,7 +28,7 @@
     /* Typography */
     --font-primary: 'Cinzel', serif;
     --font-secondary: 'Cormorant Garamond', serif;
-    --font-display: 'Righteous', cursive;
+    --font-display: 'Playfair Display', serif;
     --font-body: 'Montserrat', sans-serif;
 
     /* Base Colors */
@@ -38,7 +38,7 @@
     --bg-warm-4: rgba(176, 144, 96, 0.92);
 
     /* Shadows */
-    --shadow-card: 0 10px 30px rgba(0,0,0,0.2);
+    --shadow-card: 0 10px 30px rgba(0,0,0,0.3);
     --shadow-hover: 0 15px 40px rgba(0,0,0,0.3);
 }
 
@@ -133,13 +133,13 @@ body {
     overflow: hidden;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .character-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.3);
     background: rgba(0, 0, 0, 0.5);
 }
 
@@ -153,11 +153,11 @@ body {
 }
 
 .character-card[data-persona="investor"]:hover {
-    background: rgba(239, 235, 228, 0.3);
+    background: rgba(35, 30, 20, 0.6);  /* Changed to dark for consistency */
 }
 
 .character-card[data-persona="dad"]:hover {
-    background: rgba(255, 251, 239, 0.3);
+    background: rgba(40, 25, 20, 0.6);  /* Changed to dark for consistency */
 }
 
 /* Card Backgrounds */
@@ -167,7 +167,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    opacity: 0.15;
+    opacity: 0.08;  /* More subtle since image is prominent */
     z-index: 0;
 }
 
@@ -189,81 +189,76 @@ body {
 
 /* ==================== Character Portrait ==================== */
 .character-frame {
-    padding: 30px 20px 20px;
-    text-align: center;
     position: relative;
     z-index: 1;
+    height: 250px;  /* Increased height for better proportion */
+    overflow: hidden;
+    margin-bottom: 0;  /* No gap since we overlap with fade */
 }
 
 .character-portrait {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto;
-    border-radius: 50%;
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
     position: relative;
-    border: 3px solid rgba(196, 168, 120, 0.5);
-    background: #f0f0f0;
-    transition: all 0.4s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    overflow: hidden;
+    /* Use mask to fade the image itself */
+    -webkit-mask-image: linear-gradient(to bottom,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,1) 40%,
+        rgba(0,0,0,0.9) 50%,
+        rgba(0,0,0,0.7) 60%,
+        rgba(0,0,0,0.5) 70%,
+        rgba(0,0,0,0.3) 80%,
+        rgba(0,0,0,0.1) 90%,
+        rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to bottom,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,1) 40%,
+        rgba(0,0,0,0.9) 50%,
+        rgba(0,0,0,0.7) 60%,
+        rgba(0,0,0,0.5) 70%,
+        rgba(0,0,0,0.3) 80%,
+        rgba(0,0,0,0.1) 90%,
+        rgba(0,0,0,0) 100%);
 }
+
+/* No need for overlay - the mask handles the fade */
 
 .character-photo {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 25%;
+    object-position: center 20%;  /* Adjusted for full-width display */
     transition: all 0.4s ease;
-    filter: brightness(1) contrast(1);
+    filter: brightness(0.9) contrast(1.1);
 }
 
 /* Portrait Hover Effects */
-.character-card:hover .character-portrait {
-    /* No transform - stays still */
-}
-
 .character-card:hover .character-photo {
-    /* No transform - stays still */
-    filter: brightness(1.05) contrast(1.05) saturate(1.1);
-}
-
-/* Persona-specific Portrait Colors */
-.character-card[data-persona="founder"]:hover .character-portrait {
-    border-color: var(--founder-accent);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 30px rgba(160, 164, 83, 0.5);
-}
-
-.character-card[data-persona="operator"]:hover .character-portrait {
-    border-color: var(--operator-accent);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 30px rgba(255, 184, 0, 0.5);
-}
-
-.character-card[data-persona="investor"]:hover .character-portrait {
-    border-color: var(--investor-accent);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 30px rgba(195, 159, 71, 0.5);
-}
-
-.character-card[data-persona="dad"]:hover .character-portrait {
-    border-color: var(--dad-accent);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 30px rgba(255, 127, 80, 0.5);
+    /* Removed transform to prevent line artifacts with mask */
+    filter: brightness(1.05) contrast(1.05) saturate(1.05);
 }
 
 /* ==================== Character Info ==================== */
 .character-info {
-    padding: 20px;
+    padding: 15px 20px 20px 20px;  /* Moderate top padding */
     position: relative;
-    z-index: 1;
+    z-index: 3;
+    margin-top: -30px;  /* Some overlap but text starts where fade is minimal */
 }
 
 .character-name {
-    font-family: var(--font-display);
+    font-family: var(--font-primary);  /* Cinzel - same as CHOOSE YOUR CHARACTER */
     font-size: 26px;
-    letter-spacing: 4px;
+    font-weight: 700;
+    letter-spacing: 3px;
     margin: 0;
     color: rgba(255, 255, 255, 0.95);
     text-transform: uppercase;
     transition: all 0.3s;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    transform-origin: center center;  /* Ensures consistent scaling from center */
+    display: inline-block;  /* Needed for transform to work properly */
 }
 
 .character-title {
@@ -271,7 +266,7 @@ body {
     font-size: 15px;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.85);
-    margin: 8px 0;
+    margin: 10px 0 8px 0;  /* Added more top margin */
     letter-spacing: 2px;
     transition: color 0.3s;
 }
@@ -284,32 +279,56 @@ body {
     line-height: 1.6;
     margin: 15px 0;
     transition: color 0.3s;
+    min-height: 45px;  /* Ensures consistent height for alignment */
+    display: block;  /* Changed from flex to block */
+    text-align: left;  /* Left align text */
 }
 
 /* Text colors already white for all cards */
 
+/* Improve title and description readability on hover */
+.character-card:hover .character-title {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.character-card:hover .character-desc {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 /* Persona-specific Name Colors on Hover */
 .character-card[data-persona="founder"]:hover .character-name {
-    color: var(--founder-accent);
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.3), 0 0 20px rgba(160, 164, 83, 0.5);
+    color: #E8F5E9;  /* Light mint green for excellent readability */
+    text-shadow:
+        2px 2px 4px rgba(0,0,0,0.5),
+        0 0 30px rgba(160, 164, 83, 0.8),
+        0 0 50px rgba(160, 164, 83, 0.4);
     transform: scale(1.05);
 }
 
 .character-card[data-persona="operator"]:hover .character-name {
-    color: var(--operator-accent);
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.3), 0 0 20px rgba(255, 184, 0, 0.5);
+    color: #FFF8E1;  /* Light cream yellow for readability */
+    text-shadow:
+        2px 2px 4px rgba(0,0,0,0.5),
+        0 0 30px rgba(255, 184, 0, 0.8),
+        0 0 50px rgba(255, 184, 0, 0.4);
     transform: scale(1.05);
 }
 
 .character-card[data-persona="investor"]:hover .character-name {
-    color: var(--investor-accent);
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.3), 0 0 20px rgba(195, 159, 71, 0.5);
+    color: #FFFEF7;  /* Off-white with warm tint */
+    text-shadow:
+        2px 2px 4px rgba(0,0,0,0.5),
+        0 0 30px rgba(195, 159, 71, 0.8),
+        0 0 50px rgba(195, 159, 71, 0.4);
     transform: scale(1.05);
 }
 
 .character-card[data-persona="dad"]:hover .character-name {
-    color: var(--dad-accent);
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.3), 0 0 20px rgba(255, 127, 80, 0.5);
+    color: #FFF5F0;  /* Light peach for readability */
+    text-shadow:
+        2px 2px 4px rgba(0,0,0,0.5),
+        0 0 30px rgba(255, 127, 80, 0.8),
+        0 0 50px rgba(255, 127, 80, 0.4);
     transform: scale(1.05);
 }
 
@@ -334,33 +353,15 @@ body {
     position: relative;
 }
 
-.stat-item::before {
-    content: '▸';
-    position: absolute;
-    left: 5px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    color: inherit;
-}
-
 .character-card:hover .stat-item {
-    padding-left: 15px;
     color: rgba(255, 255, 255, 1);
-}
-
-.character-card:hover .stat-item::before {
-    opacity: 1;
-}
-
-/* Light arrow colors for dark backgrounds */
-.character-card[data-persona="founder"]:hover .stat-item::before,
-.character-card[data-persona="operator"]:hover .stat-item::before {
-    color: var(--founder-accent);
+    background: rgba(255, 255, 255, 0.05);
+    /* No padding or position change - keeps perfect alignment */
 }
 
 .stat-item span {
-    font-family: var(--font-display);
-    font-weight: normal;
+    font-family: var(--font-body);  /* Changed to Montserrat for better readability at small size */
+    font-weight: 600;
     font-size: 14px;
     color: rgba(255, 255, 255, 0.95);
     background: rgba(255, 255, 255, 0.2);
@@ -381,7 +382,7 @@ body {
     background: var(--founder-accent);
     color: var(--founder-bg);
     transform: scale(1.1);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }
 
 .strategist-bg ~ .character-frame ~ .character-info .stat-item span {
@@ -392,7 +393,7 @@ body {
     background: var(--operator-accent);
     color: var(--operator-bg);
     transform: scale(1.1);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }
 
 .merchant-bg ~ .character-frame ~ .character-info .stat-item span {
@@ -403,7 +404,7 @@ body {
     background: var(--investor-accent);
     color: var(--investor-text);
     transform: scale(1.1);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }
 
 .scholar-bg ~ .character-frame ~ .character-info .stat-item span {
@@ -414,7 +415,7 @@ body {
     background: var(--dad-accent);
     color: var(--dad-text);
     transform: scale(1.1);
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }
 
 /* ==================== Scroll Footer ==================== */
@@ -588,14 +589,30 @@ body {
     background: rgba(255,255,255,0.95);
     border: 2px solid rgba(0,0,0,0.1);
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     transition: all 0.3s;
     padding: 0;
+    overflow: hidden;
+}
+
+.current-persona-avatar {
+    display: block;
+    width: 100%;
+    height: 100%;
+    line-height: 0;  /* Remove any line-height spacing */
+}
+
+.persona-profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;  /* Matches character card photo positioning */
+    display: block;
 }
 
 .persona-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
 }
 
 .persona-dropdown {
@@ -604,7 +621,7 @@ body {
     right: 0;
     background: white;
     border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     padding: 10px;
     min-width: 200px;
     opacity: 0;
