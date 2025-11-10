@@ -64,9 +64,30 @@ class BustlingWorldV2 {
      * Initialize the application
      */
     init() {
+        const path = window.location.pathname;
+        const isIndexPage = path === '/' || path === '/index.html' || path.endsWith('/index.html');
+
+        // Check if reset parameter is in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const shouldReset = urlParams.get('reset') === 'true';
+
+        if (shouldReset) {
+            // Clear the reset parameter from URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+            // Clear localStorage
+            localStorage.removeItem('bustling_v2_visited');
+            localStorage.removeItem('bustling_v2_persona');
+            this.isFirstVisit = true;
+        }
+
         // Check first visit status
         if (this.isFirstVisit) {
-            this.showCharacterSelection();
+            if (isIndexPage) {
+                this.showCharacterSelection();
+            } else {
+                // If first visit on a non-index page, redirect to index for character selection
+                window.location.href = '/?reset=true';
+            }
         } else {
             const savedPersona = localStorage.getItem('bustling_v2_persona') || 'founder';
             this.setPersona(savedPersona);
@@ -105,6 +126,25 @@ class BustlingWorldV2 {
                 const persona = card.dataset.persona;
                 this.selectCharacter(persona);
             });
+
+            // Setup video hover effect for Founder card
+            if (card.dataset.persona === 'founder') {
+                const video = card.querySelector('.character-video');
+                if (video) {
+                    // Play video on hover
+                    card.addEventListener('mouseenter', () => {
+                        video.play().catch(e => {
+                            console.log('Video play failed:', e);
+                        });
+                    });
+
+                    // Pause and reset video when hover ends
+                    card.addEventListener('mouseleave', () => {
+                        video.pause();
+                        video.currentTime = 0;
+                    });
+                }
+            }
         });
     }
 
@@ -164,19 +204,24 @@ class BustlingWorldV2 {
      */
     setupNavigation() {
         const navLinks = document.querySelectorAll('.nav-link');
+        const path = window.location.pathname;
+        const isIndexPage = path === '/' || path === '/index.html' || path.endsWith('/index.html');
+
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');
-                if (href === '/' || href === '#') {
+
+                // Only prevent default on index page for home link
+                if (isIndexPage && href === '/') {
                     e.preventDefault();
                     // Update active state
                     navLinks.forEach(l => l.classList.remove('active'));
                     link.classList.add('active');
                     // Update content for home page
-                    if (href === '/') {
-                        this.updatePersonaContent();
-                    }
+                    this.updatePersonaContent();
                 }
+                // For other pages, let the navigation happen naturally
+                // The browser will handle the navigation to other pages
             });
         });
     }
@@ -222,8 +267,14 @@ class BustlingWorldV2 {
      */
     showCharacterSelection() {
         const modal = document.getElementById('characterSelect');
+        const path = window.location.pathname;
+        const isIndexPage = path === '/' || path === '/index.html' || path.endsWith('/index.html');
+
         if (modal) {
             modal.classList.remove('hidden');
+        } else if (!isIndexPage) {
+            // If we're not on the main page and there's no modal, redirect to main page with reset
+            window.location.href = '/?reset=true';
         }
     }
 
@@ -355,22 +406,29 @@ class BustlingWorldV2 {
         localStorage.removeItem('bustling_v2_visited');
         localStorage.removeItem('bustling_v2_persona');
 
-        // Reset state
-        this.currentPersona = null;
+        // Check if we're on the main page with character selection
+        const modal = document.getElementById('characterSelect');
+        if (modal) {
+            // We're on the main page, show the modal
+            this.currentPersona = null;
 
-        // Hide main content
-        const container = document.getElementById('mainContainer');
-        if (container) {
-            container.style.opacity = '0';
+            // Hide main content
+            const container = document.getElementById('mainContainer');
+            if (container) {
+                container.style.opacity = '0';
+            }
+
+            const switcher = document.getElementById('personaSwitcher');
+            if (switcher) {
+                switcher.classList.add('hidden');
+            }
+
+            // Show character selection
+            this.showCharacterSelection();
+        } else {
+            // We're on a detail page, redirect to main page
+            window.location.href = '/?reset=true';
         }
-
-        const switcher = document.getElementById('personaSwitcher');
-        if (switcher) {
-            switcher.classList.add('hidden');
-        }
-
-        // Show character selection
-        this.showCharacterSelection();
     }
 }
 

@@ -5,8 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investments - Alan James Curtis</title>
     <meta name="description" content="Portfolio of investments across funds, tech startups, and crypto projects by Alan James Curtis.">
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="/bustling-world-v2.css">
+
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/bustling-world-v2.css">
+    <link rel="stylesheet" href="/css/mobile.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -18,10 +25,6 @@
     <meta property="og:image" content="https://yourdomain.com/og-image.jpg">
     <meta property="og:url" content="https://yourdomain.com/investments.html">
     <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Investments - Alan James Curtis">
-    <meta name="twitter:description" content="Portfolio of investments across funds, tech startups, and crypto projects.">
-    <meta name="twitter:image" content="https://yourdomain.com/og-image.jpg">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BFD7WNPCNP"></script>
@@ -33,26 +36,153 @@
     </script>
 </head>
 <body>
-    <div class="container">
-        <aside>
-            <h1>Alan James Curtis</h1>
-            <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+    <!-- Persona Switcher -->
+    <div id="personaSwitcher" class="persona-switcher">
+        <button class="persona-btn" aria-label="Switch Persona">
+            <span class="current-persona-avatar">
+                <img id="currentPersonaImage" class="persona-profile-img" src="/assets/alan-2.jpeg" alt="Current Persona">
+            </span>
+        </button>
+        <div class="persona-dropdown">
+            <button data-persona="founder" class="dropdown-item">
+                <span class="item-avatar">
+                    <svg viewBox="0 0 100 100" width="30" height="30">
+                        <path d="M50 20 L30 40 L30 60 L50 80 L70 60 L70 40 Z" fill="var(--founder-accent)" opacity="0.6"/>
+                        <path d="M50 10 L20 30 L20 70 L50 90 L80 70 L80 30 Z" stroke="var(--founder-accent)" fill="none" stroke-width="2"/>
+                    </svg>
+                </span>
+                <span>Founder</span>
+            </button>
+            <button data-persona="operator" class="dropdown-item">
+                <span class="item-avatar">
+                    <svg viewBox="0 0 100 100" width="30" height="30">
+                        <rect x="30" y="30" width="40" height="40" stroke="var(--operator-accent)" fill="none" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="10" fill="var(--operator-accent)" opacity="0.6"/>
+                    </svg>
+                </span>
+                <span>Operator</span>
+            </button>
+            <button data-persona="investor" class="dropdown-item">
+                <span class="item-avatar">
+                    <svg viewBox="0 0 100 100" width="30" height="30">
+                        <circle cx="50" cy="30" r="20" stroke="var(--investor-accent)" fill="none" stroke-width="2"/>
+                        <circle cx="35" cy="55" r="15" stroke="var(--investor-accent)" fill="var(--investor-accent)" opacity="0.3"/>
+                        <circle cx="65" cy="55" r="15" stroke="var(--investor-accent)" fill="var(--investor-accent)" opacity="0.3"/>
+                    </svg>
+                </span>
+                <span>Investor</span>
+            </button>
+            <button data-persona="dad" class="dropdown-item">
+                <span class="item-avatar">
+                    <svg viewBox="0 0 100 100" width="30" height="30">
+                        <rect x="35" y="20" width="30" height="40" stroke="var(--dad-accent)" fill="none" stroke-width="2"/>
+                        <path d="M30 65 Q50 75 70 65" stroke="var(--dad-accent)" fill="none" stroke-width="2"/>
+                        <circle cx="50" cy="80" r="5" fill="var(--dad-accent)" opacity="0.6"/>
+                    </svg>
+                </span>
+                <span>Dad</span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button id="resetSelection" class="dropdown-item reset-btn">
+                <span class="item-icon reset-icon"></span>
+                <span>Change Role</span>
+            </button>
+        </div>
+    </div>
 
-            <nav id="nav">
-                <ul>
-                    <li><a href="/">Welcome</a></li>
-                    <li><a href="/bio.html">Bio</a></li>
-                    <li><a href="/writing.html">Writing</a></li>
-                    <li><a href="/quotes.html">Quotes</a></li>
-                    <li><a href="/questions.html">Questions</a></li>
-                    <li><a href="/investments.html" class="active">Investments</a></li>
+    <!-- Main Site Container -->
+    <div class="container" id="mainContainer">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="site-title">Alan James Curtis</h1>
+                <div class="persona-badge" id="personaBadge">
+                    <span class="badge-text">Founder</span>
+                </div>
+            </div>
+
+            <button class="hamburger" id="hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav id="nav" class="navigation">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link" data-page="welcome">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <path d="M10 2L2 8v10h6v-6h4v6h6V8z" fill="currentColor"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Welcome</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/bio.html" class="nav-link" data-page="bio">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <rect x="4" y="2" width="12" height="16" stroke="currentColor" fill="none"/>
+                                    <line x1="7" y1="6" x2="13" y2="6" stroke="currentColor"/>
+                                    <line x1="7" y1="10" x2="13" y2="10" stroke="currentColor"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Bio</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/writing.html" class="nav-link" data-page="writing">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <path d="M14 2L18 6L8 16L2 18L4 12z" stroke="currentColor" fill="none"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Writing</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/quotes.html" class="nav-link" data-page="quotes">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <text x="4" y="14" font-size="16" fill="currentColor">"</text>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Quotes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/questions.html" class="nav-link" data-page="questions">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <circle cx="10" cy="10" r="8" stroke="currentColor" fill="none"/>
+                                    <text x="10" y="14" text-anchor="middle" font-size="12" fill="currentColor">?</text>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Questions</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/investments.html" class="nav-link active" data-page="investments">
+                            <span class="nav-icon">
+                                <svg width="20" height="20" viewBox="0 0 20 20">
+                                    <polyline points="2,14 6,10 10,12 18,4" stroke="currentColor" fill="none"/>
+                                    <circle cx="18" cy="4" r="2" fill="currentColor"/>
+                                </svg>
+                            </span>
+                            <span class="nav-text">Investments</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
 
+        <!-- Main Content -->
         <main class="content split-view">
             <div class="list-pane">
-                <h1>Investments</h1>
+                <div class="page-header">
+                    <h1 class="page-title">Investments</h1>
+                </div>
                 <ul class="post-list">
                     <li><a href="#" data-category="funds">Funds</a></li>
                     <li><a href="#" data-category="tech">Tech</a></li>
@@ -68,7 +198,9 @@
         </main>
     </div>
 
-    <script src="/main.js"></script>
+    <script src="/js/utilities.js"></script>
+    <script src="/js/bustling-world-v2.js"></script>
+    <script src="/js/mobile.js"></script>
     <script>
         const investments = {
             'funds': {
@@ -171,21 +303,28 @@
                 </ul>
             `
         });
-    </script>
-    <script src="/bustling-world-v2.js"></script>
-    <script>
-        // Apply saved persona theme to sub-pages
-        document.addEventListener('DOMContentLoaded', function() {
+
+        // Initialize after DOM loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if character selection has been made
             const savedPersona = localStorage.getItem('bustling_v2_persona');
             if (savedPersona) {
-                const themes = {
-                    'founder': 'persona-warlord',
-                    'operator': 'persona-strategist',
-                    'investor': 'persona-merchant',
-                    'dad': 'persona-scholar'
-                };
-                if (themes[savedPersona]) {
-                    document.body.className = themes[savedPersona];
+                // Apply persona theme
+                const personaBadge = document.querySelector('.badge-text');
+                if (personaBadge) {
+                    personaBadge.textContent = savedPersona.charAt(0).toUpperCase() + savedPersona.slice(1);
+                }
+
+                // Update profile image
+                const profileImg = document.getElementById('currentPersonaImage');
+                if (profileImg) {
+                    const imageMap = {
+                        'founder': '/assets/alan-2.jpeg',
+                        'operator': '/assets/alan-3.jpg',
+                        'investor': '/assets/alan-1.jpg',
+                        'dad': '/assets/alan-4.jpg'
+                    };
+                    profileImg.src = imageMap[savedPersona] || '/assets/alan-2.jpeg';
                 }
             }
         });

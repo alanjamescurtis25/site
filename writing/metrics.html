@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Metrics - Alan James Curtis</title>
-    <link rel="stylesheet" href="/style.css">
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/bustling-world-v2.css">
+    <link rel="stylesheet" href="/css/mobile.css">
 </head>
 <body>
     <div class="container">
@@ -45,5 +52,18 @@
             
         </main>
     </div>
+
+    <script src="/js/utilities.js"></script>
+    <script src="/js/bustling-world-v2.js"></script>
+    <script src="/js/mobile.js"></script>
+    <script>
+        // Apply saved persona theme
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedPersona = localStorage.getItem('bustling_v2_persona');
+            if (savedPersona) {
+                document.body.className = `persona-${savedPersona}`;
+            }
+        });
+    </script>
 </body>
 </html>
