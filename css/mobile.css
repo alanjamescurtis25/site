@@ -32,65 +32,72 @@ html, body {
 
 /* ==================== Mobile Character Selection ==================== */
 @media (max-width: 768px) {
-    /* Full screen overlay */
+    /* Full screen overlay - now scrollable */
     .character-select-overlay {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
         z-index: 9999;
         background: linear-gradient(135deg, #1a1a2e 0%, #0a0a1e 100%);
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Hide container when character select is visible */
+    .character-select-overlay:not(.hidden) ~ .container {
+        display: none;
     }
 
     .character-select-modal {
         width: 100%;
-        height: 100%;
-        max-width: 100%;
-        max-height: 100%;
+        min-height: 100vh;
         padding: 0;
         margin: 0;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        overflow: hidden;
+        overflow: visible;
         background: transparent;
     }
 
     .scroll-header {
-        padding: 15px;
+        padding: 15px 15px 10px;
         text-align: center;
-        flex-shrink: 0;
     }
 
     .select-title {
         font-size: 22px;
         letter-spacing: 3px;
-        margin-bottom: 5px;
+        margin-bottom: 15px;
+        margin-top: 5px;
     }
 
     .select-subtitle {
         font-size: 12px;
-        margin-top: 0;
+        margin-top: 3px;
+        margin-bottom: 10px;
     }
 
     /* Character Selection - One main card with thumbnails */
     .character-grid {
         display: flex;
         flex-direction: column;
-        height: 100%;
         padding: 10px;
         gap: 20px;
-        overflow: hidden;
+        overflow: visible;
+        min-height: auto;
     }
 
     /* Main character display area */
     .character-main-display {
-        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 0;
+        padding: 10px;
+        min-height: auto;
     }
 
     /* Character cards */
@@ -98,29 +105,39 @@ html, body {
         display: none !important;
         width: 95%;
         max-width: 380px;
-        height: 95%;
-        max-height: 580px;
-        padding: 15px;
+        height: auto;
+        min-height: 500px;
+        padding: 0;
         flex-direction: column;
         border-radius: 12px;
         position: relative;
-        overflow: hidden;
+        overflow: visible;
         margin: 0 auto;
     }
+
+    /* Hide character-frame on mobile - merge with portrait */
+    .character-frame {
+        display: contents; /* This makes the frame act as if it doesn't exist */
+    }
+
 
     /* Only active card is visible */
     .character-card.active {
         display: flex !important;
     }
 
-    /* Adjust portrait for main card - LARGER */
+    /* Adjust portrait for main card */
     .character-portrait {
-        height: 55%;
+        height: 300px; /* Fixed height instead of percentage */
         width: 100%;
         position: relative;
-        margin-bottom: 15px;
-        border-radius: 12px;
+        margin: 0;
+        border-radius: 12px 12px 0 0;
         overflow: hidden;
+        background: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .character-photo,
@@ -128,17 +145,33 @@ html, body {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: center;
+        object-position: center top;
+        transform: scale(1.15);
     }
 
-    /* Info section for main card */
+    /* Info section for main card - natural height, no scroll */
     .character-info {
-        flex: 1;
-        padding: 10px;
+        height: auto;
+        padding: 20px;
+        padding-bottom: 25px;
         margin-top: 0;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: flex-start;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        background: linear-gradient(to bottom,
+            rgba(30, 44, 35, 0.95) 0%,
+            rgba(26, 26, 46, 0.98) 100%);
+        border-radius: 0 0 12px 12px;
+    }
+
+    /* Ensure consistent spacing for all cards */
+    .character-card[data-persona="investor"] .character-info {
+        padding: 20px;
     }
 
     .character-name {
@@ -159,33 +192,83 @@ html, body {
         min-height: unset;
     }
 
-    /* Stats for main card */
+    /* Stats for main card - Progress bar layout */
     .character-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
         margin-top: 10px;
+        margin-bottom: 10px;
+        width: 100%;
     }
 
     .stat-item {
-        padding: 5px;
-        font-size: 11px;
-        text-align: center;
+        display: flex;
+        align-items: center;
+        font-size: 10px;
+        position: relative;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+        padding: 6px 8px;
+        overflow: hidden;
     }
 
-    .stat-item span {
-        padding: 3px 6px;
-        font-size: 10px;
+    /* Create progress bar background */
+    .stat-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: linear-gradient(90deg,
+            var(--theme-accent, #A0A453) 0%,
+            rgba(160, 164, 83, 0.8) 50%,
+            var(--theme-accent, #A0A453) 100%);
+        opacity: 0.3;
         border-radius: 4px;
+        z-index: 0;
+        width: 0%;
+        transition: width 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
     }
+
+    /* Animate bars when card becomes active */
+    .character-card.active .stat-item::before {
+        animation: fillBar 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+    }
+
+    @keyframes fillBar {
+        from {
+            width: 0%;
+        }
+    }
+
+    /* Set bar widths based on values */
+    .stat-item span {
+        position: absolute;
+        right: 8px;
+        font-size: 11px;
+        font-weight: bold;
+        color: rgba(255, 255, 255, 0.9);
+        z-index: 2;
+    }
+
+    /* Label text */
+    .stat-item {
+        color: rgba(255, 255, 255, 0.8);
+        z-index: 1;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+    }
+
 
     /* Thumbnail navigation */
     .character-thumbnails {
         display: flex;
         justify-content: center;
         gap: 10px;
-        padding: 10px;
-        flex-shrink: 0;
+        padding: 10px 10px 20px;
+        margin-top: 0;
     }
 
     .character-thumbnail {
@@ -208,6 +291,7 @@ html, body {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: center;
     }
 
     .character-thumbnail .thumb-name {
@@ -223,21 +307,93 @@ html, body {
         text-transform: uppercase;
     }
 
+    /* Select Role Button */
+    .select-role-container {
+        padding: 20px 15px 30px;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .select-role-btn {
+        background: linear-gradient(135deg, var(--theme-accent, #A0A453), var(--theme-secondary, #8B8F4E));
+        color: #1a1a2e;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 40px;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Cinzel', serif;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .select-role-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .select-role-btn:hover::before {
+        left: 100%;
+    }
+
+    .select-role-btn:active {
+        transform: scale(0.95);
+        box-shadow: 0 2px 8px rgba(160, 164, 83, 0.2);
+    }
+
+    .select-role-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
     /* Immediate animations on mobile */
     .character-card .character-video {
         display: block;
         opacity: 1;
     }
 
-    /* Videos auto-play on Founder card */
+    /* Initially show photo for Founder card */
+    .character-card[data-persona="founder"] .character-photo {
+        opacity: 1;
+        visibility: visible;
+        display: block;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Initially hide video for Founder card */
     .character-card[data-persona="founder"] .character-video {
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        transition: opacity 0.3s ease;
+    }
+
+    /* When card is active and playing, show video and hide photo */
+    .character-card[data-persona="founder"].video-playing .character-video {
         opacity: 1;
         visibility: visible;
     }
 
-    .character-card[data-persona="founder"] .character-photo {
-        opacity: 0;
-        visibility: hidden;
+    .character-card[data-persona="founder"].video-playing .character-photo {
+        opacity: 0; /* Hide photo when video is playing */
     }
 
     /* Touch feedback */
@@ -251,10 +407,6 @@ html, body {
         display: none;
     }
 
-    /* Hide mask gradient on mobile for better visibility */
-    .character-portrait::after {
-        display: none;
-    }
 }
 
 /* ==================== Mobile Navigation ==================== */

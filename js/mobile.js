@@ -115,8 +115,10 @@
             // Setup swipe gestures
             this.setupSwipeGestures();
 
-            // Auto-play videos on mobile
-            this.autoPlayVideos();
+            // Don't auto-play videos - user must click to play
+
+            // Setup stat progress bars
+            this.setupStatBars();
 
             // Add mobile classes
             document.body.classList.add('is-mobile');
@@ -137,10 +139,25 @@
                 if (index === 0) {
                     card.classList.add('active');
                     card.style.display = 'flex';
+                    // Animate first card on load
+                    setTimeout(() => {
+                        this.animateCardNumbers(card);
+                    }, 300);
                 } else {
                     card.classList.remove('active');
                     card.style.display = 'none';
                 }
+
+                // Add click handler for Founder card to toggle video
+                if (card.dataset.persona === 'founder') {
+                    card.addEventListener('click', (e) => {
+                        // Only toggle video if clicking on the portrait area
+                        if (e.target.closest('.character-portrait')) {
+                            this.toggleFounderVideo(card);
+                        }
+                    });
+                }
+
                 mainDisplay.appendChild(card);
             });
 
@@ -178,6 +195,23 @@
             });
 
             grid.appendChild(thumbnails);
+
+            // Create and add Select Role button
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'select-role-container';
+
+            const selectButton = document.createElement('button');
+            selectButton.className = 'select-role-btn';
+            selectButton.textContent = 'Select Role';
+            selectButton.addEventListener('click', () => {
+                this.selectCurrentCharacter();
+            });
+
+            buttonContainer.appendChild(selectButton);
+            grid.appendChild(buttonContainer);
+
+            // Store button reference for later use
+            this.selectButton = selectButton;
         }
 
         setupThumbnails() {
@@ -191,12 +225,30 @@
         }
 
         switchToCard(index) {
-            if (index === this.currentIndex) return;
+            if (index === this.currentIndex) {
+                // If clicking the same card that's already active
+                const currentCard = this.cards[index];
+                if (currentCard.dataset.persona === 'founder') {
+                    // Toggle video playback for Founder card
+                    this.toggleFounderVideo(currentCard);
+                }
+                return;
+            }
 
-            // Hide ALL cards first
+            // Hide ALL cards first and stop any playing videos
             this.cards.forEach(card => {
                 card.classList.remove('active');
                 card.style.display = 'none';
+
+                // Stop video and remove playing class
+                if (card.dataset.persona === 'founder') {
+                    card.classList.remove('video-playing');
+                    const video = card.querySelector('.character-video');
+                    if (video) {
+                        video.pause();
+                        video.currentTime = 0;
+                    }
+                }
             });
 
             // Remove active from all thumbnails
@@ -209,16 +261,77 @@
             this.cards[index].style.display = 'flex';
             document.querySelectorAll('.character-thumbnail')[index].classList.add('active');
 
+            // Animate the numbers from 0 to target value
+            this.animateCardNumbers(this.cards[index]);
+
             this.currentIndex = index;
 
-            // Auto-play video for new card if it's Founder
+            // For Founder card, show static image initially (don't auto-play video)
             const newCard = this.cards[index];
             if (newCard.dataset.persona === 'founder') {
-                const video = newCard.querySelector('.character-video');
-                if (video) {
-                    video.play().catch(() => {});
-                }
+                // Just show the card with static image, don't start video
+                newCard.classList.remove('video-playing');
             }
+        }
+
+        toggleFounderVideo(card) {
+            const video = card.querySelector('.character-video');
+            if (!video) return;
+
+            if (card.classList.contains('video-playing')) {
+                // Stop video
+                card.classList.remove('video-playing');
+                video.pause();
+                video.currentTime = 0;
+            } else {
+                // Start video
+                card.classList.add('video-playing');
+                video.play().catch((e) => {
+                    console.log('Video play failed:', e);
+                    card.classList.remove('video-playing');
+                });
+            }
+        }
+
+        selectCurrentCharacter() {
+            // Get the currently active card
+            const activeCard = this.cards[this.currentIndex];
+            if (!activeCard) return;
+
+            const persona = activeCard.dataset.persona;
+            if (!persona) return;
+
+            // Save selection to localStorage (same as desktop)
+            localStorage.setItem('bustling_v2_visited', 'true');
+            localStorage.setItem('bustling_v2_persona', persona);
+            localStorage.setItem('selectedPersona', persona);
+
+            // Hide character selection and show main content
+            const characterSelect = document.getElementById('characterSelect');
+            if (characterSelect) {
+                characterSelect.classList.add('hidden');
+                characterSelect.style.display = 'none';
+            }
+
+            // Show main container
+            const mainContainer = document.getElementById('mainContainer');
+            if (mainContainer) {
+                mainContainer.classList.remove('hidden');
+                mainContainer.style.display = '';
+            }
+
+            // Apply persona class to body
+            document.body.className = '';
+            document.body.classList.add(`persona-${persona}`);
+
+            // Update persona badges
+            const badges = document.querySelectorAll('.persona-badge .badge-text');
+            badges.forEach(badge => {
+                badge.textContent = persona.charAt(0).toUpperCase() + persona.slice(1);
+            });
+
+            // Reload page to apply persona properly
+            window.location.reload();
         }
 
         setupSwipeGestures() {
@@ -306,6 +419,81 @@
                         // Silent fail
                     });
                 }
+            });
+        }
+
+        setupStatBars() {
+            // Set up progress bar widths based on stat values for all cards
+            this.cards.forEach((card, cardIndex) => {
+                const statItems = card.querySelectorAll('.stat-item');
+                statItems.forEach((item, statIndex) => {
+                    const valueSpan = item.querySelector('span');
+                    if (valueSpan) {
+                        const value = parseInt(valueSpan.textContent);
+                        // Add data attribute for the target width
+                        item.setAttribute('data-value', value);
+
+                        // Create unique class for this stat
+                        const uniqueClass = `stat-card${cardIndex}-item${statIndex}`;
+                        item.classList.add(uniqueClass);
+
+                        // Create style for animation end state
+                        const style = document.createElement('style');
+                        style.textContent = `
+                            .character-card.active .${uniqueClass}::before {
+                                animation: fillBar-${uniqueClass} 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+                                animation-delay: ${statIndex * 0.1}s;
+                            }
+                            @keyframes fillBar-${uniqueClass} {
+                                from { width: 0%; }
+                                to { width: ${value}%; }
+                            }
+                        `;
+                        document.head.appendChild(style);
+
+                        // Also animate the number
+                        this.animateNumber(valueSpan, value);
+                    }
+                });
+            });
+        }
+
+        animateNumber(element, targetValue) {
+            // Store original value
+            element.setAttribute('data-target', targetValue);
+        }
+
+        animateCardNumbers(card) {
+            const statItems = card.querySelectorAll('.stat-item span');
+            statItems.forEach((span, index) => {
+                const target = parseInt(span.getAttribute('data-target') || span.textContent);
+                const duration = 1200; // 1.2 seconds
+                const delay = index * 100; // Stagger animations
+                const startTime = Date.now() + delay;
+
+                // Set initial value to 0
+                span.textContent = '0';
+
+                const updateNumber = () => {
+                    const now = Date.now();
+                    const elapsed = Math.max(0, now - startTime);
+                    const progress = Math.min(elapsed / duration, 1);
+
+                    // Easing function (ease-out-cubic)
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    const current = Math.round(target * eased);
+
+                    span.textContent = current;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(updateNumber);
+                    }
+                };
+
+                // Start animation after delay
+                setTimeout(() => {
+                    requestAnimationFrame(updateNumber);
+                }, delay);
             });
         }
     }
@@ -492,7 +680,187 @@
     }
 
     /**
-     * Initialize Mobile Features
+     * Responsive View Manager
+     * Handles switching between mobile and desktop views without page refresh
+     */
+    class ResponsiveViewManager {
+        constructor() {
+            this.currentView = null;
+            this.mobileInstances = {
+                characterSelection: null,
+                navigation: null,
+                touchFeedback: null
+            };
+            this.resizeTimeout = null;
+            this.preventPullToRefreshListeners = [];
+            this.init();
+        }
+
+        init() {
+            // Initial setup
+            this.updateView();
+
+            // Handle resize events with debouncing
+            window.addEventListener('resize', () => {
+                clearTimeout(this.resizeTimeout);
+                this.resizeTimeout = setTimeout(() => {
+                    this.updateView();
+                }, 250); // Debounce for 250ms to avoid too many updates
+            });
+
+            // Handle orientation changes
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => {
+                    this.updateView();
+                    window.scrollTo(0, 0);
+                }, 100);
+            });
+        }
+
+        updateView() {
+            const isMobile = MobileDetect.isMobile();
+            const newView = isMobile ? 'mobile' : 'desktop';
+
+            // Only update if view has changed
+            if (this.currentView === newView) {
+                return;
+            }
+
+            console.log(`Switching to ${newView} view`);
+            this.currentView = newView;
+
+            if (isMobile) {
+                this.initializeMobileView();
+            } else {
+                this.cleanupMobileView();
+                this.initializeDesktopView();
+            }
+        }
+
+        initializeMobileView() {
+            // Clean up any existing instances first
+            this.cleanupMobileView();
+
+            // Initialize mobile features
+            this.mobileInstances.characterSelection = new CharacterSelectionMobile();
+            this.mobileInstances.navigation = new MobileNavigation();
+            this.mobileInstances.touchFeedback = new TouchFeedback();
+
+            // Add mobile-specific classes
+            document.body.classList.add('mobile-view');
+            document.body.classList.remove('desktop-view');
+
+            // Reset character selection to show first card
+            const cards = document.querySelectorAll('.character-card');
+            cards.forEach((card, index) => {
+                if (index === 0) {
+                    card.classList.add('active');
+                    card.style.display = 'flex';
+                } else {
+                    card.classList.remove('active');
+                    card.style.display = 'none';
+                }
+            });
+
+            // Add viewport meta if not present
+            if (!document.querySelector('meta[name="viewport"]')) {
+                const viewport = document.createElement('meta');
+                viewport.name = 'viewport';
+                viewport.content = 'width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes';
+                document.head.appendChild(viewport);
+            }
+
+            // Setup pull-to-refresh prevention
+            this.setupPullToRefreshPrevention();
+        }
+
+        setupPullToRefreshPrevention() {
+            // Prevent pull-to-refresh on Chrome mobile
+            let preventPullToRefresh = false;
+            let lastY = 0;
+
+            const touchStartHandler = (e) => {
+                if (e.touches.length === 1) {
+                    lastY = e.touches[0].clientY;
+                    preventPullToRefresh = window.pageYOffset === 0;
+                }
+            };
+
+            const touchMoveHandler = (e) => {
+                const y = e.touches[0].clientY;
+                const dy = y - lastY;
+
+                if (preventPullToRefresh && dy > 0 && window.pageYOffset === 0) {
+                    e.preventDefault();
+                }
+            };
+
+            document.addEventListener('touchstart', touchStartHandler);
+            document.addEventListener('touchmove', touchMoveHandler, { passive: false });
+
+            // Store listeners for cleanup
+            this.preventPullToRefreshListeners = [
+                { type: 'touchstart', handler: touchStartHandler },
+                { type: 'touchmove', handler: touchMoveHandler }
+            ];
+        }
+
+        cleanupMobileView() {
+            // Clean up mobile instances
+            Object.keys(this.mobileInstances).forEach(key => {
+                if (this.mobileInstances[key] && typeof this.mobileInstances[key].destroy === 'function') {
+                    this.mobileInstances[key].destroy();
+                }
+                this.mobileInstances[key] = null;
+            });
+
+            // Remove pull-to-refresh prevention listeners
+            this.preventPullToRefreshListeners.forEach(({ type, handler }) => {
+                document.removeEventListener(type, handler);
+            });
+            this.preventPullToRefreshListeners = [];
+
+            // Remove mobile event listeners from hamburger if they exist
+            const hamburger = document.getElementById('hamburger');
+            if (hamburger) {
+                const newHamburger = hamburger.cloneNode(true);
+                hamburger.parentNode.replaceChild(newHamburger, hamburger);
+            }
+        }
+
+        initializeDesktopView() {
+            // Add desktop-specific classes
+            document.body.classList.add('desktop-view');
+            document.body.classList.remove('mobile-view');
+
+            // Reset all cards to be visible in grid layout for desktop
+            const cards = document.querySelectorAll('.character-card');
+            cards.forEach(card => {
+                card.style.display = ''; // Remove inline display style
+                card.classList.remove('active');
+            });
+
+            // Remove mobile-specific elements if they exist
+            const thumbnails = document.querySelector('.character-thumbnails');
+            if (thumbnails) {
+                thumbnails.style.display = 'none';
+            }
+
+            // Ensure character select overlay is properly displayed
+            const characterSelect = document.getElementById('characterSelect');
+            if (characterSelect && characterSelect.style.display === 'none') {
+                // If character was already selected on mobile, keep it hidden
+                // Otherwise show the character selection screen
+                const hasSelectedPersona = localStorage.getItem('selectedPersona');
+                if (!hasSelectedPersona) {
+                    characterSelect.style.display = 'block';
+                }
+            }
+        }
+    }
+
+    /**
+     * Initialize Mobile Features (Legacy function for backward compatibility)
      */
     function initMobile() {
         // Only run on mobile devices
@@ -542,11 +910,14 @@
         }, { passive: false });
     }
 
-    // Initialize when DOM is ready
+    // Initialize Responsive View Manager when DOM is ready
+    // This replaces the old initMobile approach with responsive handling
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initMobile);
+        document.addEventListener('DOMContentLoaded', () => {
+            new ResponsiveViewManager();
+        });
     } else {
-        initMobile();
+        new ResponsiveViewManager();
     }
 
     // Export for global access
@@ -555,7 +926,8 @@
         SwipeHandler,
         CharacterSelectionMobile,
         MobileNavigation,
-        TouchFeedback
+        TouchFeedback,
+        ResponsiveViewManager
     };
 
 })();

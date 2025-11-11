@@ -122,9 +122,13 @@ class BustlingWorldV2 {
     setupCharacterSelection() {
         const characterCards = document.querySelectorAll('.character-card');
         characterCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const persona = card.dataset.persona;
-                this.selectCharacter(persona);
+            card.addEventListener('click', (e) => {
+                // Only allow direct card selection on desktop
+                // On mobile, users must use the Select Role button
+                if (window.innerWidth > 768) {
+                    const persona = card.dataset.persona;
+                    this.selectCharacter(persona);
+                }
             });
 
             // Setup video hover effect for Founder card
