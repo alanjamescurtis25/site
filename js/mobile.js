@@ -150,10 +150,19 @@
 
                 // Add click handler for Founder card to toggle video
                 if (card.dataset.persona === 'founder') {
+                    let isToggling = false;
                     card.addEventListener('click', (e) => {
-                        // Only toggle video if clicking on the portrait area
-                        if (e.target.closest('.character-portrait')) {
+                        // Toggle video on any click on the card (for better mobile UX)
+                        // Prevent if clicking the Select Role button or already toggling
+                        if (!e.target.closest('.select-role-btn') && !isToggling) {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            isToggling = true;
                             this.toggleFounderVideo(card);
+                            // Reset flag after a short delay
+                            setTimeout(() => {
+                                isToggling = false;
+                            }, 300);
                         }
                     });
                 }
@@ -208,7 +217,20 @@
             });
 
             buttonContainer.appendChild(selectButton);
+
+            // Add footer text inside the button container
+            const footerText = document.createElement('p');
+            footerText.className = 'footer-text mobile-footer-text';
+            footerText.textContent = 'Each perspective reveals different aspects of my journey';
+            buttonContainer.appendChild(footerText);
+
             grid.appendChild(buttonContainer);
+
+            // Hide the original footer on mobile
+            const originalFooter = document.querySelector('.character-select-modal > .scroll-footer');
+            if (originalFooter) {
+                originalFooter.style.display = 'none';
+            }
 
             // Store button reference for later use
             this.selectButton = selectButton;
@@ -279,17 +301,30 @@
             if (!video) return;
 
             if (card.classList.contains('video-playing')) {
-                // Stop video
+                // Stop video and go back to image
                 card.classList.remove('video-playing');
                 video.pause();
                 video.currentTime = 0;
+
+                // Remove any inline styles that might override CSS
+                video.removeAttribute('style');
+                const photo = card.querySelector('.character-photo');
+                if (photo) {
+                    photo.removeAttribute('style');
+                }
             } else {
                 // Start video
-                card.classList.add('video-playing');
-                video.play().catch((e) => {
-                    console.log('Video play failed:', e);
-                    card.classList.remove('video-playing');
-                });
+                video.load(); // Force reload the video
+
+                // Start video with a small delay for reliability
+                setTimeout(() => {
+                    card.classList.add('video-playing');
+
+                    video.play().catch((e) => {
+                        console.log('Video play failed:', e);
+                        card.classList.remove('video-playing');
+                    });
+                }, 50);
             }
         }
 
