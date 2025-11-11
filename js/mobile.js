@@ -125,6 +125,9 @@
             if (MobileDetect.isTouchDevice()) {
                 document.body.classList.add('is-touch');
             }
+
+            // Fix scroll issues on mobile
+            this.fixMobileScroll();
         }
 
         setupMobileLayout() {

@@ -25,9 +25,14 @@
 }
 
 /* Prevent horizontal scroll */
-html, body {
+html {
     overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
+}
+
+body {
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
 }
 
 /* ==================== Mobile Character Selection ==================== */
@@ -37,15 +42,16 @@ html, body {
         position: fixed;
         top: 0;
         left: 0;
+        right: 0;
+        bottom: 0;
         width: 100%;
         height: 100%;
         z-index: 9999;
         background: linear-gradient(135deg, #1a1a2e 0%, #0a0a1e 100%);
-        overflow-y: scroll; /* Changed from auto to scroll */
+        overflow-y: scroll; /* Force scrollbar always */
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain; /* Prevent scroll chaining */
-        touch-action: pan-y; /* Only allow vertical scrolling */
+        /* Remove overscroll-behavior as it can cause issues on iOS */
     }
 
     /* Hide container when character select is visible */
@@ -55,7 +61,7 @@ html, body {
 
     .character-select-modal {
         width: 100%;
-        min-height: 100vh;
+        min-height: 100%;
         padding: 0;
         margin: 0;
         display: flex;
@@ -63,6 +69,8 @@ html, body {
         justify-content: flex-start;
         overflow: visible;
         background: transparent;
+        padding-bottom: 50px; /* Extra padding at bottom */
+        padding-bottom: calc(50px + env(safe-area-inset-bottom)); /* For iOS safe area */
     }
 
     .scroll-header {
@@ -241,9 +249,9 @@ html, body {
         left: 0;
         height: 100%;
         background: linear-gradient(90deg,
-            #5B9BFF 0%,
-            rgba(91, 155, 255, 0.8) 50%,
-            #5B9BFF 100%);
+            #A0A453 0%,
+            rgba(160, 164, 83, 0.8) 50%,
+            #A0A453 100%);
         opacity: 0.5;
         border-radius: 4px;
         z-index: 0;
@@ -258,9 +266,9 @@ html, body {
         left: 0;
         height: 100%;
         background: linear-gradient(90deg,
-            #FFB366 0%,
-            rgba(255, 179, 102, 0.8) 50%,
-            #FFB366 100%);
+            #A0A453 0%,
+            rgba(160, 164, 83, 0.8) 50%,
+            #A0A453 100%);
         opacity: 0.5;
         border-radius: 4px;
         z-index: 0;
@@ -275,9 +283,9 @@ html, body {
         left: 0;
         height: 100%;
         background: linear-gradient(90deg,
-            #9BCB5E 0%,
-            rgba(155, 203, 94, 0.8) 50%,
-            #9BCB5E 100%);
+            #A0A453 0%,
+            rgba(160, 164, 83, 0.8) 50%,
+            #A0A453 100%);
         opacity: 0.5;
         border-radius: 4px;
         z-index: 0;
