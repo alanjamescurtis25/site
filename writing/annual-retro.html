@@ -31,12 +31,31 @@
 <body>
     <!-- Persona Switcher -->
     <div id="personaSwitcher" class="persona-switcher">
-        <button class="persona-btn" aria-label="Switch Persona">
-            <span class="current-persona-avatar">
-                <img id="currentPersonaImage" class="persona-profile-img" src="/assets/alan-2.jpeg" alt="Current Persona">
-            </span>
-        </button>
-        <div class="persona-dropdown">
+        <div class="persona-icons-container">
+            <!-- Other role icons that appear on hover -->
+            <div class="persona-options">
+                <button data-persona="founder" class="persona-icon-btn" title="Founder">
+                    <img class="persona-icon-img" src="/assets/alan-2.jpeg" alt="Founder">
+                </button>
+                <button data-persona="operator" class="persona-icon-btn" title="Operator">
+                    <img class="persona-icon-img" src="/assets/alan-1.jpg" alt="Operator">
+                </button>
+                <button data-persona="investor" class="persona-icon-btn" title="Investor">
+                    <img class="persona-icon-img" src="/assets/alan-3.jpg" alt="Investor">
+                </button>
+                <button data-persona="dad" class="persona-icon-btn" title="Dad">
+                    <img class="persona-icon-img" src="/assets/alan-4.jpg" alt="Dad">
+                </button>
+            </div>
+            <!-- Current role icon (always visible) -->
+            <button class="persona-btn" aria-label="Switch Persona">
+                <span class="current-persona-avatar">
+                    <img id="currentPersonaImage" class="persona-profile-img" src="/assets/alan-2.jpeg" alt="Current Persona">
+                </span>
+            </button>
+        </div>
+        <!-- Keep original dropdown for mobile -->
+        <div class="persona-dropdown mobile-only">
             <button data-persona="founder" class="dropdown-item">
                 <span class="item-avatar">
                     <svg viewBox="0 0 100 100" width="30" height="30">
@@ -88,7 +107,9 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h1 class="site-title">Alan James Curtis</h1>
+                <h1 class="site-title">
+                    <a href="/?reset=true" class="site-title-link">Alan James Curtis</a>
+                </h1>
                 <div class="persona-badge" id="personaBadge">
                     <span class="badge-text">Founder</span>
                 </div>
@@ -202,6 +223,7 @@
     <script src="/js/utilities.js"></script>
     <script src="/js/bustling-world-v2.js"></script>
     <script src="/js/mobile.js"></script>
+    <script src="/js/spa-navigation.js"></script>
     <script>
         // Initialize after DOM loads
         document.addEventListener('DOMContentLoaded', () => {
@@ -220,8 +242,8 @@
                 if (profileImg) {
                     const imageMap = {
                         'founder': '/assets/alan-2.jpeg',
-                        'operator': '/assets/alan-3.jpg',
-                        'investor': '/assets/alan-1.jpg',
+                        'operator': '/assets/alan-1.jpg',
+                        'investor': '/assets/alan-3.jpg',
                         'dad': '/assets/alan-4.jpg'
                     };
                     profileImg.src = imageMap[savedPersona] || '/assets/alan-2.jpeg';

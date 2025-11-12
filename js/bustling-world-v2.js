@@ -25,7 +25,7 @@ class BustlingWorldV2 {
             operator: {
                 name: 'Operator',
                 theme: 'persona-operator',
-                image: '/assets/alan-3.jpg',
+                image: '/assets/alan-1.jpg',
                 content: {
                     title: 'Strategic Operations Center',
                     welcome: "Systems thinking meets execution. Former COO at EigenLayer and CTO at Core Scientific, I specialize in scaling operations from startup to enterprise.",
@@ -36,7 +36,7 @@ class BustlingWorldV2 {
             investor: {
                 name: 'Investor',
                 theme: 'persona-investor',
-                image: '/assets/alan-1.jpg',
+                image: '/assets/alan-3.jpg',
                 content: {
                     title: 'The Trading Hall',
                     welcome: "Capital allocation is both art and science. As an active investor and advisor, I help founders navigate from seed to scale.",
@@ -153,35 +153,58 @@ class BustlingWorldV2 {
     }
 
     /**
-     * Setup persona switcher dropdown
+     * Setup persona switcher with horizontal hover icons
      */
     setupPersonaSwitcher() {
         const personaSwitcher = document.getElementById('personaSwitcher');
         if (!personaSwitcher) return;
 
-        const dropdown = personaSwitcher.querySelector('.persona-dropdown');
+        // Desktop: Handle horizontal icon buttons
+        const iconBtns = personaSwitcher.querySelectorAll('.persona-icon-btn');
+        iconBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const persona = btn.dataset.persona;
+                if (persona) {
+                    // Update current role indicator
+                    iconBtns.forEach(b => b.classList.remove('current-role'));
+                    btn.classList.add('current-role');
+                    this.switchPersona(persona);
+                }
+            });
+        });
+
+        // Mobile: Keep dropdown functionality
+        const dropdown = personaSwitcher.querySelector('.persona-dropdown.mobile-only');
+        const personaBtn = personaSwitcher.querySelector('.persona-btn');
         let hoverTimeout = null;
 
-        // Show dropdown on hover
-        personaSwitcher.addEventListener('mouseenter', () => {
-            clearTimeout(hoverTimeout);
-            if (dropdown) {
-                dropdown.style.opacity = '1';
-                dropdown.style.visibility = 'visible';
+        // Mobile dropdown on click
+        if (window.innerWidth <= 768) {
+            if (personaBtn && dropdown) {
+                personaBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const isVisible = dropdown.style.visibility === 'visible';
+                    if (isVisible) {
+                        dropdown.style.opacity = '0';
+                        dropdown.style.visibility = 'hidden';
+                    } else {
+                        dropdown.style.opacity = '1';
+                        dropdown.style.visibility = 'visible';
+                    }
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!personaSwitcher.contains(e.target)) {
+                        dropdown.style.opacity = '0';
+                        dropdown.style.visibility = 'hidden';
+                    }
+                });
             }
-        });
+        }
 
-        // Hide dropdown with delay
-        personaSwitcher.addEventListener('mouseleave', () => {
-            hoverTimeout = setTimeout(() => {
-                if (dropdown) {
-                    dropdown.style.opacity = '0';
-                    dropdown.style.visibility = 'hidden';
-                }
-            }, 100);
-        });
-
-        // Dropdown items
+        // Mobile dropdown items
         const dropdownItems = document.querySelectorAll('.dropdown-item:not(.reset-btn)');
         dropdownItems.forEach(item => {
             item.addEventListener('click', (e) => {
@@ -189,11 +212,16 @@ class BustlingWorldV2 {
                 const persona = item.dataset.persona;
                 if (persona) {
                     this.switchPersona(persona);
+                    // Close dropdown after selection
+                    if (dropdown) {
+                        dropdown.style.opacity = '0';
+                        dropdown.style.visibility = 'hidden';
+                    }
                 }
             });
         });
 
-        // Reset button
+        // Reset button (mobile)
         const resetBtn = document.getElementById('resetSelection');
         if (resetBtn) {
             resetBtn.addEventListener('click', (e) => {
@@ -201,6 +229,15 @@ class BustlingWorldV2 {
                 this.resetToCharacterSelection();
             });
         }
+
+        // Update current role indicator on load
+        const currentPersona = localStorage.getItem('bustling_v2_persona') || 'founder';
+        iconBtns.forEach(btn => {
+            btn.classList.remove('current-role');
+            if (btn.dataset.persona === currentPersona) {
+                btn.classList.add('current-role');
+            }
+        });
     }
 
     /**
@@ -307,6 +344,17 @@ class BustlingWorldV2 {
         // Transition to main content
         this.hideCharacterSelection();
         this.showMainContent();
+
+        // After showing main content, load Welcome as the default page
+        const isIndexPage = window.location.pathname === '/' || window.location.pathname === '/index.html';
+        if (isIndexPage) {
+            // Load Welcome content after character selection
+            setTimeout(() => {
+                if (window.loadPageContent) {
+                    window.loadPageContent('welcome');
+                }
+            }, 500);
+        }
     }
 
     /**

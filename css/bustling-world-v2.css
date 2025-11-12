@@ -526,6 +526,18 @@ body.persona-dad .sidebar {
     letter-spacing: 1px;
 }
 
+.site-title-link {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+
+.site-title-link:hover {
+    opacity: 0.8;
+    text-decoration: none;
+}
+
 .persona-badge {
     display: inline-block;
     padding: 5px 15px;
@@ -665,9 +677,115 @@ body.persona-dad .page-header {
     z-index: 9999;
 }
 
+/* Desktop: Horizontal icon layout */
+@media (min-width: 769px) {
+    .persona-icons-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .persona-options {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        margin-right: 8px;
+        overflow: hidden;
+        max-width: 0;
+        opacity: 0;
+        transition: max-width 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s ease;
+    }
+
+    /* Show options on hover */
+    .persona-icons-container:hover .persona-options {
+        max-width: 216px; /* 3 visible icons * 60px + gaps */
+        opacity: 1;
+    }
+
+    .persona-icon-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.95);
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        padding: 0;
+        transition: all 0.3s ease;
+        box-shadow: none;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateX(20px) scale(0.9);
+        position: relative;
+    }
+
+    /* Staggered animation for icons appearing */
+    .persona-icons-container:hover .persona-icon-btn {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+
+    .persona-icons-container:hover .persona-icon-btn:nth-child(1) {
+        transition-delay: 0.05s;
+    }
+
+    .persona-icons-container:hover .persona-icon-btn:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+
+    .persona-icons-container:hover .persona-icon-btn:nth-child(3) {
+        transition-delay: 0.15s;
+    }
+
+    .persona-icons-container:hover .persona-icon-btn:nth-child(4) {
+        transition-delay: 0.2s;
+    }
+
+    .persona-icon-btn:hover {
+        transform: scale(1.1);
+        box-shadow: none;
+    }
+
+    /* Persona-specific hover border colors */
+    .persona-founder .persona-icon-btn:hover {
+        border-color: #A0A453;
+    }
+
+    .persona-operator .persona-icon-btn:hover {
+        border-color: #FFB800;
+    }
+
+    .persona-investor .persona-icon-btn:hover {
+        border-color: #C39F47;
+    }
+
+    .persona-dad .persona-icon-btn:hover {
+        border-color: #FF7F50;
+    }
+
+    /* Hide current persona in the options */
+    .persona-icon-btn.current-role {
+        display: none !important;
+    }
+
+    .persona-icon-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: center 25%;
+        display: block;
+    }
+
+    /* Hide mobile dropdown on desktop */
+    .persona-dropdown.mobile-only {
+        display: none !important;
+    }
+}
+
 .persona-btn {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: rgba(255,255,255,0.95);
     border: 2px solid rgba(0,0,0,0.1);
@@ -695,7 +813,18 @@ body.persona-dad .page-header {
 
 .persona-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    box-shadow: none;
+}
+
+/* Mobile: Keep dropdown */
+@media (max-width: 768px) {
+    .persona-options {
+        display: none !important;
+    }
+
+    .persona-dropdown.mobile-only {
+        display: block;
+    }
 }
 
 .persona-dropdown {
