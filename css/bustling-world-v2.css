@@ -435,8 +435,8 @@ body {
 }
 
 .character-card:hover .warlord-bg ~ .character-frame ~ .character-info .stat-item span {
-    background: var(--founder-accent);
-    color: var(--founder-bg);
+    background: #A0A453;
+    color: #333;
     transform: scale(1.1);
     box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }
@@ -446,8 +446,8 @@ body {
 }
 
 .character-card:hover .strategist-bg ~ .character-frame ~ .character-info .stat-item span {
-    background: var(--operator-accent);
-    color: var(--operator-bg);
+    background: #FFB800;
+    color: #333;
     transform: scale(1.1);
     box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }
@@ -457,8 +457,8 @@ body {
 }
 
 .character-card:hover .merchant-bg ~ .character-frame ~ .character-info .stat-item span {
-    background: var(--investor-accent);
-    color: var(--investor-text);
+    background: #C39F47;
+    color: #333;
     transform: scale(1.1);
     box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }
@@ -468,8 +468,8 @@ body {
 }
 
 .character-card:hover .scholar-bg ~ .character-frame ~ .character-info .stat-item span {
-    background: var(--dad-accent);
-    color: var(--dad-text);
+    background: #FF7F50;
+    color: #fff;
     transform: scale(1.1);
     box-shadow: 0 3px 6px rgba(0,0,0,0.3);
 }

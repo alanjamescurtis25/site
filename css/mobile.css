@@ -83,12 +83,14 @@ body {
         letter-spacing: 3px;
         margin-bottom: 15px;
         margin-top: 5px;
+        color: rgba(234, 234, 234, 0.95) !important;
     }
 
     .select-subtitle {
         font-size: 12px;
         margin-top: 3px;
         margin-bottom: 10px;
+        color: rgba(234, 234, 234, 0.85) !important;
     }
 
     /* Character Selection - One main card with thumbnails */
@@ -124,6 +126,29 @@ body {
         position: relative;
         overflow: visible;
         margin: 0 auto;
+    }
+
+    /* Background color for characterSelect div on mobile */
+    #characterSelect {
+        background: #1A1D20 !important;
+    }
+
+    /* Same background color for all character cards on mobile */
+    .character-card[data-persona="founder"],
+    .character-card[data-persona="operator"],
+    .character-card[data-persona="investor"],
+    .character-card[data-persona="dad"] {
+        background: #1E2C23 !important;
+    }
+
+    /* Ensure the background elements inside all cards also use the same color */
+    .character-card[data-persona="founder"] .warlord-bg,
+    .character-card[data-persona="operator"] .strategist-bg,
+    .character-card[data-persona="investor"] .merchant-bg,
+    .character-card[data-persona="dad"] .scholar-bg,
+    .character-card[data-persona="dad"] .artist-bg,
+    .character-card .card-background {
+        background: #1E2C23 !important;
     }
 
     /* Hide character-frame on mobile - merge with portrait */
@@ -189,11 +214,13 @@ body {
         font-size: 24px !important;
         letter-spacing: 2px;
         margin-bottom: 8px;
+        color: rgba(234, 234, 234, 0.95) !important;
     }
 
     .character-title {
         font-size: 14px !important;
         margin: 5px 0;
+        color: rgba(234, 234, 234, 0.85) !important;
     }
 
     .character-desc {
@@ -201,6 +228,7 @@ body {
         line-height: 1.4;
         margin: 10px 0;
         min-height: unset;
+        color: rgba(234, 234, 234, 0.8) !important;
     }
 
     /* Stats for main card - Progress bar layout */
@@ -218,13 +246,18 @@ body {
         align-items: center;
         font-size: 10px;
         position: relative;
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.05) !important;
         border-radius: 4px;
         padding: 6px 8px;
         overflow: hidden;
     }
 
-    /* Create progress bar background - fixed colors per persona */
+    /* Keep background color consistent when active */
+    .character-card.active .stat-item {
+        background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    /* Create progress bar background - even softer versions with cohesive colors */
     .character-card[data-persona="founder"] .stat-item::before {
         content: '';
         position: absolute;
@@ -232,10 +265,9 @@ body {
         left: 0;
         height: 100%;
         background: linear-gradient(90deg,
-            #A0A453 0%,
-            rgba(160, 164, 83, 0.8) 50%,
-            #A0A453 100%);
-        opacity: 0.5;
+            rgba(160, 164, 83, 0.25) 0%,
+            rgba(160, 164, 83, 0.15) 50%,
+            rgba(160, 164, 83, 0.25) 100%);
         border-radius: 4px;
         z-index: 0;
         width: 0%;
@@ -249,10 +281,9 @@ body {
         left: 0;
         height: 100%;
         background: linear-gradient(90deg,
-            #A0A453 0%,
-            rgba(160, 164, 83, 0.8) 50%,
-            #A0A453 100%);
-        opacity: 0.5;
+            rgba(255, 184, 0, 0.25) 0%,
+            rgba(255, 184, 0, 0.15) 50%,
+            rgba(255, 184, 0, 0.25) 100%);
         border-radius: 4px;
         z-index: 0;
         width: 0%;
@@ -266,10 +297,9 @@ body {
         left: 0;
         height: 100%;
         background: linear-gradient(90deg,
-            #A0A453 0%,
-            rgba(160, 164, 83, 0.8) 50%,
-            #A0A453 100%);
-        opacity: 0.5;
+            rgba(195, 159, 71, 0.25) 0%,
+            rgba(195, 159, 71, 0.15) 50%,
+            rgba(195, 159, 71, 0.25) 100%);
         border-radius: 4px;
         z-index: 0;
         width: 0%;
@@ -283,10 +313,9 @@ body {
         left: 0;
         height: 100%;
         background: linear-gradient(90deg,
-            #A0A453 0%,
-            rgba(160, 164, 83, 0.8) 50%,
-            #A0A453 100%);
-        opacity: 0.5;
+            rgba(255, 127, 80, 0.25) 0%,
+            rgba(255, 127, 80, 0.15) 50%,
+            rgba(255, 127, 80, 0.25) 100%);
         border-radius: 4px;
         z-index: 0;
         width: 0%;
@@ -309,23 +338,85 @@ body {
         }
     }
 
-    /* Set bar widths based on values */
-    .stat-item span {
+    /* Set bar widths based on values - Founder */
+    .character-card[data-persona="founder"] .stat-item span {
         position: absolute;
         right: 8px;
         font-size: 11px;
         font-weight: bold;
-        color: rgba(255, 255, 255, 0.9);
+        color: #333;
+        background: #A0A453;
+        padding: 2px 6px;
+        border-radius: 3px;
         z-index: 2;
+    }
+
+    /* Operator */
+    .character-card[data-persona="operator"] .stat-item span {
+        position: absolute;
+        right: 8px;
+        font-size: 11px;
+        font-weight: bold;
+        color: #333;
+        background: #FFB800;
+        padding: 2px 6px;
+        border-radius: 3px;
+        z-index: 2;
+    }
+
+    /* Investor */
+    .character-card[data-persona="investor"] .stat-item span {
+        position: absolute;
+        right: 8px;
+        font-size: 11px;
+        font-weight: bold;
+        color: #333;
+        background: #C39F47;
+        padding: 2px 6px;
+        border-radius: 3px;
+        z-index: 2;
+    }
+
+    /* Dad */
+    .character-card[data-persona="dad"] .stat-item span {
+        position: absolute;
+        right: 8px;
+        font-size: 11px;
+        font-weight: bold;
+        color: #fff;
+        background: #FF7F50;
+        padding: 2px 6px;
+        border-radius: 3px;
+        z-index: 2;
+    }
+
+    /* Keep the same colors when active */
+    .character-card[data-persona="founder"].active .stat-item span {
+        background: #A0A453 !important;
+    }
+    .character-card[data-persona="operator"].active .stat-item span {
+        background: #FFB800 !important;
+    }
+    .character-card[data-persona="investor"].active .stat-item span {
+        background: #C39F47 !important;
+    }
+    .character-card[data-persona="dad"].active .stat-item span {
+        background: #FF7F50 !important;
+        color: #fff !important;
     }
 
     /* Label text */
     .stat-item {
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.8) !important;
         z-index: 1;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-weight: 500;
+    }
+
+    /* Ensure color doesn't change when active */
+    .character-card.active .stat-item {
+        color: rgba(255, 255, 255, 0.8) !important;
     }
 
 
@@ -430,7 +521,7 @@ body {
     /* Footer text inside button container */
     .mobile-footer-text {
         font-size: 13px;
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(234, 234, 234, 0.7);
         margin: 4px 0 0 0;
         font-style: italic;
         letter-spacing: 0.5px;
