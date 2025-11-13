@@ -74,14 +74,14 @@ body {
     }
 
     .scroll-header {
-        padding: 15px 15px 10px;
+        padding: 15px 15px 5px; /* Reduced bottom padding */
         text-align: center;
     }
 
     .select-title {
         font-size: 22px;
         letter-spacing: 3px;
-        margin-bottom: 15px;
+        margin-bottom: 8px; /* Reduced from 15px */
         margin-top: 5px;
         color: rgba(234, 234, 234, 0.95) !important;
     }
@@ -89,7 +89,7 @@ body {
     .select-subtitle {
         font-size: 12px;
         margin-top: 3px;
-        margin-bottom: 10px;
+        margin-bottom: 5px; /* Reduced from 10px */
         color: rgba(234, 234, 234, 0.85) !important;
     }
 
@@ -189,7 +189,7 @@ body {
     .character-info {
         height: auto;
         padding: 20px;
-        padding-bottom: 25px;
+        padding-bottom: 10px;
         margin-top: 0;
         display: flex;
         flex-direction: column;
@@ -208,6 +208,7 @@ body {
     /* Ensure consistent spacing for all cards */
     .character-card[data-persona="investor"] .character-info {
         padding: 20px;
+        padding-bottom: 10px;
     }
 
     .character-name {
@@ -215,6 +216,8 @@ body {
         letter-spacing: 2px;
         margin-bottom: 8px;
         color: rgba(234, 234, 234, 0.95) !important;
+        width: auto !important;
+        display: block !important;
     }
 
     .character-title {
@@ -579,6 +582,45 @@ body {
     .character-card[data-persona="operator"].video-playing .character-photo {
         opacity: 0 !important; /* Hide photo when video is playing */
         display: none !important;
+    }
+
+    /* Keep character-info and character-name in place when video is playing */
+    .character-card.video-playing .character-info {
+        position: relative !important;
+        transform: none !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 20px !important;
+    }
+
+    .character-card.video-playing .character-name {
+        text-align: left !important;
+        transform: none !important;
+        position: relative !important;
+        left: 0 !important;
+        margin: 0 !important;
+        margin-bottom: 8px !important; /* Keep original margin */
+        width: auto !important; /* Keep natural width */
+        display: block !important; /* Keep block display */
+    }
+
+    /* Ensure character-name stays consistent when video stops (after playing) */
+    .character-card:not(.video-playing) .character-name {
+        transform: none !important;
+        position: relative !important;
+        left: 0 !important;
+        width: auto !important;
+    }
+
+    /* Reduce text-shadow on mobile after clicking */
+    .character-card.active .character-name {
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3) !important; /* Much lighter shadow */
+    }
+
+    .character-card.video-playing .character-name {
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.3) !important; /* Much lighter shadow when video plays */
     }
 
     /* Touch feedback */
@@ -1050,7 +1092,7 @@ body {
     .questions-container > *:first-child,
     .investments-grid > *:first-child {
         margin-top: 0 !important;
-        padding-top: 0 !important;
+        padding-top: 15px !important;
     }
 
     /* Persona Switcher for Mobile - removed duplicate, see line 670 */

@@ -1139,7 +1139,7 @@ body.persona-dad h1, body.persona-dad h2, body.persona-dad h3 {
     display: flex;
     gap: 30px;
     height: calc(100vh - 80px);
-    padding: 20px;
+    padding: 40px;
 }
 
 .list-pane {
