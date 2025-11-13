@@ -92,7 +92,16 @@ class BustlingWorldV2 {
             const savedPersona = localStorage.getItem('bustling_v2_persona') || 'founder';
             this.setPersona(savedPersona);
             this.hideCharacterSelection();
-            this.showMainContent();
+
+            // Always show persona switcher on non-index pages
+            if (!isIndexPage) {
+                const switcher = document.getElementById('personaSwitcher');
+                if (switcher) {
+                    switcher.classList.remove('hidden');
+                }
+            } else {
+                this.showMainContent();
+            }
         }
 
         this.setupEventListeners();
@@ -159,76 +168,77 @@ class BustlingWorldV2 {
         const personaSwitcher = document.getElementById('personaSwitcher');
         if (!personaSwitcher) return;
 
-        // Desktop: Handle horizontal icon buttons
         const iconBtns = personaSwitcher.querySelectorAll('.persona-icon-btn');
-        iconBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const persona = btn.dataset.persona;
-                if (persona) {
-                    // Update current role indicator
-                    iconBtns.forEach(b => b.classList.remove('current-role'));
-                    btn.classList.add('current-role');
-                    this.switchPersona(persona);
-                }
-            });
-        });
-
-        // Mobile: Keep dropdown functionality
-        const dropdown = personaSwitcher.querySelector('.persona-dropdown.mobile-only');
         const personaBtn = personaSwitcher.querySelector('.persona-btn');
-        let hoverTimeout = null;
+        const personaContainer = personaSwitcher.querySelector('.persona-icons-container');
 
-        // Mobile dropdown on click
+        // Handle both desktop and mobile with icon navigation
         if (window.innerWidth <= 768) {
-            if (personaBtn && dropdown) {
-                personaBtn.addEventListener('click', (e) => {
+            // Mobile: Use tap to show/hide icons
+            if (personaBtn && personaContainer) {
+                // Remove any existing event listeners by cloning the button
+                const newBtn = personaBtn.cloneNode(true);
+                personaBtn.parentNode.replaceChild(newBtn, personaBtn);
+
+                newBtn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const isVisible = dropdown.style.visibility === 'visible';
-                    if (isVisible) {
-                        dropdown.style.opacity = '0';
-                        dropdown.style.visibility = 'hidden';
-                    } else {
-                        dropdown.style.opacity = '1';
-                        dropdown.style.visibility = 'visible';
-                    }
+                    e.stopPropagation();
+                    console.log('Mobile persona button clicked - toggling show-options');
+                    personaContainer.classList.toggle('show-options');
                 });
 
-                // Close dropdown when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!personaSwitcher.contains(e.target)) {
-                        dropdown.style.opacity = '0';
-                        dropdown.style.visibility = 'hidden';
-                    }
-                });
+                // Close when tapping outside - use setTimeout to prevent immediate trigger
+                setTimeout(() => {
+                    document.addEventListener('click', (e) => {
+                        if (!personaContainer.contains(e.target)) {
+                            console.log('Clicked outside - removing show-options');
+                            personaContainer.classList.remove('show-options');
+                        }
+                    });
+                }, 100);
             }
         }
 
-        // Mobile dropdown items
-        const dropdownItems = document.querySelectorAll('.dropdown-item:not(.reset-btn)');
-        dropdownItems.forEach(item => {
-            item.addEventListener('click', (e) => {
+        // Handle icon button clicks (both desktop and mobile)
+        iconBtns.forEach((btn, index) => {
+            const handleClick = (e) => {
                 e.preventDefault();
-                const persona = item.dataset.persona;
+                e.stopPropagation();
+                const persona = e.currentTarget.dataset.persona;
+                console.log('Persona icon clicked:', persona);
                 if (persona) {
+                    // Update current role indicator using all buttons
+                    const allBtns = personaSwitcher.querySelectorAll('.persona-icon-btn');
+                    allBtns.forEach(b => b.classList.remove('current-role'));
+                    e.currentTarget.classList.add('current-role');
+
+                    // Update the main persona image
+                    const currentImg = document.getElementById('currentPersonaImage');
+                    const optionImg = e.currentTarget.querySelector('.persona-icon-img');
+                    if (currentImg && optionImg) {
+                        currentImg.src = optionImg.src;
+                        currentImg.alt = optionImg.alt;
+                    }
+
+                    // Actually switch the persona
                     this.switchPersona(persona);
-                    // Close dropdown after selection
-                    if (dropdown) {
-                        dropdown.style.opacity = '0';
-                        dropdown.style.visibility = 'hidden';
+
+                    // On mobile, close the options after selection
+                    if (window.innerWidth <= 768) {
+                        setTimeout(() => {
+                            personaContainer.classList.remove('show-options');
+                        }, 300);
                     }
                 }
-            });
-        });
+            };
 
-        // Reset button (mobile)
-        const resetBtn = document.getElementById('resetSelection');
-        if (resetBtn) {
-            resetBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.resetToCharacterSelection();
-            });
-        }
+            // Add event listener directly
+            btn.addEventListener('click', handleClick);
+            // Add touch handler for mobile
+            if (window.innerWidth <= 768) {
+                btn.addEventListener('touchstart', handleClick, { passive: false });
+            }
+        });
 
         // Update current role indicator on load
         const currentPersona = localStorage.getItem('bustling_v2_persona') || 'founder';
@@ -238,6 +248,19 @@ class BustlingWorldV2 {
                 btn.classList.add('current-role');
             }
         });
+
+        // Also update the main button image based on current persona
+        const currentImg = document.getElementById('currentPersonaImage');
+        if (currentImg) {
+            const currentBtn = document.querySelector(`.persona-icon-btn[data-persona="${currentPersona}"]`);
+            if (currentBtn) {
+                const img = currentBtn.querySelector('.persona-icon-img');
+                if (img) {
+                    currentImg.src = img.src;
+                    currentImg.alt = img.alt;
+                }
+            }
+        }
     }
 
     /**
@@ -284,23 +307,100 @@ class BustlingWorldV2 {
      * Setup mobile menu functionality
      */
     setupMobileMenu() {
-        const hamburger = document.getElementById('hamburger');
-        const sidebar = document.querySelector('.sidebar');
+        // Only setup mobile menu on mobile devices
+        if (window.innerWidth > 768) return;
 
-        if (!hamburger || !sidebar) return;
+        // Use a small delay to ensure DOM is ready
+        setTimeout(() => {
+            const hamburger = document.getElementById('hamburger');
+            const sidebar = document.querySelector('.sidebar');
 
-        hamburger.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-            hamburger.classList.toggle('active');
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
-                sidebar.classList.remove('open');
-                hamburger.classList.remove('active');
+            if (!hamburger || !sidebar) {
+                console.log('Mobile menu elements not found - hamburger:', !!hamburger, 'sidebar:', !!sidebar);
+                // Try again if elements not found
+                setTimeout(() => this.setupMobileMenu(), 500);
+                return;
             }
-        });
+
+            // Debug hamburger visibility
+            console.log('[BustlingWorld] Hamburger found, checking visibility...');
+            const rect = hamburger.getBoundingClientRect();
+            const computedStyle = window.getComputedStyle(hamburger);
+            console.log('[BustlingWorld] Hamburger details:', {
+                position: rect,
+                display: computedStyle.display,
+                visibility: computedStyle.visibility,
+                opacity: computedStyle.opacity,
+                zIndex: computedStyle.zIndex,
+                width: rect.width,
+                height: rect.height,
+                hasSpans: hamburger.querySelectorAll('span').length,
+                parent: hamburger.parentElement ? hamburger.parentElement.tagName + '.' + hamburger.parentElement.className : 'body',
+                computedLeft: computedStyle.left,
+                computedTop: computedStyle.top
+            });
+
+            // Force position fix if needed
+            if (rect.x < 0) {
+                console.log('[BustlingWorld] Fixing hamburger position - was at x:', rect.x);
+                hamburger.style.left = '15px !important';
+                hamburger.style.position = 'fixed !important';
+                hamburger.style.transform = 'none !important';
+            }
+
+            // Remove any existing event listeners by cloning
+            const newHamburger = hamburger.cloneNode(true);
+            hamburger.parentNode.replaceChild(newHamburger, hamburger);
+
+            // Setup hamburger click handler directly on the DOM element
+            const finalHamburger = document.getElementById('hamburger');
+            finalHamburger.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Hamburger clicked - toggling sidebar');
+                sidebar.classList.toggle('open');
+                finalHamburger.classList.toggle('active');
+                document.body.classList.toggle('menu-open');
+            });
+
+            // Setup overlay click handler
+            const overlay = document.querySelector('.menu-overlay');
+            if (overlay) {
+                overlay.addEventListener('click', () => {
+                    console.log('Overlay clicked - closing sidebar');
+                    sidebar.classList.remove('open');
+                    finalHamburger.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                });
+            }
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (sidebar.classList.contains('open') &&
+                    !sidebar.contains(e.target) &&
+                    !finalHamburger.contains(e.target)) {
+                    console.log('Closing sidebar - clicked outside');
+                    sidebar.classList.remove('open');
+                    finalHamburger.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                }
+            });
+
+            // Close menu when clicking on a nav link
+            const navLinks = sidebar.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        console.log('Nav link clicked - closing sidebar');
+                        sidebar.classList.remove('open');
+                        finalHamburger.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                    }
+                });
+            });
+
+            console.log('Mobile menu setup complete');
+        }, 100); // Close the setTimeout
     }
 
     /**
@@ -313,6 +413,8 @@ class BustlingWorldV2 {
 
         if (modal) {
             modal.classList.remove('hidden');
+            // Add class to body to indicate character selection is active (for mobile styling)
+            document.body.classList.add('character-select-active');
         } else if (!isIndexPage) {
             // If we're not on the main page and there's no modal, redirect to main page with reset
             window.location.href = '/?reset=true';
@@ -326,6 +428,8 @@ class BustlingWorldV2 {
         const modal = document.getElementById('characterSelect');
         if (modal) {
             modal.classList.add('hidden');
+            // Remove the character-select-active class
+            document.body.classList.remove('character-select-active');
         }
     }
 
@@ -401,8 +505,12 @@ class BustlingWorldV2 {
             profileImg.alt = data.name;
         }
 
-        // Update content
-        this.updatePersonaContent();
+        // Update content only on index page
+        const path = window.location.pathname;
+        const isIndexPage = path === '/' || path === '/index.html' || path.endsWith('/index.html');
+        if (isIndexPage) {
+            this.updatePersonaContent();
+        }
     }
 
     /**
@@ -485,10 +593,15 @@ class BustlingWorldV2 {
 }
 
 // Initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        window.bustlingWorldV2 = new BustlingWorldV2();
-    });
-} else {
+function initializeBustlingWorld() {
     window.bustlingWorldV2 = new BustlingWorldV2();
+
+    // Note: Removed duplicate mobile persona initialization
+    // It's already handled in the setupPersonaSwitcher method
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeBustlingWorld);
+} else {
+    initializeBustlingWorld();
 }

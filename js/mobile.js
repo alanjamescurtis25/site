@@ -126,8 +126,7 @@
                 document.body.classList.add('is-touch');
             }
 
-            // Fix scroll issues on mobile
-            this.fixMobileScroll();
+            // Note: Scroll fix removed - was causing initialization error
         }
 
         setupMobileLayout() {
@@ -549,6 +548,7 @@
 
             this.setupMobileHeader();
             this.setupHamburgerMenu();
+            this.setupPersonaSwitcher();
             this.setupListToggle();
             this.preventBodyScroll();
         }
@@ -574,17 +574,6 @@
                 const header = document.createElement('div');
                 header.className = 'mobile-header';
 
-                // Add hamburger menu if it doesn't exist
-                let hamburger = document.getElementById('hamburger');
-                if (!hamburger) {
-                    hamburger = document.createElement('button');
-                    hamburger.id = 'hamburger';
-                    hamburger.className = 'hamburger';
-                    hamburger.setAttribute('aria-label', 'Menu');
-                    hamburger.innerHTML = '<span></span><span></span><span></span>';
-                    document.body.appendChild(hamburger);
-                }
-
                 // Add site title
                 const mobileTitle = document.createElement('div');
                 mobileTitle.className = 'mobile-site-title';
@@ -601,6 +590,15 @@
                 document.body.insertBefore(header, document.body.firstChild);
             }
 
+            // Use existing hamburger from HTML - don't create new one
+            const hamburger = document.getElementById('hamburger');
+            if (hamburger) {
+                console.log('[MobileNavigation] Using existing hamburger from HTML');
+                // Make sure it's visible and properly positioned
+                hamburger.style.display = 'flex';
+                hamburger.style.visibility = 'visible';
+            }
+
             // Add menu overlay
             if (!document.querySelector('.menu-overlay')) {
                 const overlay = document.createElement('div');
@@ -610,48 +608,134 @@
         }
 
         setupHamburgerMenu() {
-            // Try both hamburger selectors
-            const hamburger = document.getElementById('hamburger') || document.querySelector('.hamburger');
-            const sidebar = document.querySelector('.sidebar');
+            console.log('[MobileNavigation] setupHamburgerMenu called - using existing HTML hamburger');
+            // Don't create new hamburger - use the one from HTML
+            // bustling-world-v2.js will handle the click events
+        }
 
-            if (!hamburger || !sidebar) {
-                console.log('Hamburger menu setup failed - hamburger:', !!hamburger, 'sidebar:', !!sidebar);
-                return;
-            }
+        setupPersonaSwitcher() {
+            // Setup for mobile/touch devices
+            console.log('Setting up persona switcher for mobile');
 
-            // Remove any existing listeners
-            const newHamburger = hamburger.cloneNode(true);
-            hamburger.parentNode.replaceChild(newHamburger, hamburger);
+            // Try multiple times in case elements aren't ready
+            const trySetup = () => {
+                const personaContainer = document.querySelector('.persona-icons-container');
+                const personaBtn = document.querySelector('.persona-btn');
+                const personaOptions = document.querySelectorAll('.persona-icon-btn');
 
-            newHamburger.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                sidebar.classList.toggle('open');
-                newHamburger.classList.toggle('active');
-                document.body.classList.toggle('menu-open');
-                console.log('Menu toggled - sidebar open:', sidebar.classList.contains('open'));
-            });
-
-            // Close menu on outside click
-            document.addEventListener('click', (e) => {
-                const currentHamburger = document.getElementById('hamburger') || document.querySelector('.hamburger');
-                if (!sidebar.contains(e.target) && !currentHamburger.contains(e.target)) {
-                    sidebar.classList.remove('open');
-                    currentHamburger.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                }
-            });
-
-            // Close menu on navigation
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    const currentHamburger = document.getElementById('hamburger') || document.querySelector('.hamburger');
-                    sidebar.classList.remove('open');
-                    currentHamburger.classList.remove('active');
-                    document.body.classList.remove('menu-open');
+                console.log('Persona elements found:', {
+                    container: !!personaContainer,
+                    button: !!personaBtn,
+                    options: personaOptions.length
                 });
-            });
+
+                if (!personaContainer || !personaBtn) {
+                    console.log('Persona elements not ready, retrying...');
+                    setTimeout(trySetup, 500);
+                    return;
+                }
+
+                // Remove any existing listeners by cloning
+                const newBtn = personaBtn.cloneNode(true);
+                personaBtn.parentNode.replaceChild(newBtn, personaBtn);
+
+                // Flag to prevent double-firing
+                let isHandling = false;
+
+                const toggleOptions = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (isHandling) return;
+                    isHandling = true;
+
+                    console.log('Persona button activated - toggling show-options');
+                    personaContainer.classList.toggle('show-options');
+
+                    setTimeout(() => {
+                        isHandling = false;
+                    }, 100);
+                };
+
+                // Handle both click and touch
+                newBtn.addEventListener('click', toggleOptions);
+                newBtn.addEventListener('touchend', toggleOptions, { passive: false });
+
+                // Close options when tapping outside
+                let closeHandler = (e) => {
+                    if (!personaContainer.contains(e.target)) {
+                        personaContainer.classList.remove('show-options');
+                    }
+                };
+
+                document.addEventListener('click', closeHandler);
+                document.addEventListener('touchstart', closeHandler, { passive: true });
+
+                // Handle option selection
+                personaOptions.forEach(btn => {
+                    // Clone to remove old listeners
+                    const newOptionBtn = btn.cloneNode(true);
+                    btn.parentNode.replaceChild(newOptionBtn, btn);
+
+                    let isSelecting = false;
+
+                    const handleSelection = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if (isSelecting) return;
+                        isSelecting = true;
+
+                        const persona = newOptionBtn.dataset.persona;
+                        console.log('Persona selected:', persona);
+                        if (!persona) {
+                            isSelecting = false;
+                            return;
+                        }
+
+                        // Update current persona image
+                        const currentImg = document.getElementById('currentPersonaImage');
+                        const optionImg = newOptionBtn.querySelector('.persona-icon-img');
+                        if (currentImg && optionImg) {
+                            currentImg.src = optionImg.src;
+                            currentImg.alt = optionImg.alt;
+                        }
+
+                        // Update current role class for hiding
+                        document.querySelectorAll('.persona-icon-btn').forEach(opt => {
+                            opt.classList.remove('current-role');
+                        });
+                        newOptionBtn.classList.add('current-role');
+
+                        // Save selection
+                        localStorage.setItem('bustling_v2_persona', persona);
+                        localStorage.setItem('selectedPersona', persona);
+
+                        // Update body class
+                        document.body.className = document.body.className.replace(/persona-\w+/, '');
+                        document.body.classList.add(`persona-${persona}`);
+
+                        // Update persona badges
+                        const badges = document.querySelectorAll('.persona-badge .badge-text');
+                        badges.forEach(badge => {
+                            badge.textContent = persona.charAt(0).toUpperCase() + persona.slice(1);
+                        });
+
+                        // Close the options after selection
+                        setTimeout(() => {
+                            personaContainer.classList.remove('show-options');
+                            isSelecting = false;
+                        }, 300);
+                    };
+
+                    // Use only click for options (touchend on main button is enough)
+                    newOptionBtn.addEventListener('click', handleSelection);
+                });
+
+                console.log('Persona switcher setup complete');
+            };
+
+            // Start the setup process
+            trySetup();
         }
 
         setupListToggle() {
@@ -911,6 +995,9 @@
         new MobileNavigation();
         new TouchFeedback();
 
+        // Don't create hamburger - use the one from HTML
+        console.log('[Mobile.js] Using hamburger from HTML');
+
         // Add viewport meta if not present
         if (!document.querySelector('meta[name="viewport"]')) {
             const viewport = document.createElement('meta');
@@ -965,7 +1052,13 @@
         CharacterSelectionMobile,
         MobileNavigation,
         TouchFeedback,
-        ResponsiveViewManager
+        ResponsiveViewManager,
+        // Add manual initialization for persona switcher
+        initPersonaSwitcher: function() {
+            console.log('Manually initializing persona switcher');
+            const nav = new MobileNavigation();
+            nav.setupPersonaSwitcher();
+        }
     };
 
 })();

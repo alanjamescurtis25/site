@@ -111,6 +111,16 @@
 
     <!-- Main Site Container -->
     <div class="container" id="mainContainer">
+        <!-- Hamburger menu button - moved outside sidebar for mobile visibility -->
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- Menu overlay for mobile -->
+        <div class="menu-overlay"></div>
+
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -119,12 +129,6 @@
                     <span class="badge-text">Founder</span>
                 </div>
             </div>
-
-            <button class="hamburger" id="hamburger" aria-label="Menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
 
             <nav id="nav" class="navigation">
                 <ul class="nav-list">
@@ -325,31 +329,7 @@
             `
         });
 
-        // Initialize after DOM loads
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if character selection has been made
-            const savedPersona = localStorage.getItem('bustling_v2_persona');
-            if (savedPersona) {
-                // Apply persona theme
-                document.body.className = `persona-${savedPersona}`;
-                const personaBadge = document.querySelector('.badge-text');
-                if (personaBadge) {
-                    personaBadge.textContent = savedPersona.charAt(0).toUpperCase() + savedPersona.slice(1);
-                }
-
-                // Update profile image
-                const profileImg = document.getElementById('currentPersonaImage');
-                if (profileImg) {
-                    const imageMap = {
-                        'founder': '/assets/alan-2.jpeg',
-                        'operator': '/assets/alan-1.jpg',
-                        'investor': '/assets/alan-3.jpg',
-                        'dad': '/assets/alan-4.jpg'
-                    };
-                    profileImg.src = imageMap[savedPersona] || '/assets/alan-2.jpeg';
-                }
-            }
-        });
+        // Router init is sufficient, persona handling is done by bustling-world-v2.js
     </script>
 </body>
 </html>
