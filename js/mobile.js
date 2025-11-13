@@ -150,8 +150,8 @@
                     card.style.display = 'none';
                 }
 
-                // Add click handler for Founder card to toggle video
-                if (card.dataset.persona === 'founder') {
+                // Add click handler for cards with video to toggle playback
+                if (card.dataset.persona === 'founder' || card.dataset.persona === 'operator') {
                     let isToggling = false;
                     card.addEventListener('click', (e) => {
                         // Toggle video on any click on the card (for better mobile UX)
@@ -160,7 +160,7 @@
                             e.stopPropagation();
                             e.preventDefault();
                             isToggling = true;
-                            this.toggleFounderVideo(card);
+                            this.toggleFounderVideo(card);  // Works for both founder and operator
                             // Reset flag after a short delay
                             setTimeout(() => {
                                 isToggling = false;
@@ -180,8 +180,8 @@
             thumbnails.className = 'character-thumbnails';
 
             const characterData = [
-                { persona: 'founder', name: 'Founder', image: '/assets/alan-2.jpeg' },
-                { persona: 'operator', name: 'Operator', image: '/assets/alan-3.jpg' },
+                { persona: 'founder', name: 'Founder', image: '/assets/alan-2.jpeg', animation: '/assets/animation/alan-2-animation.mp4' },
+                { persona: 'operator', name: 'Operator', image: '/assets/alan-3.png', animation: '/assets/animation/alan-3-animation.mp4' },
                 { persona: 'investor', name: 'Investor', image: '/assets/alan-1.jpg' },
                 { persona: 'dad', name: 'Dad', image: '/assets/alan-4.jpg' }
             ];
@@ -252,8 +252,8 @@
             if (index === this.currentIndex) {
                 // If clicking the same card that's already active
                 const currentCard = this.cards[index];
-                if (currentCard.dataset.persona === 'founder') {
-                    // Toggle video playback for Founder card
+                if (currentCard.dataset.persona === 'founder' || currentCard.dataset.persona === 'operator') {
+                    // Toggle video playback for cards with video
                     this.toggleFounderVideo(currentCard);
                 }
                 return;
@@ -265,12 +265,14 @@
                 card.style.display = 'none';
 
                 // Stop video and remove playing class
-                if (card.dataset.persona === 'founder') {
+                if (card.dataset.persona === 'founder' || card.dataset.persona === 'operator') {
                     card.classList.remove('video-playing');
                     const video = card.querySelector('.character-video');
                     if (video) {
+                        video.muted = true;  // Ensure muted
                         video.pause();
-                        video.currentTime = 0;
+                        // Reset to appropriate start time
+                        video.currentTime = card.dataset.persona === 'operator' ? 3 : 0;
                     }
                 }
             });
@@ -298,15 +300,21 @@
             }
         }
 
-        toggleFounderVideo(card) {
+        toggleFounderVideo(card) {  // Works for both founder and operator videos
             const video = card.querySelector('.character-video');
             if (!video) return;
+
+            // Ensure video is muted
+            video.muted = true;
+            // Only auto-loop for founder, we handle operator manually
+            video.loop = card.dataset.persona === 'founder';
 
             if (card.classList.contains('video-playing')) {
                 // Stop video and go back to image
                 card.classList.remove('video-playing');
                 video.pause();
-                video.currentTime = 0;
+                // Reset to appropriate start time
+                video.currentTime = card.dataset.persona === 'operator' ? 3 : 0;
 
                 // Remove any inline styles that might override CSS
                 video.removeAttribute('style');
@@ -318,9 +326,25 @@
                 // Start video
                 video.load(); // Force reload the video
 
+                // Always start operator at 3 seconds
+                if (card.dataset.persona === 'operator') {
+                    video.currentTime = 3;
+
+                    // Handle video ended event - loop back to 3 seconds
+                    video.onended = () => {
+                        video.currentTime = 3; // Always skip first 3 seconds
+                        video.play();
+                    };
+                }
+
                 // Start video with a small delay for reliability
                 setTimeout(() => {
                     card.classList.add('video-playing');
+
+                    // Ensure operator starts at 3 seconds
+                    if (card.dataset.persona === 'operator') {
+                        video.currentTime = 3;
+                    }
 
                     video.play().catch((e) => {
                         console.log('Video play failed:', e);
@@ -366,6 +390,12 @@
             badges.forEach(badge => {
                 badge.textContent = persona.charAt(0).toUpperCase() + persona.slice(1);
             });
+
+            // Update mobile role title
+            const mobileRoleTitle = document.querySelector('.mobile-role-title .role-text');
+            if (mobileRoleTitle) {
+                mobileRoleTitle.textContent = persona.charAt(0).toUpperCase() + persona.slice(1);
+            }
 
             // Reload page to apply persona properly
             window.location.reload();
@@ -448,10 +478,24 @@
             const videos = document.querySelectorAll('.character-video');
             videos.forEach(video => {
                 if (video) {
+                    const card = video.closest('.character-card');
                     video.autoplay = true;
-                    video.muted = true;
+                    video.muted = true;  // Ensure all videos are muted
                     video.playsInline = true;
-                    video.loop = true;
+                    // Only auto-loop for non-operator videos
+                    video.loop = card && card.dataset.persona !== 'operator';
+
+                    // Set start time and loop behavior for operator video
+                    if (card && card.dataset.persona === 'operator') {
+                        video.currentTime = 3;
+
+                        // Handle manual looping for operator
+                        video.onended = () => {
+                            video.currentTime = 3; // Loop back to 3 seconds
+                            video.play();
+                        };
+                    }
+
                     video.play().catch(() => {
                         // Silent fail
                     });
@@ -720,6 +764,12 @@
                             badge.textContent = persona.charAt(0).toUpperCase() + persona.slice(1);
                         });
 
+                        // Update mobile role title
+                        const mobileRoleTitle = document.querySelector('.mobile-role-title .role-text');
+                        if (mobileRoleTitle) {
+                            mobileRoleTitle.textContent = persona.charAt(0).toUpperCase() + persona.slice(1);
+                        }
+
                         // Close the options after selection
                         setTimeout(() => {
                             personaContainer.classList.remove('show-options');
@@ -870,6 +920,13 @@
 
             // Add mobile-specific classes
             document.body.classList.add('mobile-view');
+
+            // Initialize mobile role title with correct persona
+            const savedPersona = localStorage.getItem('bustling_v2_persona') || 'founder';
+            const mobileRoleTitle = document.querySelector('.mobile-role-title .role-text');
+            if (mobileRoleTitle) {
+                mobileRoleTitle.textContent = savedPersona.charAt(0).toUpperCase() + savedPersona.slice(1);
+            }
             document.body.classList.remove('desktop-view');
 
             // Reset character selection to show first card

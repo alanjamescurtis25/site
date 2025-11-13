@@ -98,65 +98,17 @@
      * Load Welcome content
      */
     function loadWelcomeContent(container) {
-        // Get current persona from localStorage or body class
-        const savedPersona = localStorage.getItem('bustling_v2_persona');
-        const bodyClass = document.body.className;
-        const currentPersona = savedPersona || (bodyClass ? bodyClass.replace('persona-', '') : 'founder');
+        // Always show the same generic welcome content
+        const content = {
+            title: 'Welcome',
+            content: `
+                <p>Welcome to my personal website! This site's "job to be done" is to make me as legible as possible.</p>
 
-        // Define role-specific welcome content
-        const welcomeContent = {
-            founder: {
-                title: 'Welcome, Builder',
-                content: `
-                    <p>Welcome! I'm Alan Curtis, a serial founder with five exits and a lifetime 300%+ IRR across $100M+ raised.</p>
+                <p>A good place to start is with my <a href="/bio.html" class="text-link">bio</a>, my <a href="/writing/user-manual.html" class="text-link">user manual</a>, or my <a href="/writing/latticework.html" class="text-link">latticework</a>.</p>
 
-                    <p>If you're here, you're likely exploring a potential collaboration, investment, or partnership. This site is designed to make me as legible as possible - to help you understand how I think, operate, and create value.</p>
-
-                    <p>Start with my <a href="#bio" class="text-link spa-link" data-page="bio">founder journey</a> to see my track record, explore my <a href="#writing/entropy-golf" class="text-link spa-link" data-article="entropy-golf">frameworks for managing complexity</a>, or dive into my <a href="#writing/growth-strategies" class="text-link spa-link" data-article="growth-strategies">growth strategies</a>.</p>
-
-                    <p>Currently building The Invention Network - let's <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">connect on X</a> or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a> if you're building something ambitious.</p>
-                `
-            },
-            operator: {
-                title: 'Welcome, Executor',
-                content: `
-                    <p>Welcome! I'm Alan Curtis, an operator who's scaled companies through $7B TGEs, $4B IPOs, and $2B mergers.</p>
-
-                    <p>As COO at EigenLayer, CTO at Core Scientific, and CSO at Blockcap, I've specialized in turning chaos into systems and potential into performance.</p>
-
-                    <p>Explore my <a href="#bio" class="text-link spa-link" data-page="bio">operational experience</a>, study my <a href="#writing/business-operating-systems" class="text-link spa-link" data-article="business-operating-systems">business operating systems</a>, or learn about <a href="#writing/metrics" class="text-link spa-link" data-article="metrics">metrics that matter</a>.</p>
-
-                    <p>If you need someone who can execute at scale, let's talk via <a href="https://linkedin.com/in/alanjamescurtis" target="_blank" class="text-link">LinkedIn</a> or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a>.</p>
-                `
-            },
-            investor: {
-                title: 'Welcome, Allocator',
-                content: `
-                    <p>Welcome! I'm Alan Curtis, an investor in 50+ companies including seven unicorns and five successful exits.</p>
-
-                    <p>As the first Head of Platform at Blockchain Capital and an active angel investor, I focus on ambitious founders solving real problems with defensible solutions.</p>
-
-                    <p>Review my <a href="#investments" class="text-link spa-link" data-page="investments">portfolio</a>, understand my <a href="#writing/talent-investing" class="text-link spa-link" data-article="talent-investing">investment philosophy</a>, or explore my <a href="#writing/latticework" class="text-link spa-link" data-article="latticework">mental models</a>.</p>
-
-                    <p>For deal flow or portfolio support, reach out on <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">X</a> or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a>.</p>
-                `
-            },
-            dad: {
-                title: 'Welcome, Friend',
-                content: `
-                    <p>Welcome! I'm Alan Curtis, a dad of two daughters living outside Boulder, Colorado.</p>
-
-                    <p>Beyond the professional accomplishments, I'm a soccer coach, nail polish test subject, and amateur rock stacker who believes family should run more like organizations (with values, objectives, and weekly scorecards).</p>
-
-                    <p>Check out my thoughts on <a href="#writing/family-strategy" class="text-link spa-link" data-article="family-strategy">family strategy</a>, explore my <a href="#writing/therapy" class="text-link spa-link" data-article="therapy">perspectives on growth</a>, or see my <a href="#quotes" class="text-link spa-link" data-page="quotes">favorite quotes</a> about life and parenting.</p>
-
-                    <p>Always happy to connect with fellow parents navigating the startup life - find me on <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">X</a> or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a>.</p>
-                `
-            }
+                <p>Thanks for stopping by and please reach out on <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">X</a>, <a href="https://linkedin.com/in/alanjamescurtis" target="_blank" class="text-link">LinkedIn</a>, or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a> if we should be working together!</p>
+            `
         };
-
-        // Get the appropriate content or fall back to founder
-        const content = welcomeContent[currentPersona] || welcomeContent.founder;
 
         container.className = 'content';
         container.innerHTML = `

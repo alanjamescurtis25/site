@@ -534,8 +534,9 @@ body {
         opacity: 1;
     }
 
-    /* Initially show photo for Founder card */
-    .character-card[data-persona="founder"] .character-photo {
+    /* Initially show photo for cards with video */
+    .character-card[data-persona="founder"] .character-photo,
+    .character-card[data-persona="operator"] .character-photo {
         opacity: 1 !important;
         visibility: visible !important;
         display: block !important;
@@ -543,8 +544,9 @@ body {
         z-index: 1;
     }
 
-    /* Initially hide video for Founder card */
-    .character-card[data-persona="founder"] .character-video {
+    /* Initially hide video for cards with video */
+    .character-card[data-persona="founder"] .character-video,
+    .character-card[data-persona="operator"] .character-video {
         opacity: 0;
         visibility: hidden;
         display: none;
@@ -557,14 +559,24 @@ body {
         transition: opacity 0.3s ease;
     }
 
+    /* Remove filters for operator video on mobile */
+    .character-card[data-persona="operator"] .character-video {
+        filter: none !important;
+        -webkit-mask-image: none !important;
+        mask-image: none !important;
+        transition: opacity 0.1s ease !important;  /* Faster transition */
+    }
+
     /* When card is active and playing, show video and hide photo */
-    .character-card[data-persona="founder"].video-playing .character-video {
+    .character-card[data-persona="founder"].video-playing .character-video,
+    .character-card[data-persona="operator"].video-playing .character-video {
         opacity: 1 !important;
         visibility: visible !important;
         display: block !important;
     }
 
-    .character-card[data-persona="founder"].video-playing .character-photo {
+    .character-card[data-persona="founder"].video-playing .character-photo,
+    .character-card[data-persona="operator"].video-playing .character-photo {
         opacity: 0 !important; /* Hide photo when video is playing */
         display: none !important;
     }
@@ -749,6 +761,48 @@ body {
         background: linear-gradient(90deg, #FF7F50 0%, rgba(255, 127, 80, 0.9) 100%);
     }
 
+    /* Mobile role title display - next to hamburger on the left */
+    .mobile-role-title {
+        display: flex !important;
+        position: fixed;
+        top: 22px;
+        left: 59px; /* Position next to hamburger - moved 1px closer */
+        z-index: 1001;
+        align-items: center;
+    }
+
+    .mobile-role-title .role-text {
+        font-family: 'Cinzel', serif;
+        color: var(--color-primary);
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: capitalize;
+        letter-spacing: 1px;
+    }
+
+    /* Hide role title during character selection */
+    body.character-select-active .mobile-role-title,
+    #characterSelect:not(.hidden) ~ * .mobile-role-title {
+        display: none !important;
+    }
+
+    /* Persona-specific role title colors */
+    body.persona-founder .mobile-role-title .role-text {
+        color: #A0A453;
+    }
+
+    body.persona-operator .mobile-role-title .role-text {
+        color: #FFB800;
+    }
+
+    body.persona-investor .mobile-role-title .role-text {
+        color: #C39F47;
+    }
+
+    body.persona-dad .mobile-role-title .role-text {
+        color: #FF7F50;
+    }
+
 
     /* Mobile site title in center - now hidden */
     .mobile-site-title {
@@ -876,7 +930,7 @@ body {
     .navigation {
         flex: 1;
         overflow-y: auto;
-        padding: 10px 0 20px 0;  /* Reduced top padding from 20px to 10px */
+        padding: 0 0 20px 0;  /* Removed top padding completely */
         display: block !important;
     }
 
@@ -932,14 +986,71 @@ body {
 
     /* Content Area */
     .container {
-        padding-top: calc(var(--mobile-navbar-height) + 30px); /* Add extra padding for persona switcher */
+        padding-top: calc(var(--mobile-navbar-height) - 15px); /* Reduce top padding more */
         min-height: 100vh;
     }
 
     .content {
         margin-left: 0;
         padding: var(--mobile-padding);
-        padding-top: calc(var(--mobile-padding) + 15px); /* Extra top padding for breathing room */
+        padding-top: 0; /* No top padding - content starts immediately */
+    }
+
+    /* Remove top margins from content grids on mobile */
+    .writing-grid,
+    .quotes-container,
+    .questions-container,
+    .investments-grid,
+    .article-grid {
+        margin-top: 0 !important;  /* Remove top margin to move content higher */
+        padding-top: 0 !important;
+    }
+
+    /* Reduce page header spacing on mobile to move content up */
+    .page-header {
+        margin-bottom: 5px !important;  /* Very small margin */
+        padding-bottom: 5px !important;  /* Very small padding */
+        margin-top: 0 !important;  /* No negative margin to prevent cutoff */
+        padding-top: 0 !important;
+    }
+
+    /* Move page title up */
+    .page-title {
+        margin-top: 0 !important;
+        margin-bottom: 10px !important;
+        padding-top: 0 !important;
+    }
+
+    /* Remove ALL top spacing from intro text */
+    .intro-text {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Remove spacing from content-body */
+    .content-body {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Force all article and content items to start at top */
+    .article-item,
+    .quote-item,
+    .question-item,
+    .investment-item,
+    .content-item {
+        margin-top: 0 !important;
+    }
+
+    /* Make first child of any content container start at top */
+    .content > *:first-child,
+    .content-body > *:first-child,
+    .writing-grid > *:first-child,
+    .quotes-container > *:first-child,
+    .questions-container > *:first-child,
+    .investments-grid > *:first-child {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
     }
 
     /* Persona Switcher for Mobile - removed duplicate, see line 670 */
@@ -1136,19 +1247,25 @@ body {
     .split-view {
         flex-direction: column;
         height: auto;
-        padding: 0;
+        min-height: auto !important;  /* Don't force minimum height */
+        padding: var(--mobile-padding) !important;  /* Match regular content padding */
+        padding-top: 0 !important;  /* No top padding, same as regular content */
         gap: 0;
+        align-items: flex-start !important;  /* Align content to top */
+        justify-content: flex-start !important;  /* Push content to top */
     }
 
     .list-pane {
         width: 100%;
         min-width: 100%;
-        max-height: 40vh;
+        max-height: none !important;  /* Remove height restriction */
+        height: auto !important;  /* Let it size to content */
         border-right: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         padding: var(--mobile-padding);
-        position: sticky;
-        top: var(--mobile-navbar-height);
+        padding-top: 0 !important;  /* Remove top padding in list-pane */
+        position: relative !important;  /* Change from sticky to relative */
+        top: 0 !important;  /* Reset top position */
         background: var(--theme-primary);
         z-index: 10;
     }

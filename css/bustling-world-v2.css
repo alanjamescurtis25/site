@@ -53,6 +53,36 @@ body {
     font-family: var(--font-body);
     overflow-x: hidden;
     background: #f5f2e8;
+    position: relative;
+}
+
+/* Background image for all devices */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('/assets/pg.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 0.02;  /* Default very subtle for dark personas */
+    z-index: -9999;
+    pointer-events: none;
+}
+
+/* Darker opacity for founder and operator (dark backgrounds) */
+body.persona-founder::before,
+body.persona-operator::before {
+    opacity: 0.02;  /* Very subtle for dark backgrounds */
+}
+
+/* Stronger opacity for investor and dad (light backgrounds) */
+body.persona-investor::before,
+body.persona-dad::before {
+    opacity: 0.05;  /* More visible for light backgrounds */
 }
 
 .hidden {
@@ -248,7 +278,7 @@ body {
     filter: brightness(1.05) contrast(1.05) saturate(1.05);
 }
 
-/* Video Animation for Founder Card */
+/* Video Animation */
 .character-video {
     position: absolute;
     top: 0;
@@ -282,15 +312,30 @@ body {
         rgba(0,0,0,0) 100%);
 }
 
-/* Show video on hover for Founder card */
+/* Remove dark filter and mask for operator video */
+.character-card[data-persona="operator"] .character-video {
+    filter: none !important;  /* Remove brightness/contrast filter */
+    -webkit-mask-image: none !important;  /* Remove mask gradient */
+    mask-image: none !important;  /* Remove mask gradient */
+    transition: opacity 0.1s ease, visibility 0.1s ease;  /* Faster transition */
+}
+
+/* Show video on hover for cards with video */
 .character-card[data-persona="founder"]:hover .character-video {
     opacity: 1;
     visibility: visible;
     filter: brightness(1.05) contrast(1.05) saturate(1.05);
 }
 
+.character-card[data-persona="operator"]:hover .character-video {
+    opacity: 1;
+    visibility: visible;
+    filter: none !important;  /* No filter for operator video */
+}
+
 /* Hide image when video is visible */
-.character-card[data-persona="founder"]:hover .character-photo {
+.character-card[data-persona="founder"]:hover .character-photo,
+.character-card[data-persona="operator"]:hover .character-photo {
     opacity: 0;
     visibility: hidden;
 }
@@ -946,6 +991,11 @@ body.persona-dad .page-header {
     transform-origin: left;
 }
 
+/* Hide mobile role title on desktop */
+.mobile-role-title {
+    display: none;
+}
+
 @media (max-width: 768px) {
     .character-grid {
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1342,7 +1392,7 @@ body.persona-founder .container,
 body.persona-operator .container,
 body.persona-investor .container,
 body.persona-dad .container {
-    background-color: var(--theme-primary, transparent);
+    background-color: transparent;  /* Transparent to show bg image on desktop */
     color: var(--theme-text, inherit);
 }
 

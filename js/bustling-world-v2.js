@@ -36,7 +36,7 @@ class BustlingWorldV2 {
             investor: {
                 name: 'Investor',
                 theme: 'persona-investor',
-                image: '/assets/alan-3.jpg',
+                image: '/assets/alan-3.png',
                 content: {
                     title: 'The Trading Hall',
                     welcome: "Capital allocation is both art and science. As an active investor and advisor, I help founders navigate from seed to scale.",
@@ -140,12 +140,34 @@ class BustlingWorldV2 {
                 }
             });
 
-            // Setup video hover effect for Founder card
-            if (card.dataset.persona === 'founder') {
+            // Setup video hover effect for cards with video
+            if (card.dataset.persona === 'founder' || card.dataset.persona === 'operator') {
                 const video = card.querySelector('.character-video');
                 if (video) {
+                    // Ensure video is muted
+                    video.muted = true;
+                    // Only enable auto-loop for founder, we handle operator manually
+                    video.loop = card.dataset.persona === 'founder';
+
+                    // Set initial start time for operator video
+                    if (card.dataset.persona === 'operator') {
+                        video.addEventListener('loadedmetadata', () => {
+                            video.currentTime = 3; // Always start at 3 seconds
+                        });
+
+                        // When video ends, loop back to 3 seconds (skip first 3 seconds)
+                        video.addEventListener('ended', () => {
+                            video.currentTime = 3; // Loop back to 3 seconds, not 0
+                            video.play();
+                        });
+                    }
+
                     // Play video on hover
                     card.addEventListener('mouseenter', () => {
+                        // Always set to 3 seconds for operator
+                        if (card.dataset.persona === 'operator' && video.readyState >= 1) {
+                            video.currentTime = 3;
+                        }
                         video.play().catch(e => {
                             console.log('Video play failed:', e);
                         });
@@ -154,7 +176,8 @@ class BustlingWorldV2 {
                     // Pause and reset video when hover ends
                     card.addEventListener('mouseleave', () => {
                         video.pause();
-                        video.currentTime = 0;
+                        // Reset to appropriate start time
+                        video.currentTime = card.dataset.persona === 'operator' ? 3 : 0;
                     });
                 }
             }
@@ -348,20 +371,20 @@ class BustlingWorldV2 {
                 hamburger.style.transform = 'none !important';
             }
 
-            // Remove any existing event listeners by cloning
-            const newHamburger = hamburger.cloneNode(true);
-            hamburger.parentNode.replaceChild(newHamburger, hamburger);
+            // Don't remove event listeners, just add new one
+            // Check if handler already exists
+            if (!hamburger.hasAttribute('data-handler-added')) {
+                hamburger.setAttribute('data-handler-added', 'true');
 
-            // Setup hamburger click handler directly on the DOM element
-            const finalHamburger = document.getElementById('hamburger');
-            finalHamburger.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('Hamburger clicked - toggling sidebar');
-                sidebar.classList.toggle('open');
-                finalHamburger.classList.toggle('active');
-                document.body.classList.toggle('menu-open');
-            });
+                hamburger.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Hamburger clicked - toggling sidebar');
+                    sidebar.classList.toggle('open');
+                    hamburger.classList.toggle('active');
+                    document.body.classList.toggle('menu-open');
+                });
+            }
 
             // Setup overlay click handler
             const overlay = document.querySelector('.menu-overlay');
@@ -369,7 +392,7 @@ class BustlingWorldV2 {
                 overlay.addEventListener('click', () => {
                     console.log('Overlay clicked - closing sidebar');
                     sidebar.classList.remove('open');
-                    finalHamburger.classList.remove('active');
+                    hamburger.classList.remove('active');
                     document.body.classList.remove('menu-open');
                 });
             }
@@ -378,10 +401,10 @@ class BustlingWorldV2 {
             document.addEventListener('click', (e) => {
                 if (sidebar.classList.contains('open') &&
                     !sidebar.contains(e.target) &&
-                    !finalHamburger.contains(e.target)) {
+                    !hamburger.contains(e.target)) {
                     console.log('Closing sidebar - clicked outside');
                     sidebar.classList.remove('open');
-                    finalHamburger.classList.remove('active');
+                    hamburger.classList.remove('active');
                     document.body.classList.remove('menu-open');
                 }
             });
@@ -393,7 +416,7 @@ class BustlingWorldV2 {
                     if (window.innerWidth <= 768) {
                         console.log('Nav link clicked - closing sidebar');
                         sidebar.classList.remove('open');
-                        finalHamburger.classList.remove('active');
+                        hamburger.classList.remove('active');
                         document.body.classList.remove('menu-open');
                     }
                 });
@@ -517,34 +540,9 @@ class BustlingWorldV2 {
      * Update page content based on current persona
      */
     updatePersonaContent() {
-        const data = this.personaData[this.currentPersona];
-        if (!data) return;
-
-        // Update page title
-        const pageTitle = document.getElementById('pageTitle');
-        if (pageTitle) {
-            pageTitle.textContent = data.content.title;
-        }
-
-        // Update content body
-        const contentBody = document.getElementById('contentBody');
-        if (contentBody) {
-            contentBody.innerHTML = `
-                <p class="intro-text">${data.content.welcome}</p>
-
-                <p><strong>Current Focus:</strong> ${data.content.focus}</p>
-
-                <p>Begin with my <a href="/bio.html" class="text-link">chronicle</a> to understand my path,
-                explore my <a href="/writing/user-manual.html" class="text-link">manual</a> for collaboration insights,
-                or study my <a href="/writing/latticework.html" class="text-link">frameworks</a>.</p>
-
-                <p>${data.content.ending}</p>
-
-                <p>Connect through <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">X</a>,
-                <a href="https://linkedin.com/in/alanjamescurtis" target="_blank" class="text-link">LinkedIn</a>,
-                or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a> to explore opportunities.</p>
-            `;
-        }
+        // Temporarily disabled - will show persona-specific content in the future
+        // For now, all personas see the same generic welcome content
+        return;
     }
 
     /**
@@ -598,6 +596,24 @@ function initializeBustlingWorld() {
 
     // Note: Removed duplicate mobile persona initialization
     // It's already handled in the setupPersonaSwitcher method
+
+    // Debug: Check if background image is loading
+    if (window.innerWidth > 768) {
+        const img = new Image();
+        img.onload = function() {
+            console.log('Background image loaded successfully: /assets/pg.png');
+        };
+        img.onerror = function() {
+            console.error('Failed to load background image: /assets/pg.png');
+        };
+        img.src = '/assets/pg.png';
+
+        // Check computed styles
+        const bodyStyles = window.getComputedStyle(document.body, '::before');
+        console.log('Body::before background-image:', bodyStyles.backgroundImage);
+        console.log('Body::before opacity:', bodyStyles.opacity);
+        console.log('Body::before z-index:', bodyStyles.zIndex);
+    }
 }
 
 if (document.readyState === 'loading') {
