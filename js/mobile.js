@@ -954,34 +954,9 @@
         }
 
         setupPullToRefreshPrevention() {
-            // Prevent pull-to-refresh on Chrome mobile
-            let preventPullToRefresh = false;
-            let lastY = 0;
-
-            const touchStartHandler = (e) => {
-                if (e.touches.length === 1) {
-                    lastY = e.touches[0].clientY;
-                    preventPullToRefresh = window.pageYOffset === 0;
-                }
-            };
-
-            const touchMoveHandler = (e) => {
-                const y = e.touches[0].clientY;
-                const dy = y - lastY;
-
-                if (preventPullToRefresh && dy > 0 && window.pageYOffset === 0) {
-                    e.preventDefault();
-                }
-            };
-
-            document.addEventListener('touchstart', touchStartHandler);
-            document.addEventListener('touchmove', touchMoveHandler, { passive: false });
-
-            // Store listeners for cleanup
-            this.preventPullToRefreshListeners = [
-                { type: 'touchstart', handler: touchStartHandler },
-                { type: 'touchmove', handler: touchMoveHandler }
-            ];
+            // Disabled - was causing scroll issues on mobile
+            // Pull-to-refresh prevention not needed for this app
+            return;
         }
 
         cleanupMobileView() {
@@ -1071,25 +1046,7 @@
             }, 100);
         });
 
-        // Prevent pull-to-refresh on Chrome mobile
-        let preventPullToRefresh = false;
-        let lastY = 0;
-
-        document.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 1) {
-                lastY = e.touches[0].clientY;
-                preventPullToRefresh = window.pageYOffset === 0;
-            }
-        });
-
-        document.addEventListener('touchmove', (e) => {
-            const y = e.touches[0].clientY;
-            const dy = y - lastY;
-
-            if (preventPullToRefresh && dy > 0 && window.pageYOffset === 0) {
-                e.preventDefault();
-            }
-        }, { passive: false });
+        // Removed pull-to-refresh prevention - was causing scroll issues
     }
 
     // Initialize Responsive View Manager when DOM is ready
