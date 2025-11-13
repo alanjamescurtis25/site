@@ -841,6 +841,27 @@ body.persona-dad .page-header {
     overflow: hidden;
 }
 
+/* Role-specific border colors for persona button */
+body.persona-founder .persona-btn {
+    border-color: var(--founder-accent);
+    border-width: 2px;
+}
+
+body.persona-operator .persona-btn {
+    border-color: var(--operator-accent);
+    border-width: 2px;
+}
+
+body.persona-investor .persona-btn {
+    border-color: var(--investor-accent);
+    border-width: 2px;
+}
+
+body.persona-dad .persona-btn {
+    border-color: var(--dad-accent);
+    border-width: 2px;
+}
+
 .current-persona-avatar {
     display: block;
     width: 100%;

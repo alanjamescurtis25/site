@@ -38,10 +38,10 @@
                     <img class="persona-icon-img" src="/assets/alan-2.jpeg" alt="Founder">
                 </button>
                 <button data-persona="operator" class="persona-icon-btn" title="Operator">
-                    <img class="persona-icon-img" src="/assets/alan-1.jpg" alt="Operator">
+                    <img class="persona-icon-img" src="/assets/alan-3.png" alt="Operator">
                 </button>
                 <button data-persona="investor" class="persona-icon-btn" title="Investor">
-                    <img class="persona-icon-img" src="/assets/alan-3.png" alt="Investor">
+                    <img class="persona-icon-img" src="/assets/alan-1.jpg" alt="Investor">
                 </button>
                 <button data-persona="dad" class="persona-icon-btn" title="Dad">
                     <img class="persona-icon-img" src="/assets/alan-4.jpg" alt="Dad">
@@ -212,32 +212,5 @@
     <script src="/js/bustling-world-v2.js"></script>
     <script src="/js/mobile.js"></script>
     <script src="/js/spa-navigation.js"></script>
-    <script>
-        // Initialize after DOM loads
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if character selection has been made
-            const savedPersona = localStorage.getItem('bustling_v2_persona');
-            if (savedPersona) {
-                // Apply persona theme
-                document.body.className = `persona-${savedPersona}`;
-                const personaBadge = document.querySelector('.badge-text');
-                if (personaBadge) {
-                    personaBadge.textContent = savedPersona.charAt(0).toUpperCase() + savedPersona.slice(1);
-                }
-
-                // Update profile image
-                const profileImg = document.getElementById('currentPersonaImage');
-                if (profileImg) {
-                    const imageMap = {
-                        'founder': '/assets/alan-2.jpeg',
-                        'operator': '/assets/alan-1.jpg',
-                        'investor': '/assets/alan-3.png',
-                        'dad': '/assets/alan-4.jpg'
-                    };
-                    profileImg.src = imageMap[savedPersona] || '/assets/alan-2.jpeg';
-                }
-            }
-        });
-    </script>
 </body>
 </html>

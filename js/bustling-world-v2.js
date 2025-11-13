@@ -25,7 +25,7 @@ class BustlingWorldV2 {
             operator: {
                 name: 'Operator',
                 theme: 'persona-operator',
-                image: '/assets/alan-1.jpg',
+                image: '/assets/alan-3.png',
                 content: {
                     title: 'Strategic Operations Center',
                     welcome: "Systems thinking meets execution. Former COO at EigenLayer and CTO at Core Scientific, I specialize in scaling operations from startup to enterprise.",
@@ -36,7 +36,7 @@ class BustlingWorldV2 {
             investor: {
                 name: 'Investor',
                 theme: 'persona-investor',
-                image: '/assets/alan-3.png',
+                image: '/assets/alan-1.jpg',
                 content: {
                     title: 'The Trading Hall',
                     welcome: "Capital allocation is both art and science. As an active investor and advisor, I help founders navigate from seed to scale.",
