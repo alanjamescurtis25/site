@@ -141,33 +141,26 @@ class BustlingWorldV2 {
             });
 
             // Setup video hover effect for cards with video
-            if (card.dataset.persona === 'founder' || card.dataset.persona === 'operator') {
+            if (card.dataset.persona === 'founder' || card.dataset.persona === 'dad') {
                 const video = card.querySelector('.character-video');
                 if (video) {
                     // Ensure video is muted
                     video.muted = true;
-                    // Only enable auto-loop for founder, we handle operator manually
+                    // Enable auto-loop only for founder, handle dad manually
                     video.loop = card.dataset.persona === 'founder';
 
-                    // Set initial start time for operator video
-                    if (card.dataset.persona === 'operator') {
-                        video.addEventListener('loadedmetadata', () => {
-                            video.currentTime = 3; // Always start at 3 seconds
-                        });
-
-                        // When video ends, loop back to 3 seconds (skip first 3 seconds)
-                        video.addEventListener('ended', () => {
-                            video.currentTime = 3; // Loop back to 3 seconds, not 0
-                            video.play();
+                    // Handle dad video - loop back to start at 6 seconds
+                    if (card.dataset.persona === 'dad') {
+                        video.addEventListener('timeupdate', () => {
+                            if (video.currentTime >= 6) {
+                                video.currentTime = 0; // Loop back to start
+                                // No pause - keep playing
+                            }
                         });
                     }
 
                     // Play video on hover
                     card.addEventListener('mouseenter', () => {
-                        // Always set to 3 seconds for operator
-                        if (card.dataset.persona === 'operator' && video.readyState >= 1) {
-                            video.currentTime = 3;
-                        }
                         video.play().catch(e => {
                             console.log('Video play failed:', e);
                         });
@@ -176,8 +169,7 @@ class BustlingWorldV2 {
                     // Pause and reset video when hover ends
                     card.addEventListener('mouseleave', () => {
                         video.pause();
-                        // Reset to appropriate start time
-                        video.currentTime = card.dataset.persona === 'operator' ? 3 : 0;
+                        video.currentTime = 0;
                     });
                 }
             }

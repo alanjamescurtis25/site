@@ -77,51 +77,22 @@ body {
     position: relative;
 }
 
-/* Dark background base layer */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #1A1D20;
-    z-index: -10000;
-    pointer-events: none;
-}
-
-/* Background image with subtle opacity for barely visible effect */
+/* Remove body background - will be handled per page */
+body::before,
 body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: url('/assets/bg3.png');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    opacity: 0.05;  /* Subtle but visible effect */
-    z-index: -9999;
-    pointer-events: none;
+    display: none;
 }
 
-/* Same base background layer for all personas */
+/* Same for personas - remove body backgrounds */
 body.persona-founder::before,
 body.persona-operator::before,
 body.persona-investor::before,
-body.persona-dad::before {
-    background-color: #1A1D20;
-}
-
-/* Background image with subtle opacity for all personas */
+body.persona-dad::before,
 body.persona-founder::after,
 body.persona-operator::after,
 body.persona-investor::after,
 body.persona-dad::after {
-    background-image: url('/assets/bg3.png');
-    opacity: 0.05;  /* Subtle but visible effect */
+    display: none;
 }
 
 .hidden {
@@ -139,6 +110,36 @@ body.persona-dad::after {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* Dark background base layer for character selection */
+.character-select-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1A1D20;
+    z-index: -2;
+    pointer-events: none;
+}
+
+/* Background image with subtle opacity for character selection */
+.character-select-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/assets/bg3.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 0.5;  /* Subtle but visible effect */
+    z-index: -1;
+    pointer-events: none;
 }
 
 /* ==================== Selection Modal ==================== */
@@ -174,7 +175,7 @@ body.persona-dad::after {
     font-family: var(--font-secondary);
     font-size: 17px;
     font-weight: 300;  /* Lighter weight for less thickness */
-    color: rgba(255, 255, 255, 0.85) !important;  /* Force white text */
+    color: rgba(255, 255, 255, 0.5) !important;  /* Less visible with lower opacity */
     letter-spacing: 0.5px;
     text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
     margin-top: -5px;  /* Move closer to title */
@@ -202,6 +203,26 @@ body.persona-dad::after {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--shadow-card);
     border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Opaque background layer for character cards */
+.character-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #141618;
+    z-index: 0;  /* Changed from -1 to 0 to be above parent but below content */
+    border-radius: 20px;
+    pointer-events: none;
+}
+
+/* Ensure all card content is above the background */
+.character-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 .character-card:hover {
@@ -236,15 +257,9 @@ body.persona-dad::after {
     box-shadow: 0 15px 50px rgba(255, 127, 80, 0.2);
 }
 
-/* Card Backgrounds */
+/* Card Backgrounds - now handled by ::before pseudo-element */
 .card-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0.08;  /* More subtle since image is prominent */
-    z-index: 0;
+    display: none;  /* Disabled as we're using ::before for opaque background */
 }
 
 .warlord-bg {
@@ -360,11 +375,7 @@ body.persona-dad::after {
     filter: brightness(1.05) contrast(1.05) saturate(1.05);
 }
 
-/* Maintain zoom on hover for operator and investor */
-.character-card[data-persona="operator"]:hover .character-photo {
-    transform: scale(1.15) translateY(-4%);  /* Reduced hover zoom to match others */
-    filter: brightness(1.05) contrast(1.05) saturate(1.05);
-}
+/* Maintain zoom on hover for investor */
 
 .character-card[data-persona="investor"]:hover .character-photo {
     transform: scale(1.15) translateY(-8%);  /* Reduced hover zoom, maintain upward position */
@@ -425,17 +436,31 @@ body.persona-dad::after {
     filter: brightness(1.05) contrast(1.05) saturate(1.05);
 }
 
-.character-card[data-persona="operator"]:hover .character-video {
+.character-card[data-persona="dad"]:hover .character-video {
     opacity: 1;
     visibility: visible;
-    filter: none !important;  /* No filter for operator video */
+    filter: brightness(1.05) contrast(1.05) saturate(1.05);
 }
 
-/* Hide image when video is visible */
+/* Adjust dad video position */
+.character-card[data-persona="dad"] .character-video {
+    object-position: center 10%;  /* Move video up more */
+    transform: translateY(-10%);  /* Additional upward adjustment */
+}
+
+/* Hide image when video is visible - only for cards with video */
 .character-card[data-persona="founder"]:hover .character-photo,
-.character-card[data-persona="operator"]:hover .character-photo {
+.character-card[data-persona="dad"]:hover .character-photo {
     opacity: 0;
     visibility: hidden;
+}
+
+/* Keep operator photo visible on hover with effects */
+.character-card[data-persona="operator"]:hover .character-photo {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: scale(1.15) translateY(-4%);  /* Keep zoom effect */
+    filter: brightness(1.05) contrast(1.05) saturate(1.05);
 }
 
 /* ==================== Character Info ==================== */
@@ -631,7 +656,7 @@ body.persona-dad::after {
 .footer-text {
     font-family: var(--font-secondary);
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.5);  /* Reduced opacity for less emphasis */
     letter-spacing: 0.5px;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
 }

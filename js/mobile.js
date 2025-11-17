@@ -106,11 +106,8 @@
             this.cards = Array.from(document.querySelectorAll('.character-card'));
             if (this.cards.length === 0) return;
 
-            // Restructure for mobile with thumbnails
+            // Restructure for mobile with swipe interface
             this.setupMobileLayout();
-
-            // Setup thumbnail navigation
-            this.setupThumbnails();
 
             // Setup swipe gestures
             this.setupSwipeGestures();
@@ -151,7 +148,7 @@
                 }
 
                 // Add click handler for cards with video to toggle playback
-                if (card.dataset.persona === 'founder' || card.dataset.persona === 'operator') {
+                if (card.dataset.persona === 'founder' || card.dataset.persona === 'dad') {
                     let isToggling = false;
                     card.addEventListener('click', (e) => {
                         // Toggle video on any click on the card (for better mobile UX)
@@ -160,7 +157,7 @@
                             e.stopPropagation();
                             e.preventDefault();
                             isToggling = true;
-                            this.toggleFounderVideo(card);  // Works for both founder and operator
+                            this.toggleFounderVideo(card);  // Works for founder and dad
                             // Reset flag after a short delay
                             setTimeout(() => {
                                 isToggling = false;
@@ -175,37 +172,25 @@
             // Clear grid and add main display
             grid.appendChild(mainDisplay);
 
-            // Create thumbnail navigation
-            const thumbnails = document.createElement('div');
-            thumbnails.className = 'character-thumbnails';
+            // Add swipe indicators
+            const swipeIndicators = document.createElement('div');
+            swipeIndicators.className = 'swipe-indicators';
 
-            const characterData = [
-                { persona: 'founder', name: 'Founder', image: '/assets/alan-2.jpeg', animation: '/assets/animation/alan-2-animation.mp4' },
-                { persona: 'operator', name: 'Operator', image: '/assets/operator.png', animation: '/assets/animation/alan-3-animation.mp4' },
-                { persona: 'investor', name: 'Investor', image: '/assets/investor.png' },
-                { persona: 'dad', name: 'Dad', image: '/assets/dad.png' }
-            ];
-
-            characterData.forEach((data, index) => {
-                const thumb = document.createElement('div');
-                thumb.className = 'character-thumbnail';
-                if (index === 0) thumb.classList.add('active');
-                thumb.dataset.index = index;
-
-                const img = document.createElement('img');
-                img.src = data.image;
-                img.alt = data.name;
-                thumb.appendChild(img);
-
-                const name = document.createElement('div');
-                name.className = 'thumb-name';
-                name.textContent = data.name;
-                thumb.appendChild(name);
-
-                thumbnails.appendChild(thumb);
+            // Create dots for each card
+            this.cards.forEach((card, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'swipe-dot';
+                if (index === 0) dot.classList.add('active');
+                swipeIndicators.appendChild(dot);
             });
 
-            grid.appendChild(thumbnails);
+            grid.appendChild(swipeIndicators);
+
+            // Add swipe hint
+            const swipeHint = document.createElement('div');
+            swipeHint.className = 'swipe-hint';
+            swipeHint.innerHTML = '<span>Swipe to explore roles</span>';
+            grid.appendChild(swipeHint);
 
             // Create and add Select Role button
             const buttonContainer = document.createElement('div');
@@ -238,22 +223,65 @@
             this.selectButton = selectButton;
         }
 
-        setupThumbnails() {
-            const thumbnails = document.querySelectorAll('.character-thumbnail');
+        setupSwipeGestures() {
+            const mainDisplay = document.querySelector('.character-main-display');
+            if (!mainDisplay) return;
 
-            thumbnails.forEach((thumb, index) => {
-                thumb.addEventListener('click', () => {
-                    this.switchToCard(index);
-                });
-            });
+            let startX = 0;
+            let startY = 0;
+            let endX = 0;
+            let endY = 0;
+            let isSwiping = false;
+
+            // Touch events for mobile
+            mainDisplay.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isSwiping = true;
+            }, { passive: true });
+
+            mainDisplay.addEventListener('touchmove', (e) => {
+                if (!isSwiping) return;
+                endX = e.touches[0].clientX;
+                endY = e.touches[0].clientY;
+            }, { passive: true });
+
+            mainDisplay.addEventListener('touchend', (e) => {
+                if (!isSwiping) return;
+                isSwiping = false;
+
+                const deltaX = endX - startX;
+                const deltaY = endY - startY;
+
+                // Only process horizontal swipes
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+                    if (deltaX > 0) {
+                        // Swipe right - go to previous card
+                        this.previousCard();
+                    } else {
+                        // Swipe left - go to next card
+                        this.nextCard();
+                    }
+                }
+            }, { passive: true });
+        }
+
+        nextCard() {
+            const nextIndex = (this.currentIndex + 1) % this.cards.length;
+            this.switchToCard(nextIndex);
+        }
+
+        previousCard() {
+            const prevIndex = (this.currentIndex - 1 + this.cards.length) % this.cards.length;
+            this.switchToCard(prevIndex);
         }
 
         switchToCard(index) {
             if (index === this.currentIndex) {
                 // If clicking the same card that's already active
                 const currentCard = this.cards[index];
-                if (currentCard.dataset.persona === 'founder' || currentCard.dataset.persona === 'operator') {
-                    // Toggle video playback for cards with video
+                if (currentCard.dataset.persona === 'founder' || currentCard.dataset.persona === 'dad') {
+                    // Toggle video playback for cards with video (founder and dad only)
                     this.toggleFounderVideo(currentCard);
                 }
                 return;
@@ -265,27 +293,29 @@
                 card.style.display = 'none';
 
                 // Stop video and remove playing class
-                if (card.dataset.persona === 'founder' || card.dataset.persona === 'operator') {
+                if (card.dataset.persona === 'founder' || card.dataset.persona === 'dad') {
                     card.classList.remove('video-playing');
                     const video = card.querySelector('.character-video');
                     if (video) {
                         video.muted = true;  // Ensure muted
                         video.pause();
-                        // Reset to appropriate start time
-                        video.currentTime = card.dataset.persona === 'operator' ? 3 : 0;
+                        video.currentTime = 0;
                     }
                 }
             });
 
-            // Remove active from all thumbnails
-            document.querySelectorAll('.character-thumbnail').forEach(thumb => {
-                thumb.classList.remove('active');
+            // Update swipe indicators
+            document.querySelectorAll('.swipe-dot').forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
             });
 
             // Show ONLY the selected card
             this.cards[index].classList.add('active');
             this.cards[index].style.display = 'flex';
-            document.querySelectorAll('.character-thumbnail')[index].classList.add('active');
 
             // Animate the numbers from 0 to target value
             this.animateCardNumbers(this.cards[index]);
@@ -300,21 +330,31 @@
             }
         }
 
-        toggleFounderVideo(card) {  // Works for both founder and operator videos
+        toggleFounderVideo(card) {  // Works for founder and dad videos
             const video = card.querySelector('.character-video');
             if (!video) return;
 
             // Ensure video is muted
             video.muted = true;
-            // Only auto-loop for founder, we handle operator manually
+            // Auto-loop only for founder, handle dad manually
             video.loop = card.dataset.persona === 'founder';
+
+            // Setup dad video to loop back at 6 seconds
+            if (card.dataset.persona === 'dad' && !video.hasAttribute('data-listener-added')) {
+                video.setAttribute('data-listener-added', 'true');
+                video.addEventListener('timeupdate', () => {
+                    if (video.currentTime >= 6) {
+                        video.currentTime = 0; // Loop back to start
+                        // Keep playing - no pause
+                    }
+                });
+            }
 
             if (card.classList.contains('video-playing')) {
                 // Stop video and go back to image
                 card.classList.remove('video-playing');
                 video.pause();
-                // Reset to appropriate start time
-                video.currentTime = card.dataset.persona === 'operator' ? 3 : 0;
+                video.currentTime = 0;
 
                 // Remove any inline styles that might override CSS
                 video.removeAttribute('style');
@@ -326,25 +366,9 @@
                 // Start video
                 video.load(); // Force reload the video
 
-                // Always start operator at 3 seconds
-                if (card.dataset.persona === 'operator') {
-                    video.currentTime = 3;
-
-                    // Handle video ended event - loop back to 3 seconds
-                    video.onended = () => {
-                        video.currentTime = 3; // Always skip first 3 seconds
-                        video.play();
-                    };
-                }
-
                 // Start video with a small delay for reliability
                 setTimeout(() => {
                     card.classList.add('video-playing');
-
-                    // Ensure operator starts at 3 seconds
-                    if (card.dataset.persona === 'operator') {
-                        video.currentTime = 3;
-                    }
 
                     video.play().catch((e) => {
                         console.log('Video play failed:', e);
