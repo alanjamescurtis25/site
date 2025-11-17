@@ -168,6 +168,27 @@ body::after {
         position: relative;
         overflow: visible;
         margin: 0 auto;
+        /* Ensure consistent size even when video is playing */
+        box-sizing: border-box;
+        /* No border by default on mobile */
+        border: none !important;
+    }
+    
+    /* Maintain fixed height when video is playing */
+    .character-card.video-playing {
+        min-height: 480px !important;
+        height: auto !important;
+    }
+    
+    /* Prevent hover borders from desktop CSS on mobile */
+    .character-card:hover,
+    .character-card[data-persona="founder"]:hover,
+    .character-card[data-persona="operator"]:hover,
+    .character-card[data-persona="investor"]:hover,
+    .character-card[data-persona="dad"]:hover {
+        border: none !important;
+        box-shadow: none !important;
+        transform: none !important;
     }
 
     /* Background color for characterSelect div on mobile */
@@ -805,10 +826,22 @@ body::after {
         font-size: 23px !important;  /* Keep increased size when video plays */
     }
 
-    /* Touch feedback */
-    .character-card:active {
+    /* Touch feedback - but not during swipe */
+    .character-card:active:not(.swiping) {
         transform: scale(0.98);
         transition: transform 0.1s;
+    }
+    
+    /* Prevent active state during swipe - no border, no transform */
+    .character-card.swiping:active {
+        transform: none !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* Prevent border from appearing during any active state on mobile */
+    .character-card:active {
+        border: none !important;
     }
 
     /* Hide scroll indicators - not needed with grid layout */
