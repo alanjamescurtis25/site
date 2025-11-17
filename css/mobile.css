@@ -35,6 +35,35 @@ body {
     position: relative;
 }
 
+/* Mobile Background Layers - Same as Desktop */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #1A1D20;
+    z-index: -10000;
+    pointer-events: none;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('/assets/bg3.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 0.15;  /* Subtle but visible effect */
+    z-index: -9999;
+    pointer-events: none;
+}
+
 /* ==================== Mobile Character Selection ==================== */
 @media (max-width: 768px) {
     /* Full screen overlay - now scrollable */
@@ -47,7 +76,7 @@ body {
         width: 100%;
         height: 100%;
         z-index: 9999;
-        background: linear-gradient(135deg, #1a1a2e 0%, #0a0a1e 100%);
+        background: linear-gradient(135deg, #0A0B0D 0%, #141618 100%);
         overflow-y: scroll; /* Force scrollbar always */
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
@@ -79,18 +108,22 @@ body {
     }
 
     .select-title {
-        font-size: 22px;
-        letter-spacing: 3px;
+        font-size: 26px;  /* Professional size for Libre Baskerville on mobile */
+        letter-spacing: 2px;
         margin-bottom: 8px; /* Reduced from 15px */
         margin-top: 5px;
-        color: rgba(234, 234, 234, 0.95) !important;
+        color: #F0F2F5 !important;
+        text-transform: uppercase;  /* Professional, authoritative */
+        font-weight: 700;
     }
 
     .select-subtitle {
         font-size: 12px;
-        margin-top: 3px;
+        font-weight: 300;  /* Lighter weight on mobile */
+        margin-top: 0;  /* Closer to title */
         margin-bottom: 5px; /* Reduced from 10px */
-        color: rgba(234, 234, 234, 0.85) !important;
+        color: #D8D8D8 !important;
+        letter-spacing: 0.3px;
     }
 
     /* Character Selection - One main card with thumbnails */
@@ -119,7 +152,7 @@ body {
         width: 95%;
         max-width: 380px;
         height: auto;
-        min-height: 500px;
+        min-height: 550px;  /* Increased to accommodate larger portrait */
         padding: 0;
         flex-direction: column;
         border-radius: 12px;
@@ -130,7 +163,7 @@ body {
 
     /* Background color for characterSelect div on mobile */
     #characterSelect {
-        background: #1A1D20 !important;
+        background: #0A0B0D !important;
     }
 
     /* Same background color for all character cards on mobile */
@@ -138,7 +171,7 @@ body {
     .character-card[data-persona="operator"],
     .character-card[data-persona="investor"],
     .character-card[data-persona="dad"] {
-        background: #1E2C23 !important;
+        background: #141618 !important;
     }
 
     /* Ensure the background elements inside all cards also use the same color */
@@ -148,7 +181,7 @@ body {
     .character-card[data-persona="dad"] .scholar-bg,
     .character-card[data-persona="dad"] .artist-bg,
     .character-card .card-background {
-        background: #1E2C23 !important;
+        background: #141618 !important;
     }
 
     /* Hide character-frame on mobile - merge with portrait */
@@ -164,16 +197,59 @@ body {
 
     /* Adjust portrait for main card */
     .character-portrait {
-        height: 300px; /* Fixed height instead of percentage */
+        height: 350px; /* Increased height to show more image */
         width: 100%;
         position: relative;
         margin: 0;
         border-radius: 12px 12px 0 0;
         overflow: hidden;
-        background: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%);
+        background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
+        /* Ultra-smooth gradient fade matching desktop */
+        -webkit-mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 45%,   /* Full opacity until 45% */
+            rgba(0,0,0,0.995) 48%,
+            rgba(0,0,0,0.99) 51%,
+            rgba(0,0,0,0.98) 54%,
+            rgba(0,0,0,0.96) 57%,
+            rgba(0,0,0,0.93) 60%,
+            rgba(0,0,0,0.89) 62%,
+            rgba(0,0,0,0.84) 64%,
+            rgba(0,0,0,0.78) 66%,
+            rgba(0,0,0,0.71) 68%,
+            rgba(0,0,0,0.63) 70%,
+            rgba(0,0,0,0.54) 72%,
+            rgba(0,0,0,0.44) 74%,
+            rgba(0,0,0,0.34) 76%,
+            rgba(0,0,0,0.24) 78%,
+            rgba(0,0,0,0.15) 80%,
+            rgba(0,0,0,0.08) 82%,
+            rgba(0,0,0,0.03) 84%,
+            rgba(0,0,0,0) 86%);
+        mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 45%,   /* Full opacity until 45% */
+            rgba(0,0,0,0.995) 48%,
+            rgba(0,0,0,0.99) 51%,
+            rgba(0,0,0,0.98) 54%,
+            rgba(0,0,0,0.96) 57%,
+            rgba(0,0,0,0.93) 60%,
+            rgba(0,0,0,0.89) 62%,
+            rgba(0,0,0,0.84) 64%,
+            rgba(0,0,0,0.78) 66%,
+            rgba(0,0,0,0.71) 68%,
+            rgba(0,0,0,0.63) 70%,
+            rgba(0,0,0,0.54) 72%,
+            rgba(0,0,0,0.44) 74%,
+            rgba(0,0,0,0.34) 76%,
+            rgba(0,0,0,0.24) 78%,
+            rgba(0,0,0,0.15) 80%,
+            rgba(0,0,0,0.08) 82%,
+            rgba(0,0,0,0.03) 84%,
+            rgba(0,0,0,0) 86%);
     }
 
     .character-photo,
@@ -185,12 +261,27 @@ body {
         transform: scale(1.15);
     }
 
+    /* Extra zoom for operator and investor on mobile */
+    .character-card[data-persona="operator"] .character-photo {
+        transform: scale(1.15) translateY(-2%);  /* Reduced zoom to match others */
+        object-position: center 0%;  /* Moved to top to bring head closer */
+    }
+
+    .character-card[data-persona="investor"] .character-photo {
+        transform: scale(1.15) translateY(-6%);  /* Reduced zoom and move up slightly */
+        object-position: center 0%;  /* Moved to top to bring head closer */
+    }
+
+    .character-card[data-persona="dad"] .character-photo {
+        transform: scale(1.12) translateY(-6%);  /* Reduced zoom and move up slightly */
+        object-position: center 20%;  /* Moved up to 20% to bring head closer to top */
+    }
+
     /* Info section for main card - natural height, no scroll */
     .character-info {
         height: auto;
-        padding: 20px;
-        padding-bottom: 10px;
-        margin-top: 0;
+        padding: 60px 20px 10px 20px;
+        margin-top: -110px;  /* Significant overlap to match desktop fade */
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -199,9 +290,8 @@ body {
         position: relative;
         z-index: 1;
         overflow: visible;
-        background: linear-gradient(to bottom,
-            rgba(30, 44, 35, 0.95) 0%,
-            rgba(26, 26, 46, 0.98) 100%);
+        /* Transparent background to show bg3.png */
+        background: transparent;
         border-radius: 0 0 12px 12px;
     }
 
@@ -215,29 +305,35 @@ body {
     }
 
     .character-name {
-        font-size: 24px !important;
-        letter-spacing: 2px;
+        font-size: 22px !important;  /* Professional size for Libre Baskerville on mobile */
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-top: 15px;  /* Added top margin to move down */
         margin-bottom: 8px;
-        color: rgba(234, 234, 234, 0.95) !important;
+        color: #F0F2F5 !important;
         width: auto !important;
         display: block !important;
     }
 
     .character-title {
         font-size: 14px !important;
-        margin: 5px 0;
-        color: rgba(234, 234, 234, 0.85) !important;
+        font-weight: 400 !important;  /* Lighter weight on mobile */
+        margin: 4px 0 8px 0;  /* Slightly increased spacing */
+        color: #D8D8D8 !important;
+        letter-spacing: 0.3px;
     }
 
     .character-desc {
         font-size: 13px !important;
         line-height: 1.4;
-        margin: 10px 0;
+        margin: 12px 0 10px 0;  /* Added more space before description */
         min-height: unset;
         color: rgba(234, 234, 234, 0.8) !important;
     }
 
     /* Stats for main card - Progress bar layout */
+    /* Stats removed per design update - keeping styles commented in case of future use
     .character-stats {
         display: flex;
         flex-direction: column;
@@ -258,12 +354,10 @@ body {
         overflow: hidden;
     }
 
-    /* Keep background color consistent when active */
     .character-card.active .stat-item {
         background: rgba(255, 255, 255, 0.05) !important;
     }
 
-    /* Create progress bar background - even softer versions with cohesive colors */
     .character-card[data-persona="founder"] .stat-item::before {
         content: '';
         position: absolute;
@@ -328,7 +422,6 @@ body {
         transition: width 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
     }
 
-    /* Animate bars when card becomes active */
     .character-card.active .stat-item:nth-child(1)::before { animation: fillBar 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; --stat-width: 95%; }
     .character-card.active .stat-item:nth-child(2)::before { animation: fillBar 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; --stat-width: 85%; }
     .character-card.active .stat-item:nth-child(3)::before { animation: fillBar 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; --stat-width: 80%; }
@@ -344,7 +437,6 @@ body {
         }
     }
 
-    /* Set bar widths based on values - Founder */
     .character-card[data-persona="founder"] .stat-item span {
         position: absolute;
         right: 8px;
@@ -357,7 +449,6 @@ body {
         z-index: 2;
     }
 
-    /* Operator */
     .character-card[data-persona="operator"] .stat-item span {
         position: absolute;
         right: 8px;
@@ -370,7 +461,6 @@ body {
         z-index: 2;
     }
 
-    /* Investor */
     .character-card[data-persona="investor"] .stat-item span {
         position: absolute;
         right: 8px;
@@ -383,7 +473,6 @@ body {
         z-index: 2;
     }
 
-    /* Dad */
     .character-card[data-persona="dad"] .stat-item span {
         position: absolute;
         right: 8px;
@@ -396,7 +485,6 @@ body {
         z-index: 2;
     }
 
-    /* Keep the same colors when active */
     .character-card[data-persona="founder"].active .stat-item span {
         background: #A0A453 !important;
     }
@@ -411,7 +499,6 @@ body {
         color: #fff !important;
     }
 
-    /* Label text */
     .stat-item {
         color: rgba(255, 255, 255, 0.8) !important;
         z-index: 1;
@@ -420,10 +507,10 @@ body {
         font-weight: 500;
     }
 
-    /* Ensure color doesn't change when active */
     .character-card.active .stat-item {
         color: rgba(255, 255, 255, 0.8) !important;
     }
+    */
 
 
     /* Thumbnail navigation */
@@ -456,6 +543,17 @@ body {
         height: 100%;
         object-fit: cover;
         object-position: center;
+    }
+
+    /* Zoom operator and investor thumbnails */
+    .character-thumbnail[data-persona="operator"] img {
+        transform: scale(1.2);
+        object-position: center 25%;
+    }
+
+    .character-thumbnail[data-persona="investor"] img {
+        transform: scale(1.2);
+        object-position: center 25%;
     }
 
     .character-thumbnail .thumb-name {
@@ -1684,13 +1782,17 @@ body {
         -webkit-line-clamp: 2;
     }
 
+    /* Stats removed per design update
     .stat-item {
         font-size: 9px;
     }
+    */
 
+    /* Stats removed per design update
     .stat-item span {
         font-size: 8px;
     }
+    */
 
     h1 {
         font-size: 24px;

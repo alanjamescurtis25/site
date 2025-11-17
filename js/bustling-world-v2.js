@@ -25,7 +25,7 @@ class BustlingWorldV2 {
             operator: {
                 name: 'Operator',
                 theme: 'persona-operator',
-                image: '/assets/alan-3.png',
+                image: '/assets/operator.png',
                 content: {
                     title: 'Strategic Operations Center',
                     welcome: "Systems thinking meets execution. Former COO at EigenLayer and CTO at Core Scientific, I specialize in scaling operations from startup to enterprise.",
@@ -36,7 +36,7 @@ class BustlingWorldV2 {
             investor: {
                 name: 'Investor',
                 theme: 'persona-investor',
-                image: '/assets/alan-1.jpg',
+                image: '/assets/investor.png',
                 content: {
                     title: 'The Trading Hall',
                     welcome: "Capital allocation is both art and science. As an active investor and advisor, I help founders navigate from seed to scale.",
@@ -47,7 +47,7 @@ class BustlingWorldV2 {
             dad: {
                 name: 'Dad',
                 theme: 'persona-dad',
-                image: '/assets/alan-4.jpg',
+                image: '/assets/dad.png',
                 content: {
                     title: "The Scholar's Sanctuary",
                     welcome: "Hey there! Beyond all the titles and ventures, I'm a dad first. Life's greatest ROI comes from family, relationships, and helping others grow.",
@@ -601,12 +601,12 @@ function initializeBustlingWorld() {
     if (window.innerWidth > 768) {
         const img = new Image();
         img.onload = function() {
-            console.log('Background image loaded successfully: /assets/pg.png');
+            console.log('Background image loaded successfully: /assets/bg3.png');
         };
         img.onerror = function() {
-            console.error('Failed to load background image: /assets/pg.png');
+            console.error('Failed to load background image: /assets/bg3.png');
         };
-        img.src = '/assets/pg.png';
+        img.src = '/assets/bg3.png';
 
         // Check computed styles
         const bodyStyles = window.getComputedStyle(document.body, '::before');

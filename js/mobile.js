@@ -181,9 +181,9 @@
 
             const characterData = [
                 { persona: 'founder', name: 'Founder', image: '/assets/alan-2.jpeg', animation: '/assets/animation/alan-2-animation.mp4' },
-                { persona: 'operator', name: 'Operator', image: '/assets/alan-3.png', animation: '/assets/animation/alan-3-animation.mp4' },
-                { persona: 'investor', name: 'Investor', image: '/assets/alan-1.jpg' },
-                { persona: 'dad', name: 'Dad', image: '/assets/alan-4.jpg' }
+                { persona: 'operator', name: 'Operator', image: '/assets/operator.png', animation: '/assets/animation/alan-3-animation.mp4' },
+                { persona: 'investor', name: 'Investor', image: '/assets/investor.png' },
+                { persona: 'dad', name: 'Dad', image: '/assets/dad.png' }
             ];
 
             characterData.forEach((data, index) => {
@@ -504,6 +504,8 @@
         }
 
         setupStatBars() {
+            // Stats removed per design update - keeping function in case of future use
+            /*
             // Set up progress bar widths based on stat values for all cards
             this.cards.forEach((card, cardIndex) => {
                 const statItems = card.querySelectorAll('.stat-item');
@@ -537,6 +539,7 @@
                     }
                 });
             });
+            */
         }
 
         animateNumber(element, targetValue) {
@@ -545,6 +548,8 @@
         }
 
         animateCardNumbers(card) {
+            // Stats removed per design update - keeping function in case of future use
+            /*
             const statItems = card.querySelectorAll('.stat-item span');
             statItems.forEach((span, index) => {
                 const target = parseInt(span.getAttribute('data-target') || span.textContent);
@@ -576,6 +581,7 @@
                     requestAnimationFrame(updateNumber);
                 }, delay);
             });
+            */
         }
     }
 
