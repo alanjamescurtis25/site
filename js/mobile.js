@@ -238,11 +238,6 @@
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
                 isSwiping = true;
-                // Add swiping class to prevent :active state during swipe
-                const activeCard = document.querySelector('.character-card.active');
-                if (activeCard) {
-                    activeCard.classList.add('swiping');
-                }
             }, { passive: true });
 
             mainDisplay.addEventListener('touchmove', (e) => {
@@ -253,19 +248,13 @@
 
             mainDisplay.addEventListener('touchend', (e) => {
                 if (!isSwiping) return;
-                
+                isSwiping = false;
+
                 const deltaX = endX - startX;
                 const deltaY = endY - startY;
 
-                // Remove swiping class
-                const activeCard = document.querySelector('.character-card.active');
-                if (activeCard) {
-                    activeCard.classList.remove('swiping');
-                }
-
                 // Only process horizontal swipes
                 if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
-                    isSwiping = false;
                     if (deltaX > 0) {
                         // Swipe right - go to previous card
                         this.previousCard();
@@ -273,8 +262,6 @@
                         // Swipe left - go to next card
                         this.nextCard();
                     }
-                } else {
-                    isSwiping = false;
                 }
             }, { passive: true });
         }
