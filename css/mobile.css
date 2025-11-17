@@ -859,6 +859,14 @@ body::after {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
+    /* Adjust border for light themes on mobile */
+    body.persona-investor .mobile-header,
+    body.persona-investor .mobile-nav-header,
+    body.persona-dad .mobile-header,
+    body.persona-dad .mobile-nav-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
     /* Hamburger menu button - always visible on mobile */
     .hamburger,
     #hamburger {
@@ -1076,19 +1084,50 @@ body::after {
 
     /* Persona-specific sidebar backgrounds */
     body.persona-founder .sidebar {
-        background: rgba(30, 44, 35, 0.98); /* Founder green theme */
+        background: rgba(30, 44, 35, 0.98); /* Founder green theme - matches #1E2C23 */
     }
 
     body.persona-operator .sidebar {
-        background: rgba(42, 39, 26, 0.98); /* Operator yellow theme */
+        background: rgba(26, 29, 32, 0.98); /* Operator dark theme - matches #1A1D20 */
     }
 
     body.persona-investor .sidebar {
-        background: rgba(46, 39, 29, 0.98); /* Investor bronze theme */
+        background: rgba(239, 235, 228, 0.98); /* Investor light theme - matches #EFEBE4 */
     }
 
     body.persona-dad .sidebar {
-        background: rgba(51, 34, 30, 0.98); /* Dad coral theme */
+        background: rgba(255, 251, 239, 0.98); /* Dad warm light theme - matches #FFFBEF */
+    }
+
+    /* Light theme adjustments for mobile navigation */
+    body.persona-investor .nav-link,
+    body.persona-dad .nav-link {
+        color: #0A1D1A !important; /* Dark text for light backgrounds */
+    }
+
+    body.persona-investor .nav-link:hover,
+    body.persona-investor .nav-link:active,
+    body.persona-dad .nav-link:hover,
+    body.persona-dad .nav-link:active {
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--theme-accent) !important;
+    }
+
+    body.persona-investor .nav-link.active,
+    body.persona-dad .nav-link.active {
+        background: rgba(0, 0, 0, 0.08);
+        border-left-color: var(--theme-accent);
+        color: var(--theme-accent) !important;
+    }
+
+    body.persona-investor .site-title-link,
+    body.persona-dad .site-title-link {
+        color: #0A1D1A !important;
+    }
+
+    body.persona-investor .persona-badge,
+    body.persona-dad .persona-badge {
+        background: rgba(0, 0, 0, 0.05);
     }
 
     .sidebar.open {

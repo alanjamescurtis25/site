@@ -5,25 +5,25 @@
 
 /* ==================== CSS Variables ==================== */
 :root {
-    /* Founder Theme - Strategic Deep Blue */
-    --founder-bg: #0F1419;
+    /* Founder Theme - Strategic Deep Green */
+    --founder-bg: #1E2C23;
     --founder-accent: #A0A453;
-    --founder-text: #E8EAED;
+    --founder-text: #D8D8D8;
 
-    /* Operator Theme - Executive Charcoal */
-    --operator-bg: #1A1F2E;
+    /* Operator Theme - Executive Dark */
+    --operator-bg: #1A1D20;
     --operator-accent: #FFB800;
-    --operator-text: #F0F2F5;
+    --operator-text: #EAEAEA;
 
-    /* Investor Theme - Sophisticated Gold */
-    --investor-bg: #1C1917;
+    /* Investor Theme - Sophisticated Light */
+    --investor-bg: #EFEBE4;
     --investor-accent: #C39F47;
-    --investor-text: #FAF9F6;
+    --investor-text: #0A1D1A;
 
-    /* Dad Theme - Warm Earth Tones */
-    --dad-bg: #2C241F;
+    /* Dad Theme - Warm Light */
+    --dad-bg: #FFFBEF;
     --dad-accent: #FF7F50;
-    --dad-text: #F5F3F0;
+    --dad-text: #4A4A4A;
 
     /* Typography - Professional Classic Business (Active) */
     --font-primary: 'Libre Baskerville', serif;  /* Authoritative, classic headers */
@@ -1294,6 +1294,10 @@ body.persona-dad .sidebar {
 body.persona-investor .sidebar,
 body.persona-dad .sidebar {
     border-right: 1px solid rgba(0,0,0,0.1);
+    background: linear-gradient(180deg,
+        rgba(255,255,255,0.95) 0%,
+        rgba(255,255,255,0.9) 50%,
+        rgba(255,255,255,0.85) 100%);
 }
 
 body.persona-investor .nav-link,
@@ -1302,8 +1306,32 @@ body.persona-dad .nav-link {
 }
 
 body.persona-investor h1, body.persona-investor h2, body.persona-investor h3,
-body.persona-dad h1, body.persona-dad h2, body.persona-dad h3 {
+body.persona-investor h4, body.persona-investor h5, body.persona-investor h6,
+body.persona-investor p, body.persona-investor li, body.persona-investor span,
+body.persona-dad h1, body.persona-dad h2, body.persona-dad h3,
+body.persona-dad h4, body.persona-dad h5, body.persona-dad h6,
+body.persona-dad p, body.persona-dad li, body.persona-dad span {
     color: var(--theme-text);
+}
+
+/* Adjust borders and shadows for light backgrounds */
+body.persona-investor .card, body.persona-investor .article-item,
+body.persona-investor .investment-item, body.persona-investor .quote-item,
+body.persona-dad .card, body.persona-dad .article-item,
+body.persona-dad .investment-item, body.persona-dad .quote-item {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Adjust hover states for light backgrounds */
+body.persona-investor .nav-link:hover,
+body.persona-dad .nav-link:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.persona-investor .nav-link.active,
+body.persona-dad .nav-link.active {
+    background: rgba(0, 0, 0, 0.08);
 }
 
 /* ==================== Split View Layout ==================== */
