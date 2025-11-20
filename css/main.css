@@ -1,0 +1,3144 @@
+/**
+ * Main CSS - Unified Styles for The Bustling World
+ * Combines desktop and mobile styles
+ * Professional Game-Inspired Portfolio
+ *
+ * @version 3.0.0
+ */
+
+/* ==================== CSS Variables ==================== */
+:root {
+    /* Founder Theme - Strategic Deep Green */
+    --founder-bg: #1E2C23;
+    --founder-accent: #A0A453;
+    --founder-text: #D8D8D8;
+
+    /* Operator Theme - Executive Dark */
+    --operator-bg: #1A1D20;
+    --operator-accent: #FFB800;
+    --operator-text: #EAEAEA;
+
+    /* Investor Theme - Sophisticated Light */
+    --investor-bg: #EFEBE4;
+    --investor-accent: #C39F47;
+    --investor-text: #0A1D1A;
+
+    /* Dad Theme - Warm Light */
+    --dad-bg: #FFFBEF;
+    --dad-accent: #FF7F50;
+    --dad-text: #4A4A4A;
+
+    /* Typography - Professional Classic Business (Active) */
+    --font-primary: 'Libre Baskerville', serif;  /* Authoritative, classic headers */
+    --font-secondary: 'Source Serif Pro', serif;  /* Professional, clean subtitles */
+    --font-display: 'Merriweather', serif;  /* Trustworthy, readable display */
+    --font-body: 'Lora', serif;  /* Elegant, highly readable body text */
+
+    /* Base Colors - Modern Dark Gradient */
+    --bg-warm-1: rgba(15, 20, 25, 0.95);
+    --bg-warm-2: rgba(20, 25, 35, 0.95);
+    --bg-warm-3: rgba(25, 30, 40, 0.95);
+    --bg-warm-4: rgba(30, 35, 45, 0.95);
+
+    /* Shadows - Deeper for dark theme */
+    --shadow-card: 0 10px 40px rgba(0,0,0,0.5);
+    --shadow-hover: 0 15px 50px rgba(0,0,0,0.6);
+
+    /* Mobile Variables */
+    --mobile-navbar-height: 60px;
+    --mobile-bottom-nav: 70px;
+    --mobile-padding: 15px;
+    --mobile-card-gap: 15px;
+    --swipe-threshold: 50px;
+    --mobile-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== Base Styles ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@viewport {
+    width: device-width;
+    initial-scale: 1;
+    maximum-scale: 5;
+    user-scalable: yes;
+}
+
+html {
+    overflow-x: hidden;
+}
+
+body {
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    background: transparent;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* Remove body background - will be handled per page */
+body::before,
+body::after {
+    display: none;
+}
+
+/* Same for personas - remove body backgrounds */
+body.persona-founder::before,
+body.persona-operator::before,
+body.persona-investor::before,
+body.persona-dad::before,
+body.persona-founder::after,
+body.persona-operator::after,
+body.persona-investor::after,
+body.persona-dad::after {
+    display: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ==================== Character Selection Overlay ==================== */
+.character-select-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Dark background base layer for character selection */
+.character-select-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1A1D20;
+    z-index: -2;
+    pointer-events: none;
+}
+
+/* Background image with subtle opacity for character selection */
+.character-select-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/assets/bg3.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ==================== Selection Modal ==================== */
+.character-select-modal {
+    width: 90%;
+    max-width: 1400px;
+    max-height: 90vh;
+    background: transparent;
+    border-radius: 20px;
+    overflow: visible;
+    padding: 20px;
+}
+
+/* Scroll Header */
+.scroll-header {
+    padding: 40px 20px 30px;
+    text-align: center;
+    background: transparent;
+}
+
+.select-title {
+    font-family: var(--font-primary);
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.95) !important;
+    margin: 0 0 10px 0;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    text-transform: uppercase;
+}
+
+.select-subtitle {
+    font-family: var(--font-secondary);
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.5) !important;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+    margin-top: -5px;
+}
+
+/* ==================== Character Grid ==================== */
+.character-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(15px, 3vw, 30px);
+    padding: clamp(20px, 4vw, 40px);
+    max-width: 1400px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+/* ==================== Character Card ==================== */
+.character-card {
+    position: relative;
+    background: transparent;
+    backdrop-filter: none;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-card);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Opaque background layer for character cards */
+.character-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #141618;
+    z-index: 0;
+    border-radius: 20px;
+    pointer-events: none;
+}
+
+/* Ensure all card content is above the background */
+.character-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.character-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.3);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Persona-specific hover borders only - no backgrounds */
+.character-card[data-persona="founder"]:hover {
+    background: transparent;
+    border: 1px solid rgba(160, 164, 83, 0.4);
+    box-shadow: 0 15px 50px rgba(160, 164, 83, 0.2);
+}
+
+.character-card[data-persona="operator"]:hover {
+    background: transparent;
+    border: 1px solid rgba(255, 184, 0, 0.4);
+    box-shadow: 0 15px 50px rgba(255, 184, 0, 0.2);
+}
+
+.character-card[data-persona="investor"]:hover {
+    background: transparent;
+    border: 1px solid rgba(195, 159, 71, 0.4);
+    box-shadow: 0 15px 50px rgba(195, 159, 71, 0.2);
+}
+
+.character-card[data-persona="dad"]:hover {
+    background: transparent;
+    border: 1px solid rgba(255, 127, 80, 0.4);
+    box-shadow: 0 15px 50px rgba(255, 127, 80, 0.2);
+}
+
+/* Card Backgrounds - now handled by ::before pseudo-element */
+.card-background {
+    display: none;
+}
+
+.warlord-bg {
+    background: linear-gradient(135deg, var(--founder-bg) 0%, var(--founder-accent) 100%);
+}
+
+.strategist-bg {
+    background: linear-gradient(135deg, var(--operator-bg) 0%, var(--operator-accent) 100%);
+}
+
+.merchant-bg {
+    background: linear-gradient(135deg, var(--investor-bg) 0%, var(--investor-accent) 100%);
+}
+
+.scholar-bg {
+    background: linear-gradient(135deg, var(--dad-bg) 0%, var(--dad-accent) 100%);
+}
+
+/* ==================== Character Portrait ==================== */
+.character-frame {
+    position: relative;
+    z-index: 1;
+    height: clamp(350px, 35vw, 450px);
+    overflow: hidden;
+    margin-bottom: 0;
+    outline: none;
+    border: none;
+    transition: height 0.3s ease;
+}
+
+.character-portrait {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    outline: none;
+    border: none;
+    /* Use mask to fade the image itself - much earlier and smoother fade */
+    -webkit-mask-image: linear-gradient(to bottom,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,1) 45%,
+        rgba(0,0,0,0.995) 48%,
+        rgba(0,0,0,0.99) 51%,
+        rgba(0,0,0,0.98) 54%,
+        rgba(0,0,0,0.96) 57%,
+        rgba(0,0,0,0.93) 60%,
+        rgba(0,0,0,0.89) 62%,
+        rgba(0,0,0,0.84) 64%,
+        rgba(0,0,0,0.78) 66%,
+        rgba(0,0,0,0.71) 68%,
+        rgba(0,0,0,0.63) 70%,
+        rgba(0,0,0,0.54) 72%,
+        rgba(0,0,0,0.44) 74%,
+        rgba(0,0,0,0.34) 76%,
+        rgba(0,0,0,0.24) 78%,
+        rgba(0,0,0,0.15) 80%,
+        rgba(0,0,0,0.08) 82%,
+        rgba(0,0,0,0.03) 84%,
+        rgba(0,0,0,0) 86%);
+    mask-image: linear-gradient(to bottom,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,1) 45%,
+        rgba(0,0,0,0.995) 48%,
+        rgba(0,0,0,0.99) 51%,
+        rgba(0,0,0,0.98) 54%,
+        rgba(0,0,0,0.96) 57%,
+        rgba(0,0,0,0.93) 60%,
+        rgba(0,0,0,0.89) 62%,
+        rgba(0,0,0,0.84) 64%,
+        rgba(0,0,0,0.78) 66%,
+        rgba(0,0,0,0.71) 68%,
+        rgba(0,0,0,0.63) 70%,
+        rgba(0,0,0,0.54) 72%,
+        rgba(0,0,0,0.44) 74%,
+        rgba(0,0,0,0.34) 76%,
+        rgba(0,0,0,0.24) 78%,
+        rgba(0,0,0,0.15) 80%,
+        rgba(0,0,0,0.08) 82%,
+        rgba(0,0,0,0.03) 84%,
+        rgba(0,0,0,0) 86%);
+}
+
+.character-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+    transition: all 0.4s ease;
+    filter: brightness(0.9) contrast(1.1);
+}
+
+/* Zoom in on operator and investor faces */
+.character-card[data-persona="operator"] .character-photo {
+    transform: scale(1.1) translateY(-4%);
+    object-position: center 5%;
+}
+
+.character-card[data-persona="investor"] .character-photo {
+    transform: scale(1.1) translateY(-8%);
+    object-position: center 5%;
+}
+
+.character-card[data-persona="dad"] .character-photo {
+    transform: scale(1.1) translateY(-8%);
+    object-position: center 25%;
+}
+
+/* Portrait Hover Effects */
+.character-card:hover .character-photo {
+    filter: brightness(1.05) contrast(1.05) saturate(1.05);
+}
+
+.character-card[data-persona="investor"]:hover .character-photo {
+    transform: scale(1.15) translateY(-8%);
+    filter: brightness(1.05) contrast(1.05) saturate(1.05);
+}
+
+.character-card[data-persona="dad"]:hover .character-photo {
+    transform: scale(1.15) translateY(-8%);
+    filter: brightness(1.05) contrast(1.05) saturate(1.05);
+}
+
+/* Video Animation */
+.character-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    filter: brightness(0.9) contrast(1.1);
+    -webkit-mask-image: linear-gradient(to bottom,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,1) 40%,
+        rgba(0,0,0,0.9) 50%,
+        rgba(0,0,0,0.7) 60%,
+        rgba(0,0,0,0.5) 70%,
+        rgba(0,0,0,0.3) 80%,
+        rgba(0,0,0,0.1) 90%,
+        rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to bottom,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,1) 40%,
+        rgba(0,0,0,0.9) 50%,
+        rgba(0,0,0,0.7) 60%,
+        rgba(0,0,0,0.5) 70%,
+        rgba(0,0,0,0.3) 80%,
+        rgba(0,0,0,0.1) 90%,
+        rgba(0,0,0,0) 100%);
+}
+
+/* Remove dark filter and mask for operator video */
+.character-card[data-persona="operator"] .character-video {
+    filter: none !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+    transition: opacity 0.1s ease, visibility 0.1s ease;
+}
+
+/* Show video on hover for cards with video */
+.character-card[data-persona="founder"]:hover .character-video {
+    opacity: 1;
+    visibility: visible;
+    filter: brightness(1.05) contrast(1.05) saturate(1.05);
+}
+
+.character-card[data-persona="dad"]:hover .character-video {
+    opacity: 1;
+    visibility: visible;
+    filter: brightness(1.05) contrast(1.05) saturate(1.05);
+}
+
+/* Adjust dad video position */
+.character-card[data-persona="dad"] .character-video {
+    object-position: center 10%;
+    transform: translateY(-10%);
+}
+
+/* Hide image when video is visible - only for cards with video */
+.character-card[data-persona="founder"]:hover .character-photo,
+.character-card[data-persona="dad"]:hover .character-photo {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Keep operator photo visible on hover with effects */
+.character-card[data-persona="operator"]:hover .character-photo {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: scale(1.15) translateY(-4%);
+    filter: brightness(1.05) contrast(1.05) saturate(1.05);
+}
+
+/* ==================== Character Info ==================== */
+.character-info {
+    padding: 80px 20px 20px 20px;
+    position: relative;
+    z-index: 3;
+    margin-top: -180px;
+    background: transparent;
+}
+
+.character-name {
+    font-family: var(--font-primary);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin: 20px 0 0 0;
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    transform-origin: center center;
+    display: inline-block;
+}
+
+.character-title {
+    font-family: var(--font-secondary);
+    font-size: 15px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.85) !important;
+    margin: 6px 0 10px 0;
+    letter-spacing: 0.5px;
+    transition: color 0.3s;
+}
+
+.character-desc {
+    font-family: var(--font-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8) !important;
+    line-height: 1.6;
+    margin: 18px 0 15px 0;
+    transition: color 0.3s;
+    min-height: 45px;
+    display: block;
+    text-align: left;
+}
+
+/* Improve title and description readability on hover */
+.character-card:hover .character-title {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.character-card:hover .character-desc {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Persona-specific Name Colors on Hover */
+.character-card[data-persona="founder"]:hover .character-name {
+    color: #E8F5E9;
+    text-shadow:
+        2px 2px 4px rgba(0,0,0,0.5),
+        0 0 30px rgba(160, 164, 83, 0.8),
+        0 0 50px rgba(160, 164, 83, 0.4);
+    transform: scale(1.05);
+}
+
+.character-card[data-persona="operator"]:hover .character-name {
+    color: #FFF8E1;
+    text-shadow:
+        2px 2px 4px rgba(0,0,0,0.5),
+        0 0 30px rgba(255, 184, 0, 0.8),
+        0 0 50px rgba(255, 184, 0, 0.4);
+    transform: scale(1.05);
+}
+
+.character-card[data-persona="investor"]:hover .character-name {
+    color: #FFFEF7;
+    text-shadow:
+        2px 2px 4px rgba(0,0,0,0.5),
+        0 0 30px rgba(195, 159, 71, 0.8),
+        0 0 50px rgba(195, 159, 71, 0.4);
+    transform: scale(1.05);
+}
+
+.character-card[data-persona="dad"]:hover .character-name {
+    color: #FFF5F0;
+    text-shadow:
+        2px 2px 4px rgba(0,0,0,0.5),
+        0 0 30px rgba(255, 127, 80, 0.8),
+        0 0 50px rgba(255, 127, 80, 0.4);
+    transform: scale(1.05);
+}
+
+/* ==================== Scroll Footer ==================== */
+.scroll-footer {
+    padding: 20px 20px 30px;
+    text-align: center;
+    background: transparent;
+}
+
+.footer-text {
+    font-family: var(--font-secondary);
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+}
+
+/* ==================== Main Container ==================== */
+.container {
+    display: flex;
+    min-height: 100vh;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* ==================== Sidebar ==================== */
+.sidebar {
+    width: 280px;
+    background: rgba(0,0,0,0.15);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+body.persona-investor .sidebar,
+body.persona-dad .sidebar {
+    background: rgba(255,255,255,0.1);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.site-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--theme-text, #D8D8D8);
+    margin: 0 0 15px 0;
+    letter-spacing: 0.5px;
+}
+
+.site-title-link {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+
+.site-title-link:hover {
+    opacity: 0.8;
+    text-decoration: none;
+}
+
+.persona-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    border: 1px solid var(--theme-accent);
+    background: rgba(255,255,255,0.05);
+    font-family: var(--font-body);
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--theme-accent);
+    text-transform: uppercase;
+}
+
+body.persona-investor .persona-badge,
+body.persona-dad .persona-badge {
+    background: rgba(0,0,0,0.05);
+}
+
+/* ==================== Navigation ==================== */
+.navigation {
+    flex-grow: 1;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin: 10px 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--theme-text, #D8D8D8);
+    font-family: var(--font-body);
+    font-size: 14px;
+    border-radius: 0;
+    border-left: 3px solid transparent;
+    background: transparent;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background: rgba(255,255,255,0.05);
+    border-left-color: var(--theme-accent);
+}
+
+body.persona-investor .nav-link:hover,
+body.persona-dad .nav-link:hover {
+    background: rgba(0,0,0,0.03);
+}
+
+.nav-link.active {
+    background: rgba(255,255,255,0.08);
+    border-left-color: var(--theme-accent);
+    color: var(--theme-accent);
+}
+
+body.persona-investor .nav-link.active,
+body.persona-dad .nav-link.active {
+    background: rgba(0,0,0,0.05);
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--theme-text, #D8D8D8);
+}
+
+.nav-text {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* ==================== Main Content ==================== */
+.content {
+    flex: 1;
+    padding: 40px;
+    background: transparent;
+    overflow-y: auto;
+}
+
+.page-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+body.persona-investor .page-header,
+body.persona-dad .page-header {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.page-title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--theme-text, #D8D8D8);
+    margin: 0;
+}
+
+.content-body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: var(--theme-text, #D8D8D8);
+    letter-spacing: 0;
+}
+
+.intro-text {
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.text-link {
+    color: inherit;
+    text-decoration: underline;
+    transition: opacity 0.2s;
+}
+
+.text-link:hover {
+    opacity: 0.7;
+}
+
+/* ==================== Persona Switcher ==================== */
+.persona-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+/* Desktop: Horizontal icon layout */
+@media (min-width: 769px) {
+    .persona-icons-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .persona-options {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        margin-right: 8px;
+        overflow: hidden;
+        max-width: 0;
+        opacity: 0;
+        transition: max-width 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s ease;
+    }
+
+    /* Show options on hover */
+    .persona-icons-container:hover .persona-options {
+        max-width: 216px;
+        opacity: 1;
+    }
+
+    .persona-icon-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.95);
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        padding: 0;
+        transition: all 0.3s ease;
+        box-shadow: none;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateX(20px) scale(0.9);
+        position: relative;
+    }
+
+    /* Staggered animation for icons appearing */
+    .persona-icons-container:hover .persona-icon-btn {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+
+    .persona-icons-container:hover .persona-icon-btn:nth-child(1) {
+        transition-delay: 0.05s;
+    }
+
+    .persona-icons-container:hover .persona-icon-btn:nth-child(2) {
+        transition-delay: 0.1s;
+    }
+
+    .persona-icons-container:hover .persona-icon-btn:nth-child(3) {
+        transition-delay: 0.15s;
+    }
+
+    .persona-icons-container:hover .persona-icon-btn:nth-child(4) {
+        transition-delay: 0.2s;
+    }
+
+    .persona-icon-btn:hover {
+        transform: scale(1.1);
+        box-shadow: none;
+    }
+
+    /* Persona-specific hover border colors */
+    .persona-founder .persona-icon-btn:hover {
+        border-color: #A0A453;
+    }
+
+    .persona-operator .persona-icon-btn:hover {
+        border-color: #FFB800;
+    }
+
+    .persona-investor .persona-icon-btn:hover {
+        border-color: #C39F47;
+    }
+
+    .persona-dad .persona-icon-btn:hover {
+        border-color: #FF7F50;
+    }
+
+    /* Hide current persona in the options */
+    .persona-icon-btn.current-role {
+        display: none !important;
+    }
+
+    .persona-icon-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: center 25%;
+        display: block;
+    }
+
+    /* Zoom in operator and investor in persona switcher */
+    .persona-icon-btn[data-persona="operator"] .persona-icon-img {
+        transform: scale(1.2);
+        object-position: center 30%;
+    }
+
+    .persona-icon-btn[data-persona="investor"] .persona-icon-img {
+        transform: scale(1.2);
+        object-position: center 30%;
+    }
+
+    /* Hide mobile dropdown on desktop */
+    .persona-dropdown.mobile-only {
+        display: none !important;
+    }
+}
+
+.persona-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.95);
+    border: 2px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: all 0.3s;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Role-specific border colors for persona button */
+body.persona-founder .persona-btn {
+    border-color: var(--founder-accent);
+    border-width: 2px;
+}
+
+body.persona-operator .persona-btn {
+    border-color: var(--operator-accent);
+    border-width: 2px;
+}
+
+body.persona-investor .persona-btn {
+    border-color: var(--investor-accent);
+    border-width: 2px;
+}
+
+body.persona-dad .persona-btn {
+    border-color: var(--dad-accent);
+    border-width: 2px;
+}
+
+.current-persona-avatar {
+    display: block;
+    width: 100%;
+    height: 100%;
+    line-height: 0;
+}
+
+.persona-profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    display: block;
+}
+
+/* Zoom in operator and investor current persona images */
+body.persona-operator .persona-profile-img[src*="operator"],
+body.persona-investor .persona-profile-img[src*="investor"] {
+    transform: scale(1.2);
+    object-position: center 30%;
+}
+
+.persona-btn:hover {
+    transform: scale(1.05);
+    box-shadow: none;
+}
+
+.persona-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    padding: 10px;
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: #333;
+    transition: background 0.2s;
+    border-radius: 5px;
+}
+
+.dropdown-item:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: rgba(0,0,0,0.1);
+    margin: 10px 0;
+}
+
+/* ==================== Writing Page Styles ==================== */
+.writing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.writing-item {
+    background: rgba(245, 242, 232, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 25px;
+    transition: all 0.3s ease;
+}
+
+.writing-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    background: rgba(245, 242, 232, 0.9);
+}
+
+.writing-item h3 {
+    font-family: var(--font-primary);
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    letter-spacing: 0.5px;
+}
+
+.writing-item h3 a {
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.writing-item h3 a:hover {
+    color: var(--founder-accent);
+}
+
+.writing-item p {
+    font-family: var(--font-secondary);
+    font-size: 15px;
+    line-height: 1.6;
+    color: #4a4a4a;
+    margin: 0;
+}
+
+/* ==================== Mobile Responsive ==================== */
+.hamburger,
+#hamburger {
+    display: none;
+    position: fixed;
+    top: 18px;
+    left: 15px;
+    width: 30px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    z-index: 1002;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 0;
+}
+
+.hamburger span,
+#hamburger span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: var(--theme-text, #fff);
+    margin: 0;
+    transition: all 0.3s;
+    border-radius: 2px;
+    transform-origin: left;
+}
+
+/* Hide mobile role title on desktop */
+.mobile-role-title {
+    display: none;
+}
+
+/* ==================== Persona Theme Classes ==================== */
+body.persona-founder {
+    --theme-primary: var(--founder-bg);
+    --theme-accent: var(--founder-accent);
+    --theme-text: var(--founder-text);
+    background-color: var(--founder-bg) !important;
+    color: var(--founder-text) !important;
+}
+
+body.persona-operator {
+    --theme-primary: var(--operator-bg);
+    --theme-accent: var(--operator-accent);
+    --theme-text: var(--operator-text);
+    background-color: var(--operator-bg) !important;
+    color: var(--operator-text) !important;
+}
+
+body.persona-investor {
+    --theme-primary: var(--investor-bg);
+    --theme-accent: var(--investor-accent);
+    --theme-text: var(--investor-text);
+    background-color: var(--investor-bg) !important;
+    color: var(--investor-text) !important;
+}
+
+body.persona-dad {
+    --theme-primary: var(--dad-bg);
+    --theme-accent: var(--dad-accent);
+    --theme-text: var(--dad-text);
+    background-color: var(--dad-bg) !important;
+    color: var(--dad-text) !important;
+}
+
+/* Apply theme colors to specific elements */
+body.persona-founder,
+body.persona-operator,
+body.persona-investor,
+body.persona-dad {
+    transition: background-color 0.5s ease, color 0.3s ease;
+}
+
+body.persona-founder .content,
+body.persona-operator .content,
+body.persona-investor .content,
+body.persona-dad .content {
+    background-color: transparent;
+    color: inherit;
+}
+
+body.persona-founder h1,
+body.persona-founder h2,
+body.persona-founder h3,
+body.persona-founder p,
+body.persona-founder li,
+body.persona-operator h1,
+body.persona-operator h2,
+body.persona-operator h3,
+body.persona-operator p,
+body.persona-operator li {
+    color: var(--theme-text);
+}
+
+body.persona-founder a,
+body.persona-operator a,
+body.persona-investor a,
+body.persona-dad a {
+    color: var(--theme-accent);
+}
+
+body.persona-founder .nav-link:hover,
+body.persona-operator .nav-link:hover,
+body.persona-investor .nav-link:hover,
+body.persona-dad .nav-link:hover,
+body.persona-founder .nav-link.active,
+body.persona-operator .nav-link.active,
+body.persona-investor .nav-link.active,
+body.persona-dad .nav-link.active {
+    color: var(--theme-accent);
+    border-color: var(--theme-accent);
+}
+
+body.persona-founder .sidebar,
+body.persona-operator .sidebar,
+body.persona-investor .sidebar,
+body.persona-dad .sidebar {
+    background: linear-gradient(180deg,
+        rgba(0,0,0,0.1) 0%,
+        rgba(0,0,0,0.05) 50%,
+        transparent 100%);
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Adjust text colors for light backgrounds (Investor and Dad) */
+body.persona-investor .sidebar,
+body.persona-dad .sidebar {
+    border-right: 1px solid rgba(0,0,0,0.1);
+    background: linear-gradient(180deg,
+        rgba(255,255,255,0.95) 0%,
+        rgba(255,255,255,0.9) 50%,
+        rgba(255,255,255,0.85) 100%);
+}
+
+body.persona-investor .nav-link,
+body.persona-dad .nav-link {
+    color: var(--theme-text);
+}
+
+body.persona-investor h1, body.persona-investor h2, body.persona-investor h3,
+body.persona-investor h4, body.persona-investor h5, body.persona-investor h6,
+body.persona-investor p, body.persona-investor li, body.persona-investor span,
+body.persona-dad h1, body.persona-dad h2, body.persona-dad h3,
+body.persona-dad h4, body.persona-dad h5, body.persona-dad h6,
+body.persona-dad p, body.persona-dad li, body.persona-dad span {
+    color: var(--theme-text);
+}
+
+/* Adjust borders and shadows for light backgrounds */
+body.persona-investor .card, body.persona-investor .article-item,
+body.persona-investor .investment-item, body.persona-investor .quote-item,
+body.persona-dad .card, body.persona-dad .article-item,
+body.persona-dad .investment-item, body.persona-dad .quote-item {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Adjust hover states for light backgrounds */
+body.persona-investor .nav-link:hover,
+body.persona-dad .nav-link:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.persona-investor .nav-link.active,
+body.persona-dad .nav-link.active {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+/* ==================== Split View Layout ==================== */
+.split-view {
+    display: flex;
+    gap: 30px;
+    height: calc(100vh - 80px);
+    padding: 40px;
+}
+
+.list-pane {
+    width: 300px;
+    min-width: 300px;
+    overflow-y: auto;
+    padding-right: 20px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reading-pane {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px;
+}
+
+/* ==================== Post List Styles ==================== */
+.post-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.post-list li {
+    margin: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.post-list li:last-child {
+    border-bottom: none;
+}
+
+.post-list a {
+    display: block;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: var(--theme-text, #D8D8D8);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+    position: relative;
+}
+
+.post-list a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-left-color: var(--theme-accent, #A0A453);
+    padding-left: 20px;
+}
+
+.post-list a.active {
+    background: rgba(255, 255, 255, 0.08);
+    border-left-color: var(--theme-accent, #A0A453);
+    color: var(--theme-accent, #A0A453);
+}
+
+/* Adjust for light themes */
+body.persona-investor .post-list li,
+body.persona-dad .post-list li {
+    border-bottom-color: rgba(0, 0, 0, 0.05);
+}
+
+body.persona-investor .post-list a:hover,
+body.persona-dad .post-list a:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+body.persona-investor .post-list a.active,
+body.persona-dad .post-list a.active {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* ==================== Quote and Question List Styles ==================== */
+.quote-categories,
+.question-categories {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.category-btn {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--theme-text, #D8D8D8);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 20px;
+}
+
+.category-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--theme-accent, #A0A453);
+}
+
+.category-btn.active {
+    background: var(--theme-accent, #A0A453);
+    color: var(--theme-primary, #1E2C23);
+    border-color: var(--theme-accent, #A0A453);
+}
+
+body.persona-investor .category-btn,
+body.persona-dad .category-btn {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.persona-investor .category-btn:hover,
+body.persona-dad .category-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* ==================== Empty State ==================== */
+.empty-state {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: var(--font-secondary);
+    font-size: 16px;
+    font-style: italic;
+    margin-top: 50px;
+}
+
+body.persona-investor .empty-state,
+body.persona-dad .empty-state {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+/* ==================== Article Content Styles ==================== */
+.article-header {
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 30px;
+}
+
+.article-title {
+    font-family: var(--font-primary);
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: 0;
+    color: var(--theme-text, #D8D8D8);
+}
+
+.article-content {
+    font-family: var(--font-secondary);
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--theme-text, #D8D8D8);
+}
+
+.article-content h3 {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 600;
+    margin: 30px 0 15px;
+    color: var(--theme-text, #D8D8D8);
+}
+
+.article-content p {
+    margin-bottom: 20px;
+}
+
+.article-content ul,
+.article-content ol {
+    margin: 20px 0;
+    padding-left: 30px;
+}
+
+.article-content li {
+    margin-bottom: 10px;
+}
+
+.article-content a {
+    color: var(--theme-accent);
+    text-decoration: underline;
+    transition: opacity 0.2s;
+}
+
+.article-content a:hover {
+    opacity: 0.8;
+}
+
+.article-content strong {
+    font-weight: 600;
+    color: var(--theme-text);
+}
+
+.article-content em {
+    font-style: italic;
+}
+
+/* Light theme adjustments */
+body.persona-investor .article-header,
+body.persona-dad .article-header {
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== Quotes Styles ==================== */
+.quotes-container {
+    padding: 20px 0;
+}
+
+.quote-item {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body.persona-investor .quote-item,
+body.persona-dad .quote-item {
+    border-bottom-color: rgba(0, 0, 0, 0.05);
+}
+
+.quote-item:last-child {
+    border-bottom: none;
+}
+
+.quote-text {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--theme-text, #D8D8D8);
+    margin: 0 0 15px 0;
+    padding-left: 25px;
+    position: relative;
+    font-style: italic;
+}
+
+.quote-author {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--theme-accent);
+    font-style: normal;
+    text-align: right;
+    margin-top: 10px;
+    padding-right: 25px;
+}
+
+/* ==================== Writing Detail Pages ==================== */
+/* Apply persona themes to old-style pages */
+body.persona-founder .container,
+body.persona-operator .container,
+body.persona-investor .container,
+body.persona-dad .container {
+    background-color: transparent;
+    color: var(--theme-text, inherit);
+}
+
+body.persona-founder .sidebar,
+body.persona-operator .sidebar {
+    background: rgba(0, 0, 0, 0.1);
+    color: var(--theme-text);
+}
+
+body.persona-investor .sidebar,
+body.persona-dad .sidebar {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--theme-text);
+}
+
+body.persona-founder main.content,
+body.persona-operator main.content,
+body.persona-investor main.content,
+body.persona-dad main.content {
+    background: transparent;
+    color: var(--theme-text);
+}
+
+/* Update old navigation to use theme colors */
+body.persona-founder .nav-list a,
+body.persona-operator .nav-list a,
+body.persona-investor .nav-list a,
+body.persona-dad .nav-list a {
+    color: var(--theme-text);
+}
+
+body.persona-founder .nav-list a:hover,
+body.persona-operator .nav-list a:hover,
+body.persona-investor .nav-list a:hover,
+body.persona-dad .nav-list a:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+body.persona-founder .nav-list a.active,
+body.persona-operator .nav-list a.active,
+body.persona-investor .nav-list a.active,
+body.persona-dad .nav-list a.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--theme-accent);
+}
+
+/* ==================== MOBILE STYLES START HERE ==================== */
+/* ==================== Mobile Character Selection ==================== */
+@media (max-width: 768px) {
+    /* Character Selection */
+    .character-select-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: transparent;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Dark background base layer for mobile character selection */
+    .character-select-overlay::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #1A1D20;
+        z-index: -2;
+        pointer-events: none;
+    }
+
+    /* Background image for mobile character selection */
+    .character-select-overlay::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/assets/bg3.png');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        opacity: 0.5;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    /* Hide container when character select is visible */
+    .character-select-overlay:not(.hidden) ~ .container {
+        display: none;
+    }
+
+    .character-select-modal {
+        width: 100%;
+        min-height: 100%;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow: visible;
+        background: transparent;
+        padding-bottom: 50px;
+        padding-bottom: calc(50px + env(safe-area-inset-bottom));
+    }
+
+    .scroll-header {
+        padding: 20px 15px 15px 15px;
+        text-align: center;
+    }
+
+    .select-title {
+        font-size: 19px;
+        letter-spacing: 1.5px;
+        margin-bottom: 8px;
+        margin-top: 5px;
+        color: #F0F2F5 !important;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .select-subtitle {
+        font-size: 12px;
+        font-weight: 300;
+        margin-top: 0;
+        margin-bottom: 5px;
+        color: rgba(216, 216, 216, 0.5) !important;
+        letter-spacing: 0.3px;
+    }
+
+    /* Character Selection - One main card with thumbnails */
+    .character-grid {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        gap: 0px;
+        overflow: visible;
+        min-height: auto;
+    }
+
+    /* Main character display area */
+    .character-main-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        min-height: auto;
+        margin-bottom: 0;
+        position: relative;
+        touch-action: pan-y;
+    }
+
+    /* Character cards */
+    .character-card {
+        display: none !important;
+        width: 95%;
+        max-width: 380px;
+        height: auto;
+        min-height: 480px;
+        padding: 0;
+        flex-direction: column;
+        border-radius: 12px;
+        position: relative;
+        overflow: visible;
+        margin: 0 auto;
+    }
+
+    /* Background color for characterSelect div on mobile */
+    #characterSelect {
+        background: #0A0B0D !important;
+    }
+
+    /* Same background color for all character cards on mobile */
+    .character-card[data-persona="founder"],
+    .character-card[data-persona="operator"],
+    .character-card[data-persona="investor"],
+    .character-card[data-persona="dad"] {
+        background: transparent !important;
+    }
+
+    /* Opaque background layer for mobile character cards */
+    .character-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #141618;
+        z-index: 0;
+        border-radius: 12px;
+        pointer-events: none;
+    }
+
+    /* Ensure all content is above the background layer */
+    .character-card > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .character-portrait,
+    .character-info,
+    .character-photo,
+    .character-video {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Disable the old background elements */
+    .character-card[data-persona="founder"] .warlord-bg,
+    .character-card[data-persona="operator"] .strategist-bg,
+    .character-card[data-persona="investor"] .merchant-bg,
+    .character-card[data-persona="dad"] .scholar-bg,
+    .character-card[data-persona="dad"] .artist-bg,
+    .character-card .card-background {
+        display: none !important;
+    }
+
+    /* Hide character-frame on mobile - merge with portrait */
+    .character-frame {
+        display: contents;
+    }
+
+    /* Only active card is visible with smooth transition */
+    .character-card.active {
+        display: flex !important;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Maintain the same fade gradient for active cards */
+    .character-card.active .character-portrait {
+        -webkit-mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%) !important;
+        mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%) !important;
+    }
+
+    /* Adjust portrait for main card */
+    .character-portrait {
+        height: 380px;
+        width: 100%;
+        position: relative;
+        margin: 0;
+        border-radius: 12px 12px 0 0;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%);
+        mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%);
+    }
+
+    .character-photo,
+    .character-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        transform: scale(1.15);
+    }
+
+    /* Extra zoom for operator and investor on mobile */
+    .character-card[data-persona="operator"] .character-photo {
+        transform: scale(1.15) translateY(-2%);
+        object-position: center 0%;
+    }
+
+    .character-card[data-persona="investor"] .character-photo {
+        transform: scale(1.15) translateY(-6%);
+        object-position: center 0%;
+    }
+
+    .character-card[data-persona="dad"] .character-photo {
+        transform: scale(1.12) translateY(-6%);
+        object-position: center 20%;
+    }
+
+    /* Info section for main card - natural height, no scroll */
+    .character-info {
+        height: auto;
+        padding: 30px 20px 10px 20px;
+        margin-top: -60px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        background: transparent;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .character-name {
+        font-size: 22px !important;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-top: 5px;
+        margin-bottom: 0px;
+        color: #F0F2F5 !important;
+        width: auto !important;
+        display: block !important;
+    }
+
+    .character-title {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        margin: 0 0 8px 0;
+        color: #D8D8D8 !important;
+        letter-spacing: 0.3px;
+    }
+
+    .character-desc {
+        font-size: 12px !important;
+        line-height: 1.4;
+        margin: 12px 0 10px 0;
+        min-height: unset;
+        color: rgba(234, 234, 234, 0.8) !important;
+    }
+
+    /* Swipe Indicators */
+    .swipe-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        padding: 2px 5px 10px 5px;
+        margin-bottom: 0;
+    }
+
+    .swipe-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .swipe-dot.active {
+        width: 24px;
+        border-radius: 4px;
+        background: var(--theme-accent, #A0A453);
+    }
+
+    /* Swipe Hint - Hidden */
+    .swipe-hint {
+        display: none;
+    }
+
+    /* Select Role Button */
+    .select-role-container {
+        padding: 15px 15px 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .select-role-btn {
+        background: linear-gradient(135deg, var(--theme-accent, #A0A453), var(--theme-secondary, #8B8F4E));
+        color: #1a1a2e;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 40px;
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Cinzel', serif;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .select-role-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .select-role-btn:hover::before {
+        left: 100%;
+    }
+
+    .select-role-btn:active {
+        transform: scale(0.95);
+        box-shadow: 0 2px 8px rgba(160, 164, 83, 0.2);
+    }
+
+    .select-role-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Footer text inside button container */
+    .mobile-footer-text {
+        font-size: 12px;
+        color: rgba(234, 234, 234, 0.5);
+        margin: 4px 0 0 0;
+        font-style: italic;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+
+    /* Immediate animations on mobile */
+    .character-card .character-video {
+        display: block;
+        opacity: 1;
+    }
+
+    /* Initially show photo for all cards */
+    .character-card[data-persona="founder"] .character-photo,
+    .character-card[data-persona="operator"] .character-photo,
+    .character-card[data-persona="dad"] .character-photo,
+    .character-card[data-persona="investor"] .character-photo {
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: block !important;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Initially hide video for cards with video (not operator) */
+    .character-card[data-persona="founder"] .character-video,
+    .character-card[data-persona="dad"] .character-video {
+        opacity: 0;
+        visibility: hidden;
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        transition: opacity 0.3s ease;
+    }
+
+    /* Add filter and position for dad video on mobile */
+    .character-card[data-persona="dad"] .character-video {
+        filter: brightness(1.05) contrast(1.05) saturate(1.05);
+        transition: opacity 0.3s ease;
+        object-position: center 20%;
+        transform: scale(1.2) translateY(-5%);
+    }
+
+    /* When card is active and playing, show video and hide photo */
+    .character-card[data-persona="founder"].video-playing .character-video,
+    .character-card[data-persona="dad"].video-playing .character-video {
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: block !important;
+    }
+
+    .character-card[data-persona="founder"].video-playing .character-photo,
+    .character-card[data-persona="dad"].video-playing .character-photo {
+        opacity: 0 !important;
+        display: none !important;
+    }
+
+    /* Keep character-info and character-name in place when video is playing */
+    .character-card.video-playing .character-info {
+        padding: 30px 20px 10px 20px !important;
+        margin-top: -60px !important;
+        position: relative !important;
+        width: 100% !important;
+    }
+
+    /* Maintain the same fade gradient when video is playing */
+    .character-card.video-playing .character-portrait {
+        -webkit-mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%) !important;
+        mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%) !important;
+    }
+
+    .character-card.video-playing .character-name {
+        margin-top: 5px !important;
+        margin-bottom: 0px !important;
+        text-align: left !important;
+        position: relative !important;
+        width: auto !important;
+        display: block !important;
+    }
+
+    /* Ensure character-name stays consistent when video stops (after playing) */
+    .character-card:not(.video-playing) .character-name {
+        transform: none !important;
+        position: relative !important;
+        left: 0 !important;
+        width: auto !important;
+    }
+
+    /* Ensure padding stays consistent when card is active */
+    .character-card.active .character-info {
+        padding: 30px 20px 10px 20px !important;
+        margin-top: -60px !important;
+    }
+
+    /* Apply same tap effect to all cards on mobile - more specific selectors */
+    .character-card.active .character-name,
+    .character-card[data-persona="founder"].active .character-name,
+    .character-card[data-persona="operator"].active .character-name,
+    .character-card[data-persona="investor"].active .character-name,
+    .character-card[data-persona="dad"].active .character-name {
+        color: #FFFFFF !important;
+        text-shadow:
+            2px 2px 4px rgba(0,0,0,0.5),
+            0 0 30px rgba(255, 255, 255, 0.6),
+            0 0 50px rgba(255, 255, 255, 0.3) !important;
+        font-size: 23px !important;
+        transform: none !important;
+    }
+
+    /* Maintain same glow effect when video is playing on mobile */
+    .character-card.video-playing .character-name {
+        color: #FFFFFF !important;
+        text-shadow:
+            2px 2px 4px rgba(0,0,0,0.5),
+            0 0 30px rgba(255, 255, 255, 0.6),
+            0 0 50px rgba(255, 255, 255, 0.3) !important;
+        font-size: 23px !important;
+    }
+
+    /* Touch feedback */
+    .character-card:active {
+        transform: scale(0.98);
+        transition: transform 0.1s;
+    }
+
+    /* Hide scroll indicators - not needed with grid layout */
+    .scroll-indicators {
+        display: none;
+    }
+
+    /* Character grid responsive */
+    .character-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    /* Mobile hamburger and sidebar styles */
+    .hamburger,
+    #hamburger {
+        display: flex;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    .content {
+        margin-left: 0;
+    }
+}
+
+/* ==================== Mobile Navigation ==================== */
+@media (max-width: 768px) {
+    /* Hide persona switcher when character selection is visible */
+    .character-select-overlay:not(.hidden) ~ * .persona-switcher,
+    .character-select-overlay:not(.hidden) ~ .persona-switcher,
+    #characterSelect:not(.hidden) ~ * .persona-switcher,
+    #characterSelect:not(.hidden) + * .persona-switcher,
+    body.character-select-active .persona-switcher,
+    .persona-switcher.hidden {
+        display: none !important;
+    }
+
+    /* Also hide hamburger during character selection */
+    body.character-select-active .hamburger,
+    #characterSelect:not(.hidden) ~ * .hamburger {
+        display: none !important;
+    }
+
+    /* Create mobile header if it doesn't exist */
+    body:not(.character-select-active) {
+        padding-top: var(--mobile-navbar-height);
+    }
+
+    /* Mobile header bar */
+    .mobile-header,
+    .mobile-nav-header {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: calc(var(--mobile-navbar-height) + 10px);
+        background: var(--theme-primary, #1E2C23);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px var(--mobile-padding) 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Adjust border for light themes on mobile */
+    body.persona-investor .mobile-header,
+    body.persona-investor .mobile-nav-header,
+    body.persona-dad .mobile-header,
+    body.persona-dad .mobile-nav-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* Hamburger menu button - always visible on mobile */
+    .hamburger,
+    #hamburger {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        width: 30px !important;
+        height: 30px !important;
+        background: transparent !important;
+        border: none !important;
+        cursor: pointer !important;
+        z-index: 10002 !important;
+        position: fixed !important;
+        top: 18px !important;
+        left: 15px !important;
+        right: auto !important;
+        padding: 5px !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transition: transform 0.3s ease !important;
+        align-items: center !important;
+        transform: none !important;
+        margin: 0 !important;
+    }
+
+    /* Hover/Active state for hamburger */
+    .hamburger:hover,
+    #hamburger:hover {
+        transform: scale(1.1);
+    }
+
+    .hamburger:active,
+    #hamburger:active {
+        transform: scale(0.95);
+    }
+
+    /* Hamburger lines - with gradient matching theme */
+    .hamburger span,
+    #hamburger span {
+        display: block !important;
+        height: 3px !important;
+        width: 24px;
+        background: linear-gradient(90deg,
+            var(--theme-accent, #fff) 0%,
+            var(--theme-text, #fff) 100%);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center center;
+        border-radius: 3px;
+        position: absolute !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* First line - shorter */
+    .hamburger span:first-child,
+    #hamburger span:first-child {
+        width: 20px;
+        top: 6px;
+    }
+
+    /* Middle line - full width */
+    .hamburger span:nth-child(2),
+    #hamburger span:nth-child(2) {
+        width: 24px;
+        top: 13px;
+    }
+
+    /* Last line - shorter, aligned right */
+    .hamburger span:last-child,
+    #hamburger span:last-child {
+        width: 16px;
+        top: 20px;
+        left: auto;
+        right: 3px;
+        transform: none;
+    }
+
+    /* Active state - transforms into perfect centered X */
+    .hamburger.active span:first-child,
+    #hamburger.active span:first-child {
+        width: 24px !important;
+        top: 13px !important;
+        transform: translateX(-50%) rotate(45deg);
+    }
+
+    .hamburger.active span:nth-child(2),
+    #hamburger.active span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-50%) scale(0);
+    }
+
+    .hamburger.active span:last-child,
+    #hamburger.active span:last-child {
+        width: 24px !important;
+        top: 13px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) rotate(-45deg);
+    }
+
+    /* Persona-specific hamburger colors on mobile */
+    body.persona-founder .hamburger span,
+    body.persona-founder #hamburger span {
+        background: linear-gradient(90deg, #A0A453 0%, rgba(160, 164, 83, 0.9) 100%);
+    }
+
+    body.persona-operator .hamburger span,
+    body.persona-operator #hamburger span {
+        background: linear-gradient(90deg, #FFB800 0%, rgba(255, 184, 0, 0.9) 100%);
+    }
+
+    body.persona-investor .hamburger span,
+    body.persona-investor #hamburger span {
+        background: linear-gradient(90deg, #C39F47 0%, rgba(195, 159, 71, 0.9) 100%);
+    }
+
+    body.persona-dad .hamburger span,
+    body.persona-dad #hamburger span {
+        background: linear-gradient(90deg, #FF7F50 0%, rgba(255, 127, 80, 0.9) 100%);
+    }
+
+    /* Mobile role title display - next to hamburger on the left */
+    .mobile-role-title {
+        display: flex !important;
+        position: fixed;
+        top: 22px;
+        left: 59px;
+        z-index: 1001;
+        align-items: center;
+    }
+
+    .mobile-role-title .role-text {
+        font-family: 'Cinzel', serif;
+        color: var(--color-primary);
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: capitalize;
+        letter-spacing: 1px;
+    }
+
+    /* Hide role title during character selection */
+    body.character-select-active .mobile-role-title,
+    #characterSelect:not(.hidden) ~ * .mobile-role-title {
+        display: none !important;
+    }
+
+    /* Persona-specific role title colors */
+    body.persona-founder .mobile-role-title .role-text {
+        color: #A0A453;
+    }
+
+    body.persona-operator .mobile-role-title .role-text {
+        color: #FFB800;
+    }
+
+    body.persona-investor .mobile-role-title .role-text {
+        color: #C39F47;
+    }
+
+    body.persona-dad .mobile-role-title .role-text {
+        color: #FF7F50;
+    }
+
+    /* Mobile site title in center - now hidden */
+    .mobile-site-title {
+        font-family: var(--font-primary);
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        color: var(--theme-text);
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: none !important;
+    }
+
+    /* Persona switcher on mobile - top right */
+    .persona-switcher {
+        position: fixed !important;
+        right: 15px !important;
+        top: 10px !important;
+        transform: none !important;
+        display: block !important;
+        width: 48px !important;
+        height: 48px !important;
+        margin-bottom: 20px !important;
+        z-index: 999 !important;
+    }
+
+    /* Sidebar as Full-Screen Overlay */
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -100%;
+        width: 85%;
+        max-width: 320px;
+        height: 100vh !important;
+        background: rgba(30, 44, 35, 0.98);
+        z-index: 10001;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+        display: flex !important;
+        flex-direction: column;
+        padding-top: calc(var(--mobile-navbar-height) + 20px);
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+        opacity: 1 !important;
+        visibility: visible !important;
+        backdrop-filter: blur(10px);
+    }
+
+    /* Persona-specific sidebar backgrounds */
+    body.persona-founder .sidebar {
+        background: rgba(30, 44, 35, 0.98);
+    }
+
+    body.persona-operator .sidebar {
+        background: rgba(26, 29, 32, 0.98);
+    }
+
+    body.persona-investor .sidebar {
+        background: rgba(239, 235, 228, 0.98);
+    }
+
+    body.persona-dad .sidebar {
+        background: rgba(255, 251, 239, 0.98);
+    }
+
+    /* Light theme adjustments for mobile navigation */
+    body.persona-investor .nav-link,
+    body.persona-dad .nav-link {
+        color: #0A1D1A !important;
+    }
+
+    body.persona-investor .nav-link:hover,
+    body.persona-investor .nav-link:active,
+    body.persona-dad .nav-link:hover,
+    body.persona-dad .nav-link:active {
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--theme-accent) !important;
+    }
+
+    body.persona-investor .nav-link.active,
+    body.persona-dad .nav-link.active {
+        background: rgba(0, 0, 0, 0.08);
+        border-left-color: var(--theme-accent);
+        color: var(--theme-accent) !important;
+    }
+
+    body.persona-investor .site-title-link,
+    body.persona-dad .site-title-link {
+        color: #0A1D1A !important;
+    }
+
+    body.persona-investor .persona-badge,
+    body.persona-dad .persona-badge {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar.open {
+        left: 0 !important;
+        display: flex !important;
+    }
+
+    /* Dark overlay when menu is open */
+    .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    body.menu-open .menu-overlay {
+        display: block;
+        opacity: 1;
+    }
+
+    .sidebar-header {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: block !important;
+    }
+
+    .site-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .site-title-link {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-decoration: none;
+        font-family: 'Cinzel', serif;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .persona-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        margin-top: 8px;
+    }
+
+    .badge-text {
+        color: var(--theme-accent, #A0A453);
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .navigation {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 0 20px 0;
+        display: block !important;
+    }
+
+    .nav-list {
+        padding: 0;
+        margin: 0;
+        list-style: none !important;
+        display: block !important;
+    }
+
+    .nav-item {
+        margin: 0;
+        display: block !important;
+    }
+
+    .nav-link {
+        padding: 15px 20px;
+        font-size: 16px;
+        display: flex !important;
+        align-items: center;
+        gap: 15px;
+        border-left: 3px solid transparent;
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.9) !important;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover,
+    .nav-link:active {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--theme-accent, #A0A453) !important;
+    }
+
+    .nav-link.active {
+        background: rgba(255, 255, 255, 0.1);
+        border-left-color: var(--theme-accent);
+        color: var(--theme-accent, #A0A453) !important;
+    }
+
+    /* Navigation icons and text visibility */
+    .nav-icon {
+        display: inline-flex !important;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .nav-text {
+        display: inline-block !important;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 500;
+    }
+
+    /* Content Area */
+    .container {
+        padding-top: calc(var(--mobile-navbar-height) - 15px);
+        min-height: 100vh;
+    }
+
+    .content {
+        margin-left: 0;
+        padding: var(--mobile-padding);
+        padding-top: 0;
+    }
+
+    /* Remove top margins from content grids on mobile */
+    .writing-grid,
+    .quotes-container,
+    .questions-container,
+    .investments-grid,
+    .article-grid {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Reduce page header spacing on mobile to move content up */
+    .page-header {
+        margin-bottom: 5px !important;
+        padding-bottom: 5px !important;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Move page title up */
+    .page-title {
+        margin-top: 0 !important;
+        margin-bottom: 10px !important;
+        padding-top: 0 !important;
+    }
+
+    /* Remove ALL top spacing from intro text */
+    .intro-text {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Remove spacing from content-body */
+    .content-body {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Force all article and content items to start at top */
+    .article-item,
+    .quote-item,
+    .question-item,
+    .investment-item,
+    .content-item {
+        margin-top: 0 !important;
+    }
+
+    /* Make first child of any content container start at top */
+    .content > *:first-child,
+    .content-body > *:first-child,
+    .writing-grid > *:first-child,
+    .quotes-container > *:first-child,
+    .questions-container > *:first-child,
+    .investments-grid > *:first-child {
+        margin-top: 0 !important;
+        padding-top: 15px !important;
+    }
+
+    /* Container for persona icons - horizontal layout */
+    .persona-icons-container {
+        display: flex !important;
+        flex-direction: row-reverse !important;
+        align-items: center !important;
+        gap: 8px !important;
+        position: relative !important;
+        width: auto !important;
+        height: 48px !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* Options container that slides out */
+    .persona-options {
+        display: flex !important;
+        flex-direction: row-reverse !important;
+        gap: 6px !important;
+        overflow: visible !important;
+        max-width: 0 !important;
+        opacity: 0 !important;
+        transition: max-width 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s ease !important;
+        margin-right: 0 !important;
+    }
+
+    /* Show options when container has show-options class */
+    .persona-icons-container.show-options .persona-options {
+        max-width: 200px !important;
+        opacity: 1 !important;
+    }
+
+    /* Individual persona option buttons */
+    .persona-icon-btn {
+        width: 48px !important;
+        height: 48px !important;
+        min-width: 48px !important;
+        min-height: 48px !important;
+        border-radius: 50% !important;
+        background: rgba(255,255,255,0.95) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        cursor: pointer !important;
+        padding: 0 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
+        transform: translateX(20px) scale(0.9) !important;
+        display: block !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Animate icons when showing */
+    .persona-icons-container.show-options .persona-icon-btn {
+        opacity: 1 !important;
+        transform: translateX(0) scale(1) !important;
+    }
+
+    /* Staggered animation delay */
+    .persona-icons-container.show-options .persona-icon-btn:nth-child(1) {
+        transition-delay: 0.05s !important;
+    }
+    .persona-icons-container.show-options .persona-icon-btn:nth-child(2) {
+        transition-delay: 0.1s !important;
+    }
+    .persona-icons-container.show-options .persona-icon-btn:nth-child(3) {
+        transition-delay: 0.15s !important;
+    }
+    .persona-icons-container.show-options .persona-icon-btn:nth-child(4) {
+        transition-delay: 0.2s !important;
+    }
+
+    /* Selected state with role-specific colors for mobile */
+    .persona-icon-btn[data-persona="founder"].current-role {
+        border-color: #A0A453 !important;
+        border-width: 2px !important;
+        box-shadow: 0 0 0 2px rgba(160, 164, 83, 0.2) !important;
+    }
+
+    .persona-icon-btn[data-persona="operator"].current-role {
+        border-color: #FFB800 !important;
+        border-width: 2px !important;
+        box-shadow: 0 0 0 2px rgba(255, 184, 0, 0.2) !important;
+    }
+
+    .persona-icon-btn[data-persona="investor"].current-role {
+        border-color: #C39F47 !important;
+        border-width: 2px !important;
+        box-shadow: 0 0 0 2px rgba(195, 159, 71, 0.2) !important;
+    }
+
+    .persona-icon-btn[data-persona="dad"].current-role {
+        border-color: #FF7F50 !important;
+        border-width: 2px !important;
+        box-shadow: 0 0 0 2px rgba(255, 127, 80, 0.2) !important;
+    }
+
+    /* Hide current role in options */
+    .persona-icon-btn.current-role {
+        display: none !important;
+    }
+
+    /* Images in option buttons - scaled up and positioned to show faces */
+    .persona-icon-img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center 15% !important;
+        display: block !important;
+        border-radius: 50% !important;
+        transform: scale(1.3) !important;
+    }
+
+    /* Main persona button */
+    .persona-btn {
+        width: 48px !important;
+        height: 48px !important;
+        min-width: 48px !important;
+        min-height: 48px !important;
+        max-width: 48px !important;
+        max-height: 48px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        flex-shrink: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+        display: block !important;
+        background: rgba(255,255,255,0.95) !important;
+        cursor: pointer !important;
+        position: relative !important;
+        z-index: 2 !important;
+    }
+
+    /* Role-specific border colors for main button on mobile */
+    body.persona-founder .persona-btn {
+        border-color: #A0A453 !important;
+        border-width: 2px !important;
+    }
+
+    body.persona-operator .persona-btn {
+        border-color: #FFB800 !important;
+        border-width: 2px !important;
+    }
+
+    body.persona-investor .persona-btn {
+        border-color: #C39F47 !important;
+        border-width: 2px !important;
+    }
+
+    body.persona-dad .persona-btn {
+        border-color: #FF7F50 !important;
+        border-width: 2px !important;
+    }
+
+    /* Hide the mobile-only dropdown since we're using icon navigation */
+    .persona-dropdown.mobile-only {
+        display: none !important;
+    }
+
+    /* Mobile only dropdown */
+    .persona-options {
+        display: none !important;
+    }
+
+    .persona-dropdown.mobile-only {
+        display: block;
+    }
+
+    /* Ensure persona image fills the whole circle on mobile - scaled and positioned for faces */
+    .persona-profile-img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center 15% !important;
+        display: block !important;
+        border-radius: 0 !important;
+        transform: scale(1.3) !important;
+    }
+
+    .current-persona-avatar {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        line-height: 0 !important;
+        border-radius: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .persona-dropdown {
+        right: 0;
+        left: auto;
+        top: 50px;
+        width: 200px;
+    }
+}
+
+/* ==================== Mobile Split View ==================== */
+@media (max-width: 768px) {
+    .split-view {
+        flex-direction: column;
+        height: auto;
+        min-height: auto !important;
+        padding: var(--mobile-padding) !important;
+        padding-top: 0 !important;
+        gap: 0;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+    }
+
+    .list-pane {
+        width: 100%;
+        min-width: 100%;
+        max-height: none !important;
+        height: auto !important;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: var(--mobile-padding);
+        padding-top: 0 !important;
+        position: relative !important;
+        top: 0 !important;
+        background: var(--theme-primary);
+        z-index: 10;
+    }
+
+    .reading-pane {
+        width: 100%;
+        padding: var(--mobile-padding);
+        min-height: 60vh;
+    }
+
+    /* Collapsible list on mobile */
+    .list-pane.collapsed {
+        max-height: 60px;
+        overflow: hidden;
+    }
+
+    .list-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+    .list-toggle::after {
+        content: '▼';
+        transition: transform 0.3s;
+    }
+
+    .list-pane.collapsed .list-toggle::after {
+        transform: rotate(-90deg);
+    }
+
+    .post-list {
+        margin: 10px 0;
+    }
+
+    .post-list a {
+        padding: 12px 10px;
+        font-size: 14px;
+    }
+}
+
+/* ==================== Mobile Forms and Typography ==================== */
+@media (max-width: 768px) {
+    input, textarea, select {
+        font-size: 16px;
+        padding: 12px;
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--theme-text);
+    }
+
+    button, .btn {
+        min-height: 44px;
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    h1 {
+        font-size: 28px;
+        line-height: 1.2;
+    }
+
+    h2 {
+        font-size: 24px;
+        line-height: 1.3;
+    }
+
+    h3 {
+        font-size: 20px;
+        line-height: 1.4;
+    }
+
+    p, li {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .page-title {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .article-title {
+        font-size: 22px;
+    }
+
+    blockquote {
+        margin: 20px 0;
+        padding: 15px;
+        font-size: 16px;
+    }
+}
+
+/* ==================== Mobile Card Layouts ==================== */
+@media (max-width: 768px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: var(--mobile-card-gap);
+        padding: 0;
+    }
+
+    .card {
+        margin: 0;
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+    .investment-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .question-category {
+        margin: 20px 0;
+        padding: 15px;
+    }
+}
+
+/* ==================== Touch and Gesture Support ==================== */
+.touchable {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+.swipeable {
+    touch-action: pan-y;
+}
+
+.draggable {
+    touch-action: none;
+}
+
+/* ==================== Loading States ==================== */
+.mobile-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+
+.mobile-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--theme-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==================== Landscape and Small Phones ==================== */
+@media (max-width: 768px) and (orientation: landscape) {
+    .character-select-modal {
+        padding: 0;
+    }
+
+    .scroll-header {
+        padding: 5px;
+    }
+
+    .select-title {
+        font-size: 16px;
+    }
+
+    .select-subtitle {
+        display: none;
+    }
+
+    .character-grid {
+        flex-direction: row;
+        padding: 0;
+        gap: 10px;
+    }
+
+    .character-main-display {
+        flex: 1;
+    }
+
+    .character-card {
+        max-height: 100%;
+    }
+
+    .character-portrait {
+        height: 40%;
+    }
+
+    .character-name {
+        font-size: 18px !important;
+    }
+
+    .character-title {
+        font-size: 12px !important;
+    }
+
+    .character-desc {
+        font-size: 11px !important;
+        -webkit-line-clamp: 2;
+    }
+
+    .swipe-indicators {
+        padding: 10px;
+    }
+
+    .swipe-hint {
+        font-size: 12px;
+        padding: 3px;
+    }
+
+    .mobile-header {
+        height: 50px;
+    }
+
+    .container {
+        padding-top: 50px;
+    }
+}
+
+@media (max-width: 375px) {
+    :root {
+        --mobile-padding: 12px;
+    }
+
+    .select-title {
+        font-size: 17px;
+    }
+
+    .character-grid {
+        gap: 8px;
+        padding: 0;
+    }
+
+    .character-card {
+        padding: 8px;
+    }
+
+    .character-name {
+        font-size: 16px !important;
+    }
+
+    .character-title {
+        font-size: 10px !important;
+    }
+
+    .character-desc {
+        font-size: 10px !important;
+        -webkit-line-clamp: 2;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    p, li {
+        font-size: 14px;
+    }
+
+    .nav-link {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+}
+
+/* ==================== Tablets ==================== */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .character-select-modal {
+        max-width: 90%;
+        max-height: 90vh;
+    }
+
+    .character-grid {
+        grid-template-columns: repeat(2, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .character-card {
+        height: auto;
+        min-height: 350px;
+    }
+}
+
+/* ==================== Accessibility for Mobile ==================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

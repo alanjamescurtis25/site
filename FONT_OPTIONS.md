@@ -10,7 +10,7 @@ To change the font style of your site, follow these simple steps:
 ### Step 1: Update HTML (index.html)
 Uncomment the font option you want to use in the `<head>` section and comment out the current one.
 
-### Step 2: Update CSS (css/bustling-world-v2.css)
+### Step 2: Update CSS (css/main.css)
 In the CSS file, look for the Typography section (around line 28) and:
 1. Comment out the current active font variables
 2. Uncomment the font option you want to use
@@ -66,7 +66,7 @@ In the CSS file, look for the Typography section (around line 28) and:
 ### For HTML (index.html):
 Just uncomment the option you want and comment out the others.
 
-### For CSS (css/bustling-world-v2.css):
+### For CSS (css/main.css):
 Look for "Typography - Option X" and uncomment the block you want to use.
 
 ---
