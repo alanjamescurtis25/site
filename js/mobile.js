@@ -780,24 +780,32 @@
                         });
                         newOptionBtn.classList.add('current-role');
 
-                        // Save selection
-                        localStorage.setItem('bustling_v2_persona', persona);
-                        localStorage.setItem('selectedPersona', persona);
+                        // Call the main BustlingWorld switchPersona method to properly update everything
+                        console.log('[Mobile] Calling bustlingWorldV2.switchPersona:', persona);
+                        if (window.bustlingWorldV2 && window.bustlingWorldV2.switchPersona) {
+                            window.bustlingWorldV2.switchPersona(persona);
+                            console.log('[Mobile] switchPersona called successfully');
+                        } else {
+                            console.warn('[Mobile] bustlingWorldV2 not available, falling back to manual update');
+                            // Fallback: manual updates if bustlingWorldV2 is not available
+                            localStorage.setItem('bustling_v2_persona', persona);
+                            localStorage.setItem('selectedPersona', persona);
 
-                        // Update body class
-                        document.body.className = document.body.className.replace(/persona-\w+/, '');
-                        document.body.classList.add(`persona-${persona}`);
+                            // Update body class
+                            document.body.className = document.body.className.replace(/persona-\w+/, '');
+                            document.body.classList.add(`persona-${persona}`);
 
-                        // Update persona badges
-                        const badges = document.querySelectorAll('.persona-badge .badge-text');
-                        badges.forEach(badge => {
-                            badge.textContent = persona.charAt(0).toUpperCase() + persona.slice(1);
-                        });
+                            // Update persona badges
+                            const badges = document.querySelectorAll('.persona-badge .badge-text');
+                            badges.forEach(badge => {
+                                badge.textContent = persona.charAt(0).toUpperCase() + persona.slice(1);
+                            });
 
-                        // Update mobile role title
-                        const mobileRoleTitle = document.querySelector('.mobile-role-title .role-text');
-                        if (mobileRoleTitle) {
-                            mobileRoleTitle.textContent = persona.charAt(0).toUpperCase() + persona.slice(1);
+                            // Update mobile role title
+                            const mobileRoleTitle = document.querySelector('.mobile-role-title .role-text');
+                            if (mobileRoleTitle) {
+                                mobileRoleTitle.textContent = persona.charAt(0).toUpperCase() + persona.slice(1);
+                            }
                         }
 
                         // Close the options after selection

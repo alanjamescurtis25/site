@@ -93,6 +93,9 @@ class BustlingWorldV2 {
             this.setPersona(savedPersona);
             this.hideCharacterSelection();
 
+            // Update role selection active state after setting persona
+            this.updateRoleSelectionActive(savedPersona);
+
             // Always show persona switcher on non-index pages
             if (!isIndexPage) {
                 const switcher = document.getElementById('personaSwitcher');
@@ -106,6 +109,12 @@ class BustlingWorldV2 {
 
         this.setupEventListeners();
         this.setupMobileMenu();
+
+        // Update navigation icons after everything is initialized
+        // This ensures the sword appears on the correct page
+        setTimeout(() => {
+            this.updateNavigationIcons();
+        }, 100);
     }
 
     /**
@@ -132,12 +141,9 @@ class BustlingWorldV2 {
         const characterCards = document.querySelectorAll('.character-card');
         characterCards.forEach(card => {
             card.addEventListener('click', (e) => {
-                // Only allow direct card selection on desktop
-                // On mobile, users must use the Select Role button
-                if (window.innerWidth > 768) {
-                    const persona = card.dataset.persona;
-                    this.selectCharacter(persona);
-                }
+                // Allow direct card selection on all devices
+                const persona = card.dataset.persona;
+                this.selectCharacter(persona);
             });
 
             // Setup video hover effect for cards with video
@@ -191,26 +197,37 @@ class BustlingWorldV2 {
         if (window.innerWidth <= 768) {
             // Mobile: Use tap to show/hide icons
             if (personaBtn && personaContainer) {
-                // Remove any existing event listeners by cloning the button
-                const newBtn = personaBtn.cloneNode(true);
-                personaBtn.parentNode.replaceChild(newBtn, personaBtn);
-
-                newBtn.addEventListener('click', (e) => {
+                // Add click event listener to the persona button
+                personaBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     console.log('Mobile persona button clicked - toggling show-options');
                     personaContainer.classList.toggle('show-options');
                 });
 
-                // Close when tapping outside - use setTimeout to prevent immediate trigger
-                setTimeout(() => {
-                    document.addEventListener('click', (e) => {
-                        if (!personaContainer.contains(e.target)) {
-                            console.log('Clicked outside - removing show-options');
-                            personaContainer.classList.remove('show-options');
-                        }
-                    });
-                }, 100);
+                // Also add touchstart for better mobile responsiveness
+                personaBtn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Mobile persona button touched - toggling show-options');
+                    personaContainer.classList.toggle('show-options');
+                }, { passive: false });
+
+                // Close when tapping outside
+                document.addEventListener('click', (e) => {
+                    // Check if click is outside the persona switcher
+                    if (!personaSwitcher.contains(e.target)) {
+                        console.log('Clicked outside - removing show-options');
+                        personaContainer.classList.remove('show-options');
+                    }
+                });
+
+                // Also handle touch events for closing
+                document.addEventListener('touchstart', (e) => {
+                    if (!personaSwitcher.contains(e.target)) {
+                        personaContainer.classList.remove('show-options');
+                    }
+                }, { passive: true });
             }
         }
 
@@ -238,11 +255,12 @@ class BustlingWorldV2 {
                     // Actually switch the persona
                     this.switchPersona(persona);
 
-                    // On mobile, close the options after selection
+                    // On mobile, close the options after selection with smooth animation
                     if (window.innerWidth <= 768) {
+                        // Add a small delay to show the selection, then smoothly close
                         setTimeout(() => {
                             personaContainer.classList.remove('show-options');
-                        }, 300);
+                        }, 150); // Reduced delay for smoother feel
                     }
                 }
             };
@@ -290,12 +308,19 @@ class BustlingWorldV2 {
             link.addEventListener('click', (e) => {
                 const href = link.getAttribute('href');
 
+                // For founder/operator/investor/dad personas, immediately move the icon to clicked item
+                if (this.currentPersona === 'founder' || this.currentPersona === 'operator' || this.currentPersona === 'investor' || this.currentPersona === 'dad') {
+                    // Remove active from all links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    // Add active to clicked link
+                    link.classList.add('active');
+                    // Update icons immediately to move icon (skip active update since we just set it)
+                    this.updateNavigationIcons(true);
+                }
+
                 // Only prevent default on index page for home link
                 if (isIndexPage && href === '/') {
                     e.preventDefault();
-                    // Update active state
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    link.classList.add('active');
                     // Update content for home page
                     this.updatePersonaContent();
                 }
@@ -449,6 +474,190 @@ class BustlingWorldV2 {
     }
 
     /**
+     * Render the Hearthstone-style card deck
+     */
+    renderCardDeck() {
+        // Don't render on mobile
+        if (window.innerWidth <= 768) return;
+
+        const deckContainer = document.getElementById('cardDeck');
+        if (!deckContainer) return;
+
+        // Clear existing deck
+        deckContainer.innerHTML = '';
+        deckContainer.classList.remove('hidden');
+
+        // Add descriptions for each persona
+        const personaDescriptions = {
+            founder: "Build & conquer markets",
+            operator: "Scale & optimize systems",
+            investor: "Deploy capital wisely",
+            dad: "Nurture & guide growth"
+        };
+
+        const personas = Object.keys(this.personaData);
+        const totalCards = personas.length;
+        const cards = [];
+
+        // Create cards
+        personas.forEach((personaKey, index) => {
+            const data = this.personaData[personaKey];
+            const card = document.createElement('div');
+            card.className = 'deck-card';
+            if (personaKey === this.currentPersona) {
+                card.classList.add('active-card');
+            }
+
+            // Set background image
+            card.style.backgroundImage = `url('${data.image}')`;
+
+            // Card content with name and description
+            card.innerHTML = `
+                <div class="deck-card-inner">
+                    <h3 class="deck-card-name">${data.name}</h3>
+                    <p class="deck-card-desc">${personaDescriptions[personaKey]}</p>
+                </div>
+            `;
+
+            // Store card data
+            card.dataset.persona = personaKey;
+            card.dataset.index = index;
+
+            cards.push(card);
+            deckContainer.appendChild(card);
+        });
+
+        // Use GSAP for animation if available
+        if (typeof gsap !== 'undefined') {
+            // Set initial state for all cards
+            gsap.set(cards, {
+                opacity: 0,
+                scale: 0.8,
+                y: 100
+            });
+
+            // Animate cards into fan position
+            cards.forEach((card, index) => {
+                const centerIndex = (totalCards - 1) / 2;
+                const distanceFromCenter = index - centerIndex;
+
+                // Fan calculations with tighter spacing for smaller cards
+                const xPosition = distanceFromCenter * 90; // Tighter horizontal spacing
+                const yPosition = Math.abs(distanceFromCenter) * Math.abs(distanceFromCenter) * 5; // Curve effect
+                const rotation = distanceFromCenter * 10; // Rotation angle
+
+                // Animate card to position with stagger
+                gsap.to(card, {
+                    x: xPosition,
+                    y: yPosition,
+                    rotation: rotation,
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.6,
+                    delay: index * 0.08,
+                    ease: "power2.out",
+                    transformOrigin: "center bottom"
+                });
+
+                // Set z-index
+                card.style.zIndex = totalCards - Math.abs(distanceFromCenter);
+
+                // Hover animations - lift card and expand size
+                card.addEventListener('mouseenter', () => {
+                    if (!card.classList.contains('active-card')) {
+                        // Expand card and lift it up
+                        gsap.to(card, {
+                            y: yPosition - 30,
+                            scale: 1.28, // Scale to compensate for size difference (180/140 ≈ 1.28)
+                            duration: 0.3,
+                            ease: "power2.out",
+                            overwrite: "auto"
+                        });
+                        card.style.zIndex = 100;
+                    }
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    if (!card.classList.contains('active-card')) {
+                        // Return to normal size and position
+                        gsap.to(card, {
+                            y: yPosition,
+                            scale: 1,
+                            duration: 0.3,
+                            ease: "power2.out",
+                            overwrite: "auto"
+                        });
+                        card.style.zIndex = totalCards - Math.abs(distanceFromCenter);
+                    }
+                });
+
+                // Click handler
+                card.addEventListener('click', () => {
+                    const personaKey = card.dataset.persona;
+                    if (this.currentPersona !== personaKey) {
+                        this.switchPersona(personaKey);
+
+                        // Update active states
+                        cards.forEach(c => {
+                            c.classList.remove('active-card');
+                            const idx = parseInt(c.dataset.index);
+                            const centerIdx = (totalCards - 1) / 2;
+                            const dist = idx - centerIdx;
+                            const yPos = Math.abs(dist) * Math.abs(dist) * 6;
+
+                            // Reset non-active cards
+                            if (c !== card) {
+                                gsap.to(c, {
+                                    y: yPos,
+                                    scale: 1,
+                                    duration: 0.3,
+                                    ease: "power2.out"
+                                });
+                            }
+                        });
+
+                        card.classList.add('active-card');
+
+                        // Lift active card and show it expanded
+                        gsap.to(card, {
+                            y: yPosition - 20,
+                            scale: 1.2, // Keep it slightly expanded
+                            duration: 0.3,
+                            ease: "power2.out"
+                        });
+                    }
+                });
+            });
+        } else {
+            // Fallback for non-GSAP
+            const fanAngle = 15;
+            const startAngle = -((totalCards - 1) * fanAngle) / 2;
+
+            cards.forEach((card, index) => {
+                const rotation = startAngle + (index * fanAngle);
+                const centerIndex = (totalCards - 1) / 2;
+                const distanceFromCenter = index - centerIndex;
+                const xOffset = distanceFromCenter * 100;
+                const yOffset = Math.abs(distanceFromCenter) * Math.abs(distanceFromCenter) * 5;
+
+                card.style.transform = `translateX(${xOffset}px) translateY(${yOffset}px) rotate(${rotation}deg)`;
+                card.style.zIndex = index + 1;
+                card.style.opacity = '1';
+
+                // Click handler
+                card.addEventListener('click', () => {
+                    const personaKey = card.dataset.persona;
+                    if (this.currentPersona !== personaKey) {
+                        this.switchPersona(personaKey);
+                        cards.forEach(c => c.classList.remove('active-card'));
+                        card.classList.add('active-card');
+                    }
+                });
+            });
+        }
+    }
+
+    /**
      * Select a character and initialize the site
      * @param {string} persona - The selected persona
      */
@@ -464,6 +673,9 @@ class BustlingWorldV2 {
         this.hideCharacterSelection();
         this.showMainContent();
 
+        // Render the card deck
+        this.renderCardDeck();
+
         // After showing main content, load Welcome as the default page
         const isIndexPage = window.location.pathname === '/' || window.location.pathname === '/index.html';
         if (isIndexPage) {
@@ -477,75 +689,65 @@ class BustlingWorldV2 {
     }
 
     /**
-     * Show main content with fade-in
-     */
-    showMainContent() {
-        const container = document.getElementById('mainContainer');
-        if (container) {
-            container.style.opacity = '1';
-        }
-
-        const switcher = document.getElementById('personaSwitcher');
-        if (switcher) {
-            switcher.classList.remove('hidden');
-        }
-    }
-
-    /**
-     * Set the current persona and update UI
-     * @param {string} persona - The persona to set
-     */
-    setPersona(persona) {
-        if (!this.personaData[persona]) return;
-
-        this.currentPersona = persona;
-        const data = this.personaData[persona];
-
-        // Apply theme class to body
-        document.body.className = data.theme;
-
-        // Update persona badge
-        const badge = document.getElementById('personaBadge');
-        if (badge) {
-            const badgeText = badge.querySelector('.badge-text');
-            if (badgeText) {
-                badgeText.textContent = data.name;
-            }
-        }
-
-        // Update profile image in persona switcher
-        const profileImg = document.getElementById('currentPersonaImage');
-        if (profileImg) {
-            profileImg.src = data.image;
-            profileImg.alt = data.name;
-        }
-
-        // Update content only on index page
-        const path = window.location.pathname;
-        const isIndexPage = path === '/' || path === '/index.html' || path.endsWith('/index.html');
-        if (isIndexPage) {
-            this.updatePersonaContent();
-        }
-    }
-
-    /**
-     * Update page content based on current persona
-     */
-    updatePersonaContent() {
-        // Temporarily disabled - will show persona-specific content in the future
-        // For now, all personas see the same generic welcome content
-        return;
-    }
-
-    /**
      * Switch to a different persona
      * @param {string} persona - The persona to switch to
      */
     switchPersona(persona) {
-        if (persona === this.currentPersona) return;
+        console.log('[switchPersona] Switching from', this.currentPersona, 'to', persona);
+        if (persona === this.currentPersona) {
+            console.log('[switchPersona] Same persona, skipping');
+            return;
+        }
 
         localStorage.setItem('bustling_v2_persona', persona);
         this.setPersona(persona);
+
+        // Update role selection active state
+        this.updateRoleSelectionActive(persona);
+
+        // Re-render deck to update active state if needed,
+        // or just update classes (handled in click listener for performance)
+        // But if called from elsewhere (like top switcher), we should update deck
+        const deckContainer = document.getElementById('cardDeck');
+        if (deckContainer) {
+            const cards = deckContainer.querySelectorAll('.deck-card');
+            cards.forEach((card, index) => {
+                const key = Object.keys(this.personaData)[index];
+                if (key === persona) {
+                    card.classList.add('active-card');
+                } else {
+                    card.classList.remove('active-card');
+                }
+            });
+        }
+
+        // Force immediate navigation icon update after persona switch
+        // Use requestAnimationFrame to ensure DOM is ready
+        console.log('[switchPersona] Scheduling navigation icon update');
+        requestAnimationFrame(() => {
+            console.log('[switchPersona] First update call');
+            this.updateNavigationIcons();
+            // Double update to ensure it takes effect
+            setTimeout(() => {
+                console.log('[switchPersona] Second update call');
+                this.updateNavigationIcons();
+            }, 50);
+        });
+    }
+
+    /**
+     * Update the active state of role selection options
+     * @param {string} persona - The current active persona
+     */
+    updateRoleSelectionActive(persona) {
+        const roleOptions = document.querySelectorAll('.role-option');
+        roleOptions.forEach(option => {
+            if (option.dataset.role === persona) {
+                option.classList.add('active');
+            } else {
+                option.classList.remove('active');
+            }
+        });
     }
 
     /**
@@ -573,11 +775,483 @@ class BustlingWorldV2 {
                 switcher.classList.add('hidden');
             }
 
+            // Hide card deck
+            const deckContainer = document.getElementById('cardDeck');
+            if (deckContainer) {
+                deckContainer.classList.add('hidden');
+            }
+
             // Show character selection
             this.showCharacterSelection();
         } else {
             // We're on a detail page, redirect to main page
             window.location.href = '/?reset=true';
+        }
+    }
+    /**
+     * Set the current persona and update the UI
+     * @param {string} persona - The persona to set
+     */
+    setPersona(persona) {
+        if (!this.personaData[persona]) return;
+
+        this.currentPersona = persona;
+        const data = this.personaData[persona];
+
+        // Update body theme class
+        document.body.className = ''; // Clear existing classes
+        document.body.classList.add(data.theme);
+
+        // Update persona badge
+        const badge = document.getElementById('personaBadge');
+        if (badge) {
+            const badgeText = badge.querySelector('.badge-text');
+            if (badgeText) badgeText.textContent = data.name;
+        }
+
+        // Update role card
+        this.updateRoleCard(persona);
+
+        // Update mobile role title
+        const mobileTitle = document.getElementById('mobileRoleTitle');
+        if (mobileTitle) {
+            const roleText = mobileTitle.querySelector('.role-text');
+            if (roleText) roleText.textContent = data.name;
+        }
+
+        // Update current persona image in switcher
+        const currentImg = document.getElementById('currentPersonaImage');
+        if (currentImg) {
+            currentImg.src = data.image;
+            currentImg.alt = data.name;
+        }
+
+        // Update content
+        this.updatePersonaContent();
+    }
+
+    /**
+     * Update content based on current persona
+     */
+    updatePersonaContent() {
+        if (!this.currentPersona) return;
+
+        const data = this.personaData[this.currentPersona];
+
+        // Update navigation icons for founder persona
+        this.updateNavigationIcons();
+
+        // Update welcome page content if we're on the welcome page
+        // This is a bit of a hack since the content is dynamically loaded by spa-navigation.js
+        // We'll try to find the elements and update them if they exist
+
+        // We can also dispatch a custom event that spa-navigation.js could listen to
+        // But for now, let's just update what we can find
+
+        // Note: The actual content update logic might need to be more robust
+        // depending on how spa-navigation.js renders the welcome page.
+        // For now, we'll assume the structure matches what we expect.
+    }
+
+    /**
+     * Initialize role selection options
+     */
+    initializeRoleOptions() {
+        const roleOptions = document.querySelectorAll('.role-option');
+
+        roleOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.preventDefault();
+                const role = option.dataset.role;
+
+                // Update active state
+                roleOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+
+                // Switch persona (this updates all UI elements)
+                this.switchPersona(role);
+
+                // Navigate to welcome page to show the persona-specific content
+                // Check if we're on the index page
+                const isIndexPage = window.location.pathname === '/' || window.location.pathname === '/index.html';
+
+                if (isIndexPage) {
+                    // If we have the SPA navigation function, use it
+                    if (window.loadPageContent) {
+                        window.loadPageContent('welcome');
+                    }
+
+                    // Update the navigation to show welcome as active
+                    const navLinks = document.querySelectorAll('.nav-link');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.dataset.page === 'welcome') {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    /**
+     * Update role card display
+     */
+    updateRoleCard(persona) {
+        const roleCard = document.getElementById('roleCard');
+        const roleCardIcon = document.getElementById('roleCardIcon');
+        const roleCardName = document.getElementById('roleCardName');
+        const roleCardSubtitle = document.getElementById('roleCardSubtitle');
+
+        if (!roleCard || !roleCardIcon) return;
+
+        // Update character names and subtitles (from main page second line)
+        const characters = {
+            founder: {
+                name: 'Founder',
+                subtitle: 'Startup Warrior'
+            },
+            operator: {
+                name: 'Operator',
+                subtitle: 'Systems Architect'
+            },
+            investor: {
+                name: 'Investor',
+                subtitle: 'Capital Allocator'
+            },
+            dad: {
+                name: 'Dad',
+                subtitle: 'Life Mentor'
+            }
+        };
+
+        const character = characters[persona] || characters.founder;
+
+        if (roleCardName) {
+            roleCardName.textContent = character.name;
+        }
+        if (roleCardSubtitle) {
+            roleCardSubtitle.textContent = character.subtitle;
+        }
+
+        // Update with character avatars - same as top-right corner
+        const avatars = {
+            founder: '/assets/alan-2.jpeg',
+            operator: '/assets/operator.png',
+            investor: '/assets/investor.png',
+            dad: '/assets/dad.png'
+        };
+
+        const avatarUrl = avatars[persona] || avatars.founder;
+        roleCardIcon.innerHTML = `<img src="${avatarUrl}" alt="${character.name}">`;
+    }
+
+    /**
+     * Set active navigation based on current page
+     */
+    setActiveNavigation() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            link.classList.remove('active');
+
+            // Check if this is the current page
+            if (currentPath === href ||
+                (currentPath === '/' && href === '/') ||
+                (currentPath === '/index.html' && href === '/') ||
+                (currentPath.includes(href) && href !== '/')) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    /**
+     * Update navigation icons based on persona
+     */
+    updateNavigationIcons(skipActiveUpdate = false) {
+        console.log('[updateNavigationIcons] Called with persona:', this.currentPersona);
+        console.log('[updateNavigationIcons] skipActiveUpdate:', skipActiveUpdate);
+
+        // Only set active navigation if not called from click handler
+        if (!skipActiveUpdate) {
+            this.setActiveNavigation();
+        }
+
+        const navItems = document.querySelectorAll('.nav-item');
+        console.log('[updateNavigationIcons] Found nav items:', navItems.length);
+
+        const isFounder = this.currentPersona === 'founder';
+        const isOperator = this.currentPersona === 'operator';
+        const isInvestor = this.currentPersona === 'investor';
+        const isDad = this.currentPersona === 'dad';
+        console.log('[updateNavigationIcons] Persona checks - Founder:', isFounder, 'Operator:', isOperator, 'Investor:', isInvestor, 'Dad:', isDad);
+
+        // Pixel art sword SVG icon - diagonal design
+        const swordSvg = `<svg width="20" height="20" viewBox="0 0 20 20" style="image-rendering: pixelated; image-rendering: crisp-edges;">
+            <!-- Blade -->
+            <rect x="13" y="2" width="2" height="2" fill="#E0E0E0"/>
+            <rect x="12" y="3" width="2" height="2" fill="#E0E0E0"/>
+            <rect x="11" y="4" width="2" height="2" fill="#E0E0E0"/>
+            <rect x="10" y="5" width="2" height="2" fill="#E0E0E0"/>
+            <rect x="9" y="6" width="2" height="2" fill="#E0E0E0"/>
+            <rect x="8" y="7" width="2" height="2" fill="#E0E0E0"/>
+
+            <!-- Blade edge (darker) -->
+            <rect x="14" y="2" width="1" height="1" fill="#B0B0B0"/>
+            <rect x="13" y="3" width="1" height="1" fill="#B0B0B0"/>
+            <rect x="12" y="4" width="1" height="1" fill="#B0B0B0"/>
+            <rect x="11" y="5" width="1" height="1" fill="#B0B0B0"/>
+            <rect x="10" y="6" width="1" height="1" fill="#B0B0B0"/>
+            <rect x="9" y="7" width="1" height="1" fill="#B0B0B0"/>
+
+            <!-- Guard/Crossguard -->
+            <rect x="6" y="8" width="1" height="1" fill="#8B7355"/>
+            <rect x="7" y="7" width="1" height="1" fill="#8B7355"/>
+            <rect x="7" y="8" width="2" height="2" fill="#8B7355"/>
+            <rect x="8" y="9" width="1" height="1" fill="#8B7355"/>
+            <rect x="9" y="8" width="1" height="1" fill="#8B7355"/>
+
+            <!-- Handle (diagonal) -->
+            <rect x="6" y="9" width="1" height="1" fill="#654321"/>
+            <rect x="5" y="10" width="1" height="1" fill="#8B4513"/>
+            <rect x="4" y="11" width="1" height="1" fill="#654321"/>
+            <rect x="3" y="12" width="1" height="1" fill="#8B4513"/>
+
+            <!-- Handle wrap details -->
+            <rect x="6" y="10" width="1" height="1" fill="#DAA520"/>
+            <rect x="5" y="11" width="1" height="1" fill="#DAA520"/>
+            <rect x="4" y="12" width="1" height="1" fill="#DAA520"/>
+
+            <!-- Pommel -->
+            <rect x="2" y="13" width="2" height="2" fill="#DAA520"/>
+            <rect x="2" y="14" width="1" height="1" fill="#B8860B"/>
+        </svg>`;
+
+        // Pixel art wrench icon for operator - simple vertical design (rotated via CSS)
+        const screwdriverSvg = `<svg width="20" height="20" viewBox="0 0 20 20" style="image-rendering: pixelated; image-rendering: crisp-edges; transform: rotate(45deg); transform-origin: center;">
+            <!-- C-shaped head at top (opening facing up) -->
+            <!-- Left side of C -->
+            <rect x="6" y="2" width="2" height="5" fill="#8C8C8C"/>
+            <rect x="6" y="2" width="1" height="5" fill="#A0A0A0"/>
+
+            <!-- Right side of C -->
+            <rect x="12" y="2" width="2" height="5" fill="#8C8C8C"/>
+            <rect x="13" y="2" width="1" height="5" fill="#A0A0A0"/>
+
+            <!-- Bottom bar of C -->
+            <rect x="6" y="6" width="8" height="2" fill="#8C8C8C"/>
+            <rect x="7" y="7" width="6" height="1" fill="#A0A0A0"/>
+
+            <!-- Handle (vertical stick) -->
+            <rect x="9" y="8" width="2" height="10" fill="#A0A0A0"/>
+
+            <!-- Left edge shadow on handle -->
+            <rect x="8" y="8" width="1" height="10" fill="#8C8C8C"/>
+
+            <!-- Right edge highlight on handle -->
+            <rect x="11" y="8" width="1" height="10" fill="#B0B0B0"/>
+
+            <!-- Light center line on handle for depth -->
+            <rect x="10" y="8" width="1" height="10" fill="#C0C0C0"/>
+        </svg>`;
+
+        // Pixel art dollar coin icon for investor - gold/yellow coin
+        const moneyStackSvg = `<svg width="20" height="20" viewBox="0 0 20 20" style="image-rendering: pixelated; image-rendering: crisp-edges;">
+            <!-- Black outline for coin -->
+            <rect x="7" y="3" width="6" height="1" fill="#000000"/>
+            <rect x="5" y="4" width="2" height="1" fill="#000000"/>
+            <rect x="13" y="4" width="2" height="1" fill="#000000"/>
+            <rect x="4" y="5" width="1" height="2" fill="#000000"/>
+            <rect x="15" y="5" width="1" height="2" fill="#000000"/>
+            <rect x="3" y="7" width="1" height="6" fill="#000000"/>
+            <rect x="16" y="7" width="1" height="6" fill="#000000"/>
+            <rect x="4" y="13" width="1" height="2" fill="#000000"/>
+            <rect x="15" y="13" width="1" height="2" fill="#000000"/>
+            <rect x="5" y="15" width="2" height="1" fill="#000000"/>
+            <rect x="13" y="15" width="2" height="1" fill="#000000"/>
+            <rect x="7" y="16" width="6" height="1" fill="#000000"/>
+
+            <!-- Gold coin body -->
+            <rect x="7" y="4" width="6" height="1" fill="#FFD700"/>
+            <rect x="5" y="5" width="10" height="1" fill="#FFC107"/>
+            <rect x="4" y="6" width="12" height="1" fill="#FFD700"/>
+            <rect x="4" y="7" width="12" height="1" fill="#FFC107"/>
+            <rect x="4" y="8" width="12" height="1" fill="#FFD700"/>
+            <rect x="4" y="9" width="12" height="1" fill="#FFC107"/>
+            <rect x="4" y="10" width="12" height="1" fill="#FFD700"/>
+            <rect x="4" y="11" width="12" height="1" fill="#FFC107"/>
+            <rect x="4" y="12" width="12" height="1" fill="#FFD700"/>
+            <rect x="5" y="13" width="10" height="1" fill="#FFC107"/>
+            <rect x="5" y="14" width="10" height="1" fill="#FFD700"/>
+            <rect x="7" y="15" width="6" height="1" fill="#FFC107"/>
+
+            <!-- Dollar sign (more prominent) -->
+            <!-- Vertical line -->
+            <rect x="9" y="5" width="1" height="1" fill="#654321"/>
+            <rect x="9" y="6" width="1" height="1" fill="#654321"/>
+            <rect x="9" y="7" width="1" height="1" fill="#654321"/>
+            <rect x="9" y="8" width="1" height="1" fill="#654321"/>
+            <rect x="9" y="9" width="1" height="1" fill="#654321"/>
+            <rect x="9" y="10" width="1" height="1" fill="#654321"/>
+            <rect x="9" y="11" width="1" height="1" fill="#654321"/>
+            <rect x="9" y="12" width="1" height="1" fill="#654321"/>
+            <rect x="9" y="13" width="1" height="1" fill="#654321"/>
+
+            <!-- S shape -->
+            <rect x="8" y="6" width="3" height="1" fill="#654321"/>
+            <rect x="7" y="7" width="1" height="1" fill="#654321"/>
+            <rect x="8" y="8" width="2" height="1" fill="#654321"/>
+            <rect x="10" y="9" width="2" height="1" fill="#654321"/>
+            <rect x="11" y="10" width="1" height="1" fill="#654321"/>
+            <rect x="8" y="11" width="3" height="1" fill="#654321"/>
+
+            <!-- Shine/highlight -->
+            <rect x="6" y="5" width="2" height="1" fill="#FFF8DC"/>
+            <rect x="5" y="6" width="2" height="1" fill="#FFF8DC"/>
+        </svg>`;
+
+        // Pixel art house icon for dad - clear simple design
+        const houseSvg = `<svg width="20" height="20" viewBox="0 0 20 20" style="image-rendering: pixelated; image-rendering: crisp-edges;">
+            <!-- Black outline for roof -->
+            <rect x="10" y="3" width="1" height="1" fill="#2C2C2C"/>
+            <rect x="9" y="4" width="1" height="1" fill="#2C2C2C"/>
+            <rect x="11" y="4" width="1" height="1" fill="#2C2C2C"/>
+            <rect x="8" y="5" width="1" height="1" fill="#2C2C2C"/>
+            <rect x="12" y="5" width="1" height="1" fill="#2C2C2C"/>
+            <rect x="7" y="6" width="1" height="1" fill="#2C2C2C"/>
+            <rect x="13" y="6" width="1" height="1" fill="#2C2C2C"/>
+            <rect x="6" y="7" width="1" height="1" fill="#2C2C2C"/>
+            <rect x="14" y="7" width="1" height="1" fill="#2C2C2C"/>
+            <rect x="5" y="8" width="1" height="1" fill="#2C2C2C"/>
+            <rect x="15" y="8" width="1" height="1" fill="#2C2C2C"/>
+
+            <!-- Coral roof fill to match Dad theme -->
+            <rect x="10" y="4" width="1" height="1" fill="#FF7F50"/>
+            <rect x="9" y="5" width="3" height="1" fill="#FF7F50"/>
+            <rect x="8" y="6" width="5" height="1" fill="#FF7F50"/>
+            <rect x="7" y="7" width="7" height="1" fill="#FF7F50"/>
+            <rect x="6" y="8" width="9" height="1" fill="#FF7F50"/>
+
+            <!-- Black outline for walls -->
+            <rect x="5" y="9" width="1" height="6" fill="#2C2C2C"/>
+            <rect x="15" y="9" width="1" height="6" fill="#2C2C2C"/>
+            <rect x="5" y="15" width="11" height="1" fill="#2C2C2C"/>
+
+            <!-- Beige/tan walls -->
+            <rect x="6" y="9" width="9" height="6" fill="#F5DEB3"/>
+
+            <!-- Brown door -->
+            <rect x="9" y="11" width="2" height="4" fill="#8B4513"/>
+
+            <!-- Chimney on the right -->
+            <rect x="14" y="6" width="2" height="3" fill="#8B4513"/>
+            <rect x="14" y="5" width="2" height="1" fill="#654321"/>
+
+            <!-- Animated smoke (will be animated with CSS) -->
+            <g class="house-smoke">
+                <rect x="14" y="3" width="1" height="1" fill="#444444" opacity="0.9"/>
+                <rect x="15" y="2" width="1" height="1" fill="#444444" opacity="0.8"/>
+                <rect x="14" y="1" width="1" height="1" fill="#444444" opacity="0.7"/>
+            </g>
+
+            <g class="house-smoke" style="animation-delay: 0.5s;">
+                <rect x="13" y="3" width="1" height="1" fill="#444444" opacity="0.9"/>
+                <rect x="14" y="2" width="1" height="1" fill="#444444" opacity="0.8"/>
+                <rect x="15" y="1" width="1" height="1" fill="#444444" opacity="0.7"/>
+            </g>
+
+            <g class="house-smoke" style="animation-delay: 1s;">
+                <rect x="15" y="3" width="1" height="1" fill="#444444" opacity="0.9"/>
+                <rect x="14" y="2" width="1" height="1" fill="#444444" opacity="0.8"/>
+                <rect x="13" y="1" width="1" height="1" fill="#444444" opacity="0.7"/>
+            </g>
+        </svg>`;
+
+        navItems.forEach(item => {
+            const navIcon = item.querySelector('.nav-icon');
+            const navLink = item.querySelector('.nav-link');
+
+            if (navIcon && navLink) {
+                // Save original icon if not already saved
+                if (!navIcon.dataset.originalIcon) {
+                    navIcon.dataset.originalIcon = navIcon.innerHTML;
+                }
+
+                const isActive = navLink.classList.contains('active');
+                const pageName = navLink.dataset.page || 'unknown';
+                console.log(`[updateNavigationIcons] Processing ${pageName} - Active: ${isActive}`);
+
+                if (isFounder) {
+                    // For founder: ONLY show sword on active page, hide ALL other icons
+                    if (isActive) {
+                        console.log(`[updateNavigationIcons] Setting sword icon for active page: ${pageName}`);
+                        navIcon.innerHTML = swordSvg;
+                    } else {
+                        navIcon.innerHTML = '';
+                    }
+                } else if (isOperator) {
+                    // For operator: ONLY show wrench on active page, hide ALL other icons
+                    if (isActive) {
+                        console.log(`[updateNavigationIcons] Setting screwdriver icon for active page: ${pageName}`);
+                        navIcon.innerHTML = screwdriverSvg;
+                    } else {
+                        navIcon.innerHTML = '';
+                    }
+                } else if (isInvestor) {
+                    // For investor: ONLY show money stack on active page, hide ALL other icons
+                    if (isActive) {
+                        console.log(`[updateNavigationIcons] Setting money stack icon for active page: ${pageName}`);
+                        navIcon.innerHTML = moneyStackSvg;
+                    } else {
+                        navIcon.innerHTML = '';
+                    }
+                } else if (isDad) {
+                    // For dad: ONLY show house on active page, hide ALL other icons
+                    if (isActive) {
+                        console.log(`[updateNavigationIcons] Setting house icon for active page: ${pageName}`);
+                        navIcon.innerHTML = houseSvg;
+                    } else {
+                        navIcon.innerHTML = '';
+                    }
+                } else {
+                    // Restore original icons for other personas
+                    if (navIcon.dataset.originalIcon) {
+                        console.log(`[updateNavigationIcons] Restoring original icon for ${pageName}`);
+                        navIcon.innerHTML = navIcon.dataset.originalIcon;
+                    }
+                }
+            }
+        });
+        console.log('[updateNavigationIcons] Update complete');
+    }
+
+    /**
+     * Show the main content and hide character selection
+     */
+    showMainContent() {
+        const modal = document.getElementById('characterSelect');
+        const mainContainer = document.getElementById('mainContainer');
+        const personaSwitcher = document.getElementById('personaSwitcher');
+        const cardDeck = document.getElementById('cardDeck');
+
+        if (modal) {
+            modal.classList.add('hidden');
+            document.body.classList.remove('character-select-active');
+        }
+
+        if (mainContainer) {
+            mainContainer.style.opacity = '1';
+        }
+
+        if (personaSwitcher) {
+            personaSwitcher.classList.remove('hidden');
+        }
+
+        // Show card deck only on desktop
+        if (cardDeck && window.innerWidth > 768) {
+            cardDeck.classList.remove('hidden');
         }
     }
 }
@@ -586,16 +1260,21 @@ class BustlingWorldV2 {
 function initializeBustlingWorld() {
     window.bustlingWorldV2 = new BustlingWorldV2();
 
+    // Initialize role selection options
+    if (window.bustlingWorldV2) {
+        window.bustlingWorldV2.initializeRoleOptions();
+    }
+
     // Note: Removed duplicate mobile persona initialization
     // It's already handled in the setupPersonaSwitcher method
 
     // Debug: Check if background image is loading
     if (window.innerWidth > 768) {
         const img = new Image();
-        img.onload = function() {
+        img.onload = function () {
             console.log('Background image loaded successfully: /assets/bg3.png');
         };
-        img.onerror = function() {
+        img.onerror = function () {
             console.error('Failed to load background image: /assets/bg3.png');
         };
         img.src = '/assets/bg3.png';

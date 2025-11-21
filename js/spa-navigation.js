@@ -92,6 +92,11 @@
         navLinks.forEach(link => {
             link.classList.toggle('active', link.dataset.page === pageKey);
         });
+
+        // Update navigation icons after changing active state
+        if (window.bustlingWorld && window.bustlingWorld.updateNavigationIcons) {
+            window.bustlingWorld.updateNavigationIcons();
+        }
     }
 
     /**

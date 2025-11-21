@@ -1,0 +1,1952 @@
+/**
+ * Mobile-Specific Styles
+ * Professional responsive design for all mobile devices
+ *
+ * @author Alan James Curtis
+ * @version 2.0.0
+ */
+
+/* ==================== Mobile Variables ==================== */
+:root {
+    --mobile-navbar-height: 60px;
+    --mobile-bottom-nav: 70px;
+    --mobile-padding: 15px;
+    --mobile-card-gap: 15px;
+    --swipe-threshold: 50px;
+    --mobile-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== Viewport and Base Mobile Styles ==================== */
+@viewport {
+    width: device-width;
+    initial-scale: 1;
+    maximum-scale: 5;
+    user-scalable: yes;
+}
+
+/* Prevent horizontal scroll */
+html {
+    overflow-x: hidden;
+}
+
+body {
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Remove body backgrounds - will be handled per page */
+body::before,
+body::after {
+    display: none;
+}
+
+/* ==================== Mobile Character Selection ==================== */
+@media (max-width: 768px) {
+    /* Full screen overlay - now scrollable */
+    .character-select-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: transparent;  /* Make transparent to show backgrounds */
+        overflow-y: scroll; /* Force scrollbar always */
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        /* Remove overscroll-behavior as it can cause issues on iOS */
+    }
+
+    /* Dark background base layer for mobile character selection */
+    .character-select-overlay::before {
+        content: '';
+        position: fixed;  /* Fixed to cover whole viewport */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #1A1D20;
+        z-index: -2;
+        pointer-events: none;
+    }
+
+    /* Background image for mobile character selection */
+    .character-select-overlay::after {
+        content: '';
+        position: fixed;  /* Fixed to cover whole viewport */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/assets/bg3.png');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        opacity: 0.5;  /* Subtle but visible effect */
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    /* Hide container when character select is visible */
+    .character-select-overlay:not(.hidden) ~ .container {
+        display: none;
+    }
+
+    .character-select-modal {
+        width: 100%;
+        min-height: 100%;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow: visible;
+        background: transparent;
+        padding-bottom: 50px; /* Extra padding at bottom */
+        padding-bottom: calc(50px + env(safe-area-inset-bottom)); /* For iOS safe area */
+    }
+
+    .scroll-header {
+        padding: 20px 15px 15px 15px; /* top: 20px, right: 15px, bottom: 15px, left: 15px */
+        text-align: center;
+    }
+
+    .select-title {
+        font-size: 19px;  /* Adjusted to fit on one line */
+        letter-spacing: 1.5px;
+        margin-bottom: 8px; /* Reduced from 15px */
+        margin-top: 5px;
+        color: #F0F2F5 !important;
+        text-transform: uppercase;  /* Professional, authoritative */
+        font-weight: 700;
+    }
+
+    .select-subtitle {
+        font-size: 12px;
+        font-weight: 300;  /* Lighter weight on mobile */
+        margin-top: 0;  /* Closer to title */
+        margin-bottom: 5px; /* Reduced from 10px */
+        color: rgba(216, 216, 216, 0.5) !important;  /* Less visible with lower opacity */
+        letter-spacing: 0.3px;
+    }
+
+    /* Character Selection - One main card with thumbnails */
+    .character-grid {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        gap: 0px;
+        overflow: visible;
+        min-height: auto;
+    }
+
+    /* Main character display area */
+    .character-main-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        min-height: auto;
+        margin-bottom: 0;
+        position: relative;
+        touch-action: pan-y; /* Allow vertical scroll but detect horizontal swipes */
+    }
+
+    /* Character cards */
+    .character-card {
+        display: none !important;
+        width: 95%;
+        max-width: 380px;
+        height: auto;
+        min-height: 480px;  /* Reduced from 550px to make cards shorter */
+        padding: 0;
+        flex-direction: column;
+        border-radius: 12px;
+        position: relative;
+        overflow: visible;
+        margin: 0 auto;
+    }
+
+    /* Background color for characterSelect div on mobile */
+    #characterSelect {
+        background: #0A0B0D !important;
+    }
+
+    /* Same background color for all character cards on mobile - now using ::before */
+    .character-card[data-persona="founder"],
+    .character-card[data-persona="operator"],
+    .character-card[data-persona="investor"],
+    .character-card[data-persona="dad"] {
+        background: transparent !important;  /* Make card transparent */
+    }
+
+    /* Opaque background layer for mobile character cards */
+    .character-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #141618;
+        z-index: 0;
+        border-radius: 12px;
+        pointer-events: none;
+    }
+
+    /* Ensure all content is above the background layer */
+    .character-card > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .character-portrait,
+    .character-info,
+    .character-photo,
+    .character-video {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Disable the old background elements */
+    .character-card[data-persona="founder"] .warlord-bg,
+    .character-card[data-persona="operator"] .strategist-bg,
+    .character-card[data-persona="investor"] .merchant-bg,
+    .character-card[data-persona="dad"] .scholar-bg,
+    .character-card[data-persona="dad"] .artist-bg,
+    .character-card .card-background {
+        display: none !important;
+    }
+
+    /* Hide character-frame on mobile - merge with portrait */
+    .character-frame {
+        display: contents; /* This makes the frame act as if it doesn't exist */
+    }
+
+
+    /* Only active card is visible with smooth transition */
+    .character-card.active {
+        display: flex !important;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Maintain the same fade gradient for active cards */
+    .character-card.active .character-portrait {
+        -webkit-mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,   /* Full opacity until 80% - where title starts */
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%) !important;
+        mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,   /* Full opacity until 80% - where title starts */
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%) !important;
+    }
+
+    /* Adjust portrait for main card */
+    .character-portrait {
+        height: 380px; /* Increased from 350px to show more image */
+        width: 100%;
+        position: relative;
+        margin: 0;
+        border-radius: 12px 12px 0 0;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Ultra-smooth gradient fade starting at title position */
+        -webkit-mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,   /* Full opacity until 80% - where title starts */
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%);
+        mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,   /* Full opacity until 80% - where title starts */
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%);
+    }
+
+    .character-photo,
+    .character-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        transform: scale(1.15);
+    }
+
+    /* Extra zoom for operator and investor on mobile */
+    .character-card[data-persona="operator"] .character-photo {
+        transform: scale(1.15) translateY(-2%);  /* Reduced zoom to match others */
+        object-position: center 0%;  /* Moved to top to bring head closer */
+    }
+
+    .character-card[data-persona="investor"] .character-photo {
+        transform: scale(1.15) translateY(-6%);  /* Reduced zoom and move up slightly */
+        object-position: center 0%;  /* Moved to top to bring head closer */
+    }
+
+    .character-card[data-persona="dad"] .character-photo {
+        transform: scale(1.12) translateY(-6%);  /* Reduced zoom and move up slightly */
+        object-position: center 20%;  /* Moved up to 20% to bring head closer to top */
+    }
+
+    /* Info section for main card - natural height, no scroll */
+    .character-info {
+        height: auto;
+        padding: 30px 20px 10px 20px;  /* Reduced top padding from 60px to 30px */
+        margin-top: -60px;  /* Reduced overlap from -110px to -60px to show more image */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+        /* Transparent background to show bg3.png */
+        background: transparent;
+        border-radius: 0 0 12px 12px;
+    }
+
+    /* Ensure consistent spacing for all cards */
+    /* Remove persona-specific info padding - all use the default */
+
+    .character-name {
+        font-size: 22px !important;  /* Professional size for Libre Baskerville on mobile */
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-top: 5px;  /* Reduced from 15px to bring closer to image */
+        margin-bottom: 0px;
+        color: #F0F2F5 !important;
+        width: auto !important;
+        display: block !important;
+    }
+
+    .character-title {
+        font-size: 14px !important;
+        font-weight: 400 !important;  /* Lighter weight on mobile */
+        margin: 0 0 8px 0;  /* No top margin to move even higher */
+        color: #D8D8D8 !important;
+        letter-spacing: 0.3px;
+    }
+
+    .character-desc {
+        font-size: 12px !important;
+        line-height: 1.4;
+        margin: 12px 0 10px 0;  /* Added more space before description */
+        min-height: unset;
+        color: rgba(234, 234, 234, 0.8) !important;
+    }
+
+    /* Stats for main card - Progress bar layout */
+    /* Stats removed per design update - keeping styles commented in case of future use
+    .character-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        font-size: 10px;
+        position: relative;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-radius: 4px;
+        padding: 6px 8px;
+        overflow: hidden;
+    }
+
+    .character-card.active .stat-item {
+        background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    .character-card[data-persona="founder"] .stat-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: linear-gradient(90deg,
+            rgba(160, 164, 83, 0.25) 0%,
+            rgba(160, 164, 83, 0.15) 50%,
+            rgba(160, 164, 83, 0.25) 100%);
+        border-radius: 4px;
+        z-index: 0;
+        width: 0%;
+        transition: width 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    .character-card[data-persona="operator"] .stat-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: linear-gradient(90deg,
+            rgba(255, 184, 0, 0.25) 0%,
+            rgba(255, 184, 0, 0.15) 50%,
+            rgba(255, 184, 0, 0.25) 100%);
+        border-radius: 4px;
+        z-index: 0;
+        width: 0%;
+        transition: width 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    .character-card[data-persona="investor"] .stat-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: linear-gradient(90deg,
+            rgba(195, 159, 71, 0.25) 0%,
+            rgba(195, 159, 71, 0.15) 50%,
+            rgba(195, 159, 71, 0.25) 100%);
+        border-radius: 4px;
+        z-index: 0;
+        width: 0%;
+        transition: width 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    .character-card[data-persona="dad"] .stat-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        background: linear-gradient(90deg,
+            rgba(255, 127, 80, 0.25) 0%,
+            rgba(255, 127, 80, 0.15) 50%,
+            rgba(255, 127, 80, 0.25) 100%);
+        border-radius: 4px;
+        z-index: 0;
+        width: 0%;
+        transition: width 1.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    .character-card.active .stat-item:nth-child(1)::before { animation: fillBar 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; --stat-width: 95%; }
+    .character-card.active .stat-item:nth-child(2)::before { animation: fillBar 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; --stat-width: 85%; }
+    .character-card.active .stat-item:nth-child(3)::before { animation: fillBar 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; --stat-width: 80%; }
+    .character-card.active .stat-item:nth-child(4)::before { animation: fillBar 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; --stat-width: 70%; }
+    .character-card.active .stat-item:nth-child(5)::before { animation: fillBar 1.2s cubic-bezier(0.4, 0.0, 0.2, 1) forwards; --stat-width: 90%; }
+
+    @keyframes fillBar {
+        from {
+            width: 0%;
+        }
+        to {
+            width: var(--stat-width, 50%);
+        }
+    }
+
+    .character-card[data-persona="founder"] .stat-item span {
+        position: absolute;
+        right: 8px;
+        font-size: 11px;
+        font-weight: bold;
+        color: #333;
+        background: #A0A453;
+        padding: 2px 6px;
+        border-radius: 3px;
+        z-index: 2;
+    }
+
+    .character-card[data-persona="operator"] .stat-item span {
+        position: absolute;
+        right: 8px;
+        font-size: 11px;
+        font-weight: bold;
+        color: #333;
+        background: #FFB800;
+        padding: 2px 6px;
+        border-radius: 3px;
+        z-index: 2;
+    }
+
+    .character-card[data-persona="investor"] .stat-item span {
+        position: absolute;
+        right: 8px;
+        font-size: 11px;
+        font-weight: bold;
+        color: #333;
+        background: #C39F47;
+        padding: 2px 6px;
+        border-radius: 3px;
+        z-index: 2;
+    }
+
+    .character-card[data-persona="dad"] .stat-item span {
+        position: absolute;
+        right: 8px;
+        font-size: 11px;
+        font-weight: bold;
+        color: #fff;
+        background: #FF7F50;
+        padding: 2px 6px;
+        border-radius: 3px;
+        z-index: 2;
+    }
+
+    .character-card[data-persona="founder"].active .stat-item span {
+        background: #A0A453 !important;
+    }
+    .character-card[data-persona="operator"].active .stat-item span {
+        background: #FFB800 !important;
+    }
+    .character-card[data-persona="investor"].active .stat-item span {
+        background: #C39F47 !important;
+    }
+    .character-card[data-persona="dad"].active .stat-item span {
+        background: #FF7F50 !important;
+        color: #fff !important;
+    }
+
+    .stat-item {
+        color: rgba(255, 255, 255, 0.8) !important;
+        z-index: 1;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+    }
+
+    .character-card.active .stat-item {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+    */
+
+
+    /* Swipe Indicators */
+    .swipe-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        padding: 2px 5px 10px 5px;  /* Minimal top padding to bring very close to card */
+        margin-bottom: 0;
+    }
+
+    .swipe-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .swipe-dot.active {
+        width: 24px;
+        border-radius: 4px;
+        background: var(--theme-accent, #A0A453);
+    }
+
+    /* Swipe Hint - Hidden */
+    .swipe-hint {
+        display: none;  /* Hide the swipe to explore roles text */
+    }
+
+
+    /* Select Role Button */
+    .select-role-container {
+        padding: 15px 15px 25px;  /* Tighter padding to bring button closer */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .select-role-btn {
+        background: linear-gradient(135deg, var(--theme-accent, #A0A453), var(--theme-secondary, #8B8F4E));
+        color: #1a1a2e;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 40px;
+        margin: 0; /* Remove margin on mobile */
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Cinzel', serif;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .select-role-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .select-role-btn:hover::before {
+        left: 100%;
+    }
+
+    .select-role-btn:active {
+        transform: scale(0.95);
+        box-shadow: 0 2px 8px rgba(160, 164, 83, 0.2);
+    }
+
+    .select-role-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Footer text inside button container */
+    .mobile-footer-text {
+        font-size: 12px;
+        color: rgba(234, 234, 234, 0.5);  /* Reduced opacity for less emphasis */
+        margin: 4px 0 0 0;
+        font-style: italic;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+
+    /* Immediate animations on mobile */
+    .character-card .character-video {
+        display: block;
+        opacity: 1;
+    }
+
+    /* Initially show photo for all cards */
+    .character-card[data-persona="founder"] .character-photo,
+    .character-card[data-persona="operator"] .character-photo,
+    .character-card[data-persona="dad"] .character-photo,
+    .character-card[data-persona="investor"] .character-photo {
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: block !important;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Initially hide video for cards with video (not operator) */
+    .character-card[data-persona="founder"] .character-video,
+    .character-card[data-persona="dad"] .character-video {
+        opacity: 0;
+        visibility: hidden;
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        transition: opacity 0.3s ease;
+    }
+
+    /* Add filter and position for dad video on mobile */
+    .character-card[data-persona="dad"] .character-video {
+        filter: brightness(1.05) contrast(1.05) saturate(1.05);
+        transition: opacity 0.3s ease;
+        object-position: center 20%;  /* Move video down */
+        transform: scale(1.2) translateY(-5%);  /* Zoom in 20% and move down slightly */
+    }
+
+    /* When card is active and playing, show video and hide photo */
+    .character-card[data-persona="founder"].video-playing .character-video,
+    .character-card[data-persona="dad"].video-playing .character-video {
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: block !important;
+    }
+
+    .character-card[data-persona="founder"].video-playing .character-photo,
+    .character-card[data-persona="dad"].video-playing .character-photo {
+        opacity: 0 !important; /* Hide photo when video is playing */
+        display: none !important;
+    }
+
+    /* Keep character-info and character-name in place when video is playing */
+    .character-card.video-playing .character-info {
+        /* Keep the same values as the default .character-info */
+        padding: 30px 20px 10px 20px !important;  /* Same as default */
+        margin-top: -60px !important;  /* Same as default */
+        position: relative !important;
+        width: 100% !important;
+    }
+
+    /* Maintain the same fade gradient when video is playing */
+    .character-card.video-playing .character-portrait {
+        -webkit-mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,   /* Full opacity until 80% - where title starts */
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%) !important;
+        mask-image: linear-gradient(to bottom,
+            rgba(0,0,0,1) 0%,
+            rgba(0,0,0,1) 80%,   /* Full opacity until 80% - where title starts */
+            rgba(0,0,0,0.98) 82%,
+            rgba(0,0,0,0.95) 84%,
+            rgba(0,0,0,0.90) 86%,
+            rgba(0,0,0,0.82) 88%,
+            rgba(0,0,0,0.70) 90%,
+            rgba(0,0,0,0.55) 92%,
+            rgba(0,0,0,0.38) 94%,
+            rgba(0,0,0,0.20) 96%,
+            rgba(0,0,0,0.08) 98%,
+            rgba(0,0,0,0) 100%) !important;
+    }
+
+    .character-card.video-playing .character-name {
+        /* Keep same as default character-name */
+        margin-top: 5px !important;  /* Same as default */
+        margin-bottom: 0px !important;
+        text-align: left !important;
+        position: relative !important;
+        width: auto !important;
+        display: block !important;
+    }
+
+    /* Ensure character-name stays consistent when video stops (after playing) */
+    .character-card:not(.video-playing) .character-name {
+        transform: none !important;
+        position: relative !important;
+        left: 0 !important;
+        width: auto !important;
+    }
+
+    /* Ensure padding stays consistent when card is active */
+    .character-card.active .character-info {
+        padding: 30px 20px 10px 20px !important;  /* Same as default */
+        margin-top: -60px !important;  /* Same as default */
+    }
+
+    /* Apply same tap effect to all cards on mobile - more specific selectors */
+    .character-card.active .character-name,
+    .character-card[data-persona="founder"].active .character-name,
+    .character-card[data-persona="operator"].active .character-name,
+    .character-card[data-persona="investor"].active .character-name,
+    .character-card[data-persona="dad"].active .character-name {
+        color: #FFFFFF !important;  /* Pure white for all cards */
+        text-shadow:
+            2px 2px 4px rgba(0,0,0,0.5),
+            0 0 30px rgba(255, 255, 255, 0.6),
+            0 0 50px rgba(255, 255, 255, 0.3) !important;
+        font-size: 23px !important;  /* Increase from 22px to 23px */
+        transform: none !important;  /* Ensure no transform */
+    }
+
+    /* Maintain same glow effect when video is playing on mobile */
+    .character-card.video-playing .character-name {
+        color: #FFFFFF !important;  /* Pure white for all cards */
+        text-shadow:
+            2px 2px 4px rgba(0,0,0,0.5),
+            0 0 30px rgba(255, 255, 255, 0.6),
+            0 0 50px rgba(255, 255, 255, 0.3) !important;
+        font-size: 23px !important;  /* Keep increased size when video plays */
+    }
+
+    /* Touch feedback */
+    .character-card:active {
+        transform: scale(0.98);
+        transition: transform 0.1s;
+    }
+
+    /* Hide scroll indicators - not needed with grid layout */
+    .scroll-indicators {
+        display: none;
+    }
+
+}
+
+/* ==================== Mobile Navigation ==================== */
+@media (max-width: 768px) {
+    /* Hide persona switcher when character selection is visible */
+    .character-select-overlay:not(.hidden) ~ * .persona-switcher,
+    .character-select-overlay:not(.hidden) ~ .persona-switcher,
+    #characterSelect:not(.hidden) ~ * .persona-switcher,
+    #characterSelect:not(.hidden) + * .persona-switcher,
+    body.character-select-active .persona-switcher,
+    .persona-switcher.hidden {
+        display: none !important;
+    }
+
+    /* Also hide hamburger during character selection */
+    body.character-select-active .hamburger,
+    #characterSelect:not(.hidden) ~ * .hamburger {
+        display: none !important;
+    }
+
+    /* Create mobile header if it doesn't exist */
+    body:not(.character-select-active) {
+        padding-top: var(--mobile-navbar-height);
+    }
+
+    /* Mobile header bar */
+    .mobile-header,
+    .mobile-nav-header {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: calc(var(--mobile-navbar-height) + 10px); /* Slightly taller header */
+        background: var(--theme-primary, #1E2C23);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px var(--mobile-padding) 10px; /* More padding at bottom */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Adjust border for light themes on mobile */
+    body.persona-investor .mobile-header,
+    body.persona-investor .mobile-nav-header,
+    body.persona-dad .mobile-header,
+    body.persona-dad .mobile-nav-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* Hamburger menu button - always visible on mobile */
+    .hamburger,
+    #hamburger {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        width: 30px !important;
+        height: 30px !important;
+        background: transparent !important;
+        border: none !important;
+        cursor: pointer !important;
+        z-index: 10002 !important;
+        position: fixed !important;
+        top: 18px !important;
+        left: 15px !important;
+        right: auto !important;
+        padding: 5px !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transition: transform 0.3s ease !important;
+        align-items: center !important;
+        transform: none !important;
+        margin: 0 !important;
+    }
+
+    /* Container stays fixed, spans are positioned absolutely inside */
+
+    /* Hover/Active state for hamburger */
+    .hamburger:hover,
+    #hamburger:hover {
+        transform: scale(1.1);
+    }
+
+    .hamburger:active,
+    #hamburger:active {
+        transform: scale(0.95);
+    }
+
+    /* Hamburger lines - with gradient matching theme */
+    .hamburger span,
+    #hamburger span {
+        display: block !important;
+        height: 3px !important;
+        width: 24px;
+        background: linear-gradient(90deg,
+            var(--theme-accent, #fff) 0%,
+            var(--theme-text, #fff) 100%);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center center;
+        border-radius: 3px;
+        position: absolute !important;  /* Absolute positioning for precise control */
+        opacity: 1 !important;
+        visibility: visible !important;
+        left: 50%;
+        transform: translateX(-50%);  /* Center horizontally */
+    }
+
+    /* First line - shorter */
+    .hamburger span:first-child,
+    #hamburger span:first-child {
+        width: 20px;
+        top: 6px;  /* Position from top */
+    }
+
+    /* Middle line - full width */
+    .hamburger span:nth-child(2),
+    #hamburger span:nth-child(2) {
+        width: 24px;
+        top: 13px;  /* Center position (30px height / 2 - 1.5px) */
+    }
+
+    /* Last line - shorter, aligned right */
+    .hamburger span:last-child,
+    #hamburger span:last-child {
+        width: 16px;
+        top: 20px;  /* Position from top */
+        left: auto;
+        right: 3px;  /* Align to right */
+        transform: none;  /* Remove center transform */
+    }
+
+    /* Active state - transforms into perfect centered X */
+    .hamburger.active span:first-child,
+    #hamburger.active span:first-child {
+        width: 24px !important;
+        top: 13px !important;  /* Move to center */
+        transform: translateX(-50%) rotate(45deg);  /* Keep centered and rotate */
+    }
+
+    .hamburger.active span:nth-child(2),
+    #hamburger.active span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-50%) scale(0);  /* Keep centered while scaling */
+    }
+
+    .hamburger.active span:last-child,
+    #hamburger.active span:last-child {
+        width: 24px !important;
+        top: 13px !important;  /* Move to center */
+        left: 50% !important;  /* Reset to center */
+        right: auto !important;  /* Reset right alignment */
+        transform: translateX(-50%) rotate(-45deg);  /* Keep centered and rotate */
+    }
+
+    /* Persona-specific hamburger colors on mobile */
+    body.persona-founder .hamburger span,
+    body.persona-founder #hamburger span {
+        background: linear-gradient(90deg, #A0A453 0%, rgba(160, 164, 83, 0.9) 100%);
+    }
+
+    body.persona-operator .hamburger span,
+    body.persona-operator #hamburger span {
+        background: linear-gradient(90deg, #FFB800 0%, rgba(255, 184, 0, 0.9) 100%);
+    }
+
+    body.persona-investor .hamburger span,
+    body.persona-investor #hamburger span {
+        background: linear-gradient(90deg, #C39F47 0%, rgba(195, 159, 71, 0.9) 100%);
+    }
+
+    body.persona-dad .hamburger span,
+    body.persona-dad #hamburger span {
+        background: linear-gradient(90deg, #FF7F50 0%, rgba(255, 127, 80, 0.9) 100%);
+    }
+
+    /* Mobile role title display - next to hamburger on the left */
+    .mobile-role-title {
+        display: flex !important;
+        position: fixed;
+        top: 22px;
+        left: 59px; /* Position next to hamburger - moved 1px closer */
+        z-index: 1001;
+        align-items: center;
+    }
+
+    .mobile-role-title .role-text {
+        font-family: 'Cinzel', serif;
+        color: var(--color-primary);
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: capitalize;
+        letter-spacing: 1px;
+    }
+
+    /* Hide role title during character selection */
+    body.character-select-active .mobile-role-title,
+    #characterSelect:not(.hidden) ~ * .mobile-role-title {
+        display: none !important;
+    }
+
+    /* Persona-specific role title colors */
+    body.persona-founder .mobile-role-title .role-text {
+        color: #A0A453;
+    }
+
+    body.persona-operator .mobile-role-title .role-text {
+        color: #FFB800;
+    }
+
+    body.persona-investor .mobile-role-title .role-text {
+        color: #C39F47;
+    }
+
+    body.persona-dad .mobile-role-title .role-text {
+        color: #FF7F50;
+    }
+
+
+    /* Mobile site title in center - now hidden */
+    .mobile-site-title {
+        font-family: var(--font-primary);
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        color: var(--theme-text);
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: none !important;  /* Hide the title */
+    }
+
+    /* Persona switcher on mobile - top right */
+    .persona-switcher {
+        position: fixed !important;
+        right: 15px !important;
+        top: 10px !important;
+        transform: none !important;
+        display: block !important;
+        width: 48px !important;
+        height: 48px !important;
+        margin-bottom: 20px !important; /* Add space below for better separation */
+        z-index: 999 !important; /* Ensure it's above other elements */
+    }
+
+    /* Sidebar as Full-Screen Overlay */
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -100%;
+        width: 85%;
+        max-width: 320px;
+        height: 100vh !important;
+        background: rgba(30, 44, 35, 0.98); /* Default with slight transparency */
+        z-index: 10001;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+        display: flex !important;
+        flex-direction: column;
+        padding-top: calc(var(--mobile-navbar-height) + 20px);
+        box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+        opacity: 1 !important;
+        visibility: visible !important;
+        backdrop-filter: blur(10px);
+    }
+
+    /* Persona-specific sidebar backgrounds */
+    body.persona-founder .sidebar {
+        background: rgba(30, 44, 35, 0.98); /* Founder green theme - matches #1E2C23 */
+    }
+
+    body.persona-operator .sidebar {
+        background: rgba(26, 29, 32, 0.98); /* Operator dark theme - matches #1A1D20 */
+    }
+
+    body.persona-investor .sidebar {
+        background: rgba(239, 235, 228, 0.98); /* Investor light theme - matches #EFEBE4 */
+    }
+
+    body.persona-dad .sidebar {
+        background: rgba(255, 251, 239, 0.98); /* Dad warm light theme - matches #FFFBEF */
+    }
+
+    /* Light theme adjustments for mobile navigation */
+    body.persona-investor .nav-link,
+    body.persona-dad .nav-link {
+        color: #0A1D1A !important; /* Dark text for light backgrounds */
+    }
+
+    body.persona-investor .nav-link:hover,
+    body.persona-investor .nav-link:active,
+    body.persona-dad .nav-link:hover,
+    body.persona-dad .nav-link:active {
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--theme-accent) !important;
+    }
+
+    body.persona-investor .nav-link.active,
+    body.persona-dad .nav-link.active {
+        background: rgba(0, 0, 0, 0.08);
+        border-left-color: var(--theme-accent);
+        color: var(--theme-accent) !important;
+    }
+
+    body.persona-investor .site-title-link,
+    body.persona-dad .site-title-link {
+        color: #0A1D1A !important;
+    }
+
+    body.persona-investor .persona-badge,
+    body.persona-dad .persona-badge {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar.open {
+        left: 0 !important;
+        display: flex !important;
+    }
+
+    /* Dark overlay when menu is open */
+    .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    body.menu-open .menu-overlay {
+        display: block;
+        opacity: 1;
+    }
+
+    .sidebar-header {
+        padding: 20px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: block !important;
+    }
+
+    .site-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .site-title-link {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-decoration: none;
+        font-family: 'Cinzel', serif;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .persona-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        margin-top: 8px;
+    }
+
+    .badge-text {
+        color: var(--theme-accent, #A0A453);
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .navigation {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 0 20px 0;  /* Removed top padding completely */
+        display: block !important;
+    }
+
+    .nav-list {
+        padding: 0;
+        margin: 0;
+        list-style: none !important;
+        display: block !important;
+    }
+
+    .nav-item {
+        margin: 0;
+        display: block !important;
+    }
+
+    .nav-link {
+        padding: 15px 20px;
+        font-size: 16px;
+        display: flex !important;
+        align-items: center;
+        gap: 15px;
+        border-left: 3px solid transparent;
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.9) !important;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover,
+    .nav-link:active {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--theme-accent, #A0A453) !important;
+    }
+
+    .nav-link.active {
+        background: rgba(255, 255, 255, 0.1);
+        border-left-color: var(--theme-accent);
+        color: var(--theme-accent, #A0A453) !important;
+    }
+
+    /* Navigation icons and text visibility */
+    .nav-icon {
+        display: inline-flex !important;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .nav-text {
+        display: inline-block !important;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 500;
+    }
+
+    /* Content Area */
+    .container {
+        padding-top: calc(var(--mobile-navbar-height) - 15px); /* Reduce top padding more */
+        min-height: 100vh;
+    }
+
+    .content {
+        margin-left: 0;
+        padding: var(--mobile-padding);
+        padding-top: 0; /* No top padding - content starts immediately */
+    }
+
+    /* Remove top margins from content grids on mobile */
+    .writing-grid,
+    .quotes-container,
+    .questions-container,
+    .investments-grid,
+    .article-grid {
+        margin-top: 0 !important;  /* Remove top margin to move content higher */
+        padding-top: 0 !important;
+    }
+
+    /* Reduce page header spacing on mobile to move content up */
+    .page-header {
+        margin-bottom: 5px !important;  /* Very small margin */
+        padding-bottom: 5px !important;  /* Very small padding */
+        margin-top: 0 !important;  /* No negative margin to prevent cutoff */
+        padding-top: 0 !important;
+    }
+
+    /* Move page title up */
+    .page-title {
+        margin-top: 0 !important;
+        margin-bottom: 10px !important;
+        padding-top: 0 !important;
+    }
+
+    /* Remove ALL top spacing from intro text */
+    .intro-text {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Remove spacing from content-body */
+    .content-body {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Force all article and content items to start at top */
+    .article-item,
+    .quote-item,
+    .question-item,
+    .investment-item,
+    .content-item {
+        margin-top: 0 !important;
+    }
+
+    /* Make first child of any content container start at top */
+    .content > *:first-child,
+    .content-body > *:first-child,
+    .writing-grid > *:first-child,
+    .quotes-container > *:first-child,
+    .questions-container > *:first-child,
+    .investments-grid > *:first-child {
+        margin-top: 0 !important;
+        padding-top: 15px !important;
+    }
+
+    /* Persona Switcher for Mobile - removed duplicate, see line 670 */
+
+    /* Container for persona icons - horizontal layout */
+    .persona-icons-container {
+        display: flex !important;
+        flex-direction: row-reverse !important; /* Icons appear to the left of main button */
+        align-items: center !important;
+        gap: 8px !important;
+        position: relative !important;
+        width: auto !important;
+        height: 48px !important;
+        margin-bottom: 15px !important; /* Add more space below the role icon */
+    }
+
+    /* Options container that slides out - VISIBLE FOR TESTING */
+    .persona-options {
+        display: flex !important;
+        flex-direction: row-reverse !important;
+        gap: 6px !important;
+        overflow: visible !important; /* Changed to visible for testing */
+        max-width: 0 !important;
+        opacity: 0 !important;
+        transition: max-width 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s ease !important;
+        margin-right: 0 !important;
+    }
+
+    /* Show options when container has show-options class */
+    .persona-icons-container.show-options .persona-options {
+        max-width: 200px !important; /* Increased to ensure all icons show */
+        opacity: 1 !important;
+    }
+
+    /* Individual persona option buttons - ALWAYS VISIBLE FOR TESTING */
+    .persona-icon-btn {
+        width: 48px !important;
+        height: 48px !important;
+        min-width: 48px !important;
+        min-height: 48px !important;
+        border-radius: 50% !important;
+        background: rgba(255,255,255,0.95) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        cursor: pointer !important;
+        padding: 0 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
+        transform: translateX(20px) scale(0.9) !important;  /* Match desktop animation */
+        display: block !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* Animate icons when showing - match desktop */
+    .persona-icons-container.show-options .persona-icon-btn {
+        opacity: 1 !important;
+        transform: translateX(0) scale(1) !important;
+    }
+
+    /* Staggered animation delay - same timing as desktop */
+    .persona-icons-container.show-options .persona-icon-btn:nth-child(1) {
+        transition-delay: 0.05s !important;
+    }
+    .persona-icons-container.show-options .persona-icon-btn:nth-child(2) {
+        transition-delay: 0.1s !important;
+    }
+    .persona-icons-container.show-options .persona-icon-btn:nth-child(3) {
+        transition-delay: 0.15s !important;
+    }
+    .persona-icons-container.show-options .persona-icon-btn:nth-child(4) {
+        transition-delay: 0.2s !important;
+    }
+
+    /* Selected state with role-specific colors for mobile */
+    .persona-icon-btn[data-persona="founder"].current-role {
+        border-color: #A0A453 !important;
+        border-width: 2px !important;
+        box-shadow: 0 0 0 2px rgba(160, 164, 83, 0.2) !important;
+    }
+
+    .persona-icon-btn[data-persona="operator"].current-role {
+        border-color: #FFB800 !important;
+        border-width: 2px !important;
+        box-shadow: 0 0 0 2px rgba(255, 184, 0, 0.2) !important;
+    }
+
+    .persona-icon-btn[data-persona="investor"].current-role {
+        border-color: #C39F47 !important;
+        border-width: 2px !important;
+        box-shadow: 0 0 0 2px rgba(195, 159, 71, 0.2) !important;
+    }
+
+    .persona-icon-btn[data-persona="dad"].current-role {
+        border-color: #FF7F50 !important;
+        border-width: 2px !important;
+        box-shadow: 0 0 0 2px rgba(255, 127, 80, 0.2) !important;
+    }
+
+    /* Hide current role in options */
+    .persona-icon-btn.current-role {
+        display: none !important;
+    }
+
+    /* Images in option buttons - scaled up and positioned to show faces */
+    .persona-icon-img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center 15% !important;  /* Position to show faces better - more up */
+        display: block !important;
+        border-radius: 50% !important;
+        transform: scale(1.3) !important;  /* Scale up image by 30% */
+    }
+
+    /* Main persona button */
+    .persona-btn {
+        width: 48px !important;
+        height: 48px !important;
+        min-width: 48px !important;
+        min-height: 48px !important;
+        max-width: 48px !important;
+        max-height: 48px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        overflow: hidden !important;
+        flex-shrink: 0 !important;
+        aspect-ratio: 1 / 1 !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+        display: block !important;
+        background: rgba(255,255,255,0.95) !important;
+        cursor: pointer !important;
+        position: relative !important;
+        z-index: 2 !important;
+    }
+
+    /* Role-specific border colors for main button on mobile */
+    body.persona-founder .persona-btn {
+        border-color: #A0A453 !important;
+        border-width: 2px !important;
+    }
+
+    body.persona-operator .persona-btn {
+        border-color: #FFB800 !important;
+        border-width: 2px !important;
+    }
+
+    body.persona-investor .persona-btn {
+        border-color: #C39F47 !important;
+        border-width: 2px !important;
+    }
+
+    body.persona-dad .persona-btn {
+        border-color: #FF7F50 !important;
+        border-width: 2px !important;
+    }
+
+    /* Hide the mobile-only dropdown since we're using icon navigation */
+    .persona-dropdown.mobile-only {
+        display: none !important;
+    }
+
+    /* Ensure persona image fills the whole circle on mobile - scaled and positioned for faces */
+    .persona-profile-img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center 15% !important; /* Position to show face better - moved up */
+        display: block !important;
+        border-radius: 0 !important; /* Remove radius from image since container handles it */
+        transform: scale(1.3) !important;  /* Scale up image by 30% */
+    }
+
+    .current-persona-avatar {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        line-height: 0 !important;
+        border-radius: 0 !important; /* Remove radius from span since button handles it */
+        overflow: hidden !important;
+    }
+
+    .persona-dropdown {
+        right: 0;
+        left: auto;
+        top: 50px;
+        width: 200px;
+    }
+}
+
+/* ==================== Mobile Split View ==================== */
+@media (max-width: 768px) {
+    .split-view {
+        flex-direction: column;
+        height: auto;
+        min-height: auto !important;  /* Don't force minimum height */
+        padding: var(--mobile-padding) !important;  /* Match regular content padding */
+        padding-top: 0 !important;  /* No top padding, same as regular content */
+        gap: 0;
+        align-items: flex-start !important;  /* Align content to top */
+        justify-content: flex-start !important;  /* Push content to top */
+    }
+
+    .list-pane {
+        width: 100%;
+        min-width: 100%;
+        max-height: none !important;  /* Remove height restriction */
+        height: auto !important;  /* Let it size to content */
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: var(--mobile-padding);
+        padding-top: 0 !important;  /* Remove top padding in list-pane */
+        position: relative !important;  /* Change from sticky to relative */
+        top: 0 !important;  /* Reset top position */
+        background: var(--theme-primary);
+        z-index: 10;
+    }
+
+    .reading-pane {
+        width: 100%;
+        padding: var(--mobile-padding);
+        min-height: 60vh;
+    }
+
+    /* Collapsible list on mobile */
+    .list-pane.collapsed {
+        max-height: 60px;
+        overflow: hidden;
+    }
+
+    .list-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+
+    .list-toggle::after {
+        content: '▼';
+        transition: transform 0.3s;
+    }
+
+    .list-pane.collapsed .list-toggle::after {
+        transform: rotate(-90deg);
+    }
+
+    .post-list {
+        margin: 10px 0;
+    }
+
+    .post-list a {
+        padding: 12px 10px;
+        font-size: 14px;
+    }
+}
+
+/* ==================== Mobile Forms and Inputs ==================== */
+@media (max-width: 768px) {
+    input, textarea, select {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 12px;
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--theme-text);
+    }
+
+    button, .btn {
+        min-height: 44px; /* Apple's minimum touch target */
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        width: 100%;
+        margin: 10px 0;
+    }
+}
+
+/* ==================== Mobile Tables ==================== */
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    .responsive-table {
+        display: block;
+        width: 100%;
+    }
+
+    .responsive-table tbody,
+    .responsive-table tr,
+    .responsive-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .responsive-table tr {
+        margin-bottom: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .responsive-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+
+    .responsive-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        text-align: left;
+        font-weight: bold;
+    }
+}
+
+/* ==================== Mobile Typography ==================== */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 28px;
+        line-height: 1.2;
+    }
+
+    h2 {
+        font-size: 24px;
+        line-height: 1.3;
+    }
+
+    h3 {
+        font-size: 20px;
+        line-height: 1.4;
+    }
+
+    p, li {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .page-title {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .article-title {
+        font-size: 22px;
+    }
+
+    blockquote {
+        margin: 20px 0;
+        padding: 15px;
+        font-size: 16px;
+    }
+}
+
+/* ==================== Mobile Card Layouts ==================== */
+@media (max-width: 768px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+        gap: var(--mobile-card-gap);
+        padding: 0;
+    }
+
+    .card {
+        margin: 0;
+        border-radius: 12px;
+        padding: 15px;
+    }
+
+    .investment-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .question-category {
+        margin: 20px 0;
+        padding: 15px;
+    }
+}
+
+/* ==================== Touch and Gesture Support ==================== */
+.touchable {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+}
+
+.swipeable {
+    touch-action: pan-y;
+}
+
+.draggable {
+    touch-action: none;
+}
+
+/* ==================== Loading States ==================== */
+.mobile-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+
+.mobile-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--theme-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==================== Bottom Navigation (Optional) ==================== */
+@media (max-width: 768px) {
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: var(--mobile-bottom-nav);
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 100;
+        justify-content: space-around;
+        align-items: center;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .bottom-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .bottom-nav-item.active {
+        color: var(--theme-accent);
+    }
+
+    .bottom-nav-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .bottom-nav-label {
+        font-size: 11px;
+        font-weight: 500;
+    }
+
+    /* Adjust content for bottom nav */
+    .has-bottom-nav .container {
+        padding-bottom: calc(var(--mobile-bottom-nav) + 20px);
+    }
+}
+
+/* ==================== Landscape Orientation ==================== */
+@media (max-width: 768px) and (orientation: landscape) {
+    .character-select-modal {
+        padding: 0;
+    }
+
+    .scroll-header {
+        padding: 5px;
+    }
+
+    .select-title {
+        font-size: 16px;
+    }
+
+    .select-subtitle {
+        display: none; /* Hide subtitle in landscape to save space */
+    }
+
+    /* Adjust layout for landscape */
+    .character-grid {
+        flex-direction: row;
+        padding: 0;
+        gap: 10px;
+    }
+
+    .character-main-display {
+        flex: 1;
+    }
+
+    .character-card {
+        max-height: 100%;
+    }
+
+    .character-portrait {
+        height: 40%;
+    }
+
+    .character-name {
+        font-size: 18px !important;
+    }
+
+    .character-title {
+        font-size: 12px !important;
+    }
+
+    .character-desc {
+        font-size: 11px !important;
+        -webkit-line-clamp: 2;
+    }
+
+    /* Swipe indicators in landscape */
+    .swipe-indicators {
+        padding: 10px;
+    }
+
+    .swipe-hint {
+        font-size: 12px;
+        padding: 3px;
+    }
+
+    .mobile-header {
+        height: 50px;
+    }
+
+    .container {
+        padding-top: 50px;
+    }
+}
+
+/* ==================== Small Phones ==================== */
+@media (max-width: 375px) {
+    :root {
+        --mobile-padding: 12px;
+    }
+
+    /* Even smaller text for tiny screens */
+    .select-title {
+        font-size: 17px;
+    }
+
+    .character-grid {
+        gap: 8px;
+        padding: 0;
+    }
+
+    .character-card {
+        padding: 8px;
+    }
+
+    .character-name {
+        font-size: 16px !important;
+    }
+
+    .character-title {
+        font-size: 10px !important;
+    }
+
+    .character-desc {
+        font-size: 10px !important;
+        -webkit-line-clamp: 2;
+    }
+
+    /* Stats removed per design update
+    .stat-item {
+        font-size: 9px;
+    }
+    */
+
+    /* Stats removed per design update
+    .stat-item span {
+        font-size: 8px;
+    }
+    */
+
+    h1 {
+        font-size: 24px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    p, li {
+        font-size: 14px;
+    }
+
+    .nav-link {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+}
+
+/* ==================== Tablets ==================== */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .character-select-modal {
+        max-width: 90%;
+        max-height: 90vh;
+    }
+
+    .character-grid {
+        grid-template-columns: repeat(2, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .character-card {
+        height: auto;
+        min-height: 350px;
+    }
+}
+
+/* ==================== Accessibility for Mobile ==================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
