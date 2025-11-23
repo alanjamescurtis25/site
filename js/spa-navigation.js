@@ -28,6 +28,21 @@
 
         // Setup browser history handlers
         setupHistoryHandlers();
+
+        // Load the current page content if we're on the index page
+        // This ensures content loads on refresh
+        if ((pathname === '/' || pathname === '/index.html') && currentPage === 'welcome') {
+            // Check if content area exists and is empty
+            const contentArea = document.querySelector('.content');
+            const hasWelcomeContent = contentArea && (contentArea.querySelector('.welcome-cards') || contentArea.classList.contains('welcome-page'));
+
+            if (contentArea && !hasWelcomeContent) {
+                // Small delay to ensure DOM is ready
+                setTimeout(() => {
+                    loadPageContent('welcome');
+                }, 50);
+            }
+        }
     }
 
     /**
@@ -103,39 +118,153 @@
      * Load Welcome content
      */
     function loadWelcomeContent(container) {
-        // Always show the same generic welcome content
-        const content = {
-            title: 'Welcome',
-            content: `
-                <p>Welcome to my personal website! This site's "job to be done" is to make me as legible as possible.</p>
+        // Get persona-specific content
+        const persona = localStorage.getItem('bustling_v2_persona') || 'founder';
+        const isMobile = window.innerWidth <= 768;
 
-                <p>A good place to start is with my <a href="/bio.html" class="text-link">bio</a>, my <a href="/writing/user-manual.html" class="text-link">user manual</a>, or my <a href="/writing/latticework.html" class="text-link">latticework</a>.</p>
-
-                <p>Thanks for stopping by and please reach out on <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">X</a>, <a href="https://linkedin.com/in/alanjamescurtis" target="_blank" class="text-link">LinkedIn</a>, or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a> if we should be working together!</p>
-            `
+        const personaData = {
+            founder: {
+                welcome: `Welcome to my personal website! This site's "job to be done" is to make me as legible as possible.`,
+                focus: `A good place to start is with my <a href="/bio.html" class="text-link">bio</a>, my <a href="/writing/user-manual.html" class="text-link">user manual</a>, or my <a href="/writing/lattice-work.html" class="text-link">latticework</a>.`,
+                ending: `Thanks for stopping by and please reach out on <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">X</a>, <a href="https://linkedin.com/in/alanjamescurtis" target="_blank" class="text-link">LinkedIn</a>, or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a> if we should be working together!`
+            },
+            operator: {
+                welcome: `Welcome to my personal website! This site's "job to be done" is to make me as legible as possible.`,
+                focus: `A good place to start is with my <a href="/bio.html" class="text-link">bio</a>, my <a href="/writing/user-manual.html" class="text-link">user manual</a>, or my <a href="/writing/lattice-work.html" class="text-link">latticework</a>.`,
+                ending: `Thanks for stopping by and please reach out on <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">X</a>, <a href="https://linkedin.com/in/alanjamescurtis" target="_blank" class="text-link">LinkedIn</a>, or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a> if we should be working together!`
+            },
+            investor: {
+                welcome: `Welcome to my personal website! This site's "job to be done" is to make me as legible as possible.`,
+                focus: `A good place to start is with my <a href="/bio.html" class="text-link">bio</a>, my <a href="/writing/user-manual.html" class="text-link">user manual</a>, or my <a href="/writing/lattice-work.html" class="text-link">latticework</a>.`,
+                ending: `Thanks for stopping by and please reach out on <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">X</a>, <a href="https://linkedin.com/in/alanjamescurtis" target="_blank" class="text-link">LinkedIn</a>, or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a> if we should be working together!`
+            },
+            dad: {
+                welcome: `Welcome to my personal website! This site's "job to be done" is to make me as legible as possible.`,
+                focus: `A good place to start is with my <a href="/bio.html" class="text-link">bio</a>, my <a href="/writing/user-manual.html" class="text-link">user manual</a>, or my <a href="/writing/lattice-work.html" class="text-link">latticework</a>.`,
+                ending: `Thanks for stopping by and please reach out on <a href="https://twitter.com/alanjamescurtis" target="_blank" class="text-link">X</a>, <a href="https://linkedin.com/in/alanjamescurtis" target="_blank" class="text-link">LinkedIn</a>, or <a href="mailto:alanjamescurtis@gmail.com" class="text-link">email</a> if we should be working together!`
+            }
         };
 
-        container.className = 'content';
-        container.innerHTML = `
-            <div class="page-header">
-                <h1 class="page-title">${content.title}</h1>
-            </div>
-            <div class="content-body">
-                ${content.content}
-            </div>
-        `;
+        const content = personaData[persona] || personaData.founder;
+
+        // Use cards only on desktop, simple paragraphs on mobile
+        if (isMobile) {
+            container.className = 'content';
+            container.innerHTML = `
+                <div class="page-header">
+                    <h1 class="page-title">Welcome</h1>
+                </div>
+                <div class="content-body">
+                    <p>${content.welcome}</p>
+                    <p>${content.focus}</p>
+                    <p>${content.ending}</p>
+                </div>
+            `;
+        } else {
+            container.className = 'content welcome-page';
+            container.innerHTML = `
+                <div class="page-header">
+                    <h1 class="page-title">Welcome</h1>
+                </div>
+                <div class="content-body welcome-cards cards-hidden">
+                    <div class="welcome-card entrance-card">
+                        <div class="card-number">I</div>
+                        <div class="card-content">
+                            <p>${content.welcome}</p>
+                        </div>
+                    </div>
+                    <div class="welcome-card quest-card">
+                        <div class="card-number">II</div>
+                        <div class="card-content">
+                            <p>${content.focus}</p>
+                        </div>
+                    </div>
+                    <div class="welcome-card invitation-card">
+                        <div class="card-number">III</div>
+                        <div class="card-content">
+                            <p>${content.ending}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Fade in the cards after a longer delay to ensure smooth loading
+            setTimeout(() => {
+                const cardsContainer = container.querySelector('.welcome-cards');
+                if (cardsContainer) {
+                    cardsContainer.classList.remove('cards-hidden');
+                }
+            }, 200);
+        }
 
         // Setup internal links after content loads
         setTimeout(() => {
             setupWelcomeLinks();
-        }, 100);
+        }, 300);
     }
 
     /**
      * Setup Welcome page internal links
      */
     function setupWelcomeLinks() {
-        // Handle all page links
+        // Handle all text links in the welcome content
+        const textLinks = document.querySelectorAll('.text-link');
+        console.log('[SPA] Setting up welcome links, found:', textLinks.length, 'text-link elements');
+
+        textLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            console.log('[SPA] Processing link:', href);
+
+            // Skip external links (they should work normally)
+            if (href && (href.startsWith('http') || href.startsWith('mailto:'))) {
+                console.log('[SPA] External link, skipping:', href);
+                return;
+            }
+
+            // Handle internal navigation links
+            link.addEventListener('click', (e) => {
+                console.log('[SPA] Internal link clicked:', href);
+                e.preventDefault();
+
+                // Determine the page from the href
+                let page = null;
+                let article = null;
+
+                if (href.includes('/bio')) {
+                    page = 'bio';
+                } else if (href.includes('/writing/')) {
+                    // This is a specific article
+                    page = 'writing';
+                    // Extract article name from path
+                    const match = href.match(/\/writing\/(.+)\.html/);
+                    if (match) {
+                        article = match[1];
+                    }
+                } else if (href.includes('/writing')) {
+                    page = 'writing';
+                } else if (href.includes('/investments')) {
+                    page = 'investments';
+                } else if (href.includes('/quotes')) {
+                    page = 'quotes';
+                } else if (href.includes('/questions')) {
+                    page = 'questions';
+                }
+
+                if (page) {
+                    loadPageContent(page);
+
+                    // If it's a specific article, load it after the writing page loads
+                    if (page === 'writing' && article) {
+                        setTimeout(() => {
+                            const targetLink = document.querySelector(`[data-article="${article}"]`);
+                            if (targetLink) targetLink.click();
+                        }, 200);
+                    }
+                }
+            });
+        });
+
+        // Handle all page links (legacy support)
         const pageLinks = document.querySelectorAll('.spa-link[data-page]');
         pageLinks.forEach(link => {
             link.addEventListener('click', (e) => {
@@ -147,7 +276,7 @@
             });
         });
 
-        // Handle all article links
+        // Handle all article links (legacy support)
         const articleLinks = document.querySelectorAll('.spa-link[data-article]');
         articleLinks.forEach(link => {
             link.addEventListener('click', (e) => {
@@ -175,73 +304,150 @@
                 <h1 class="page-title">Bio</h1>
             </div>
             <div class="content-body">
-                <p>Alan Curtis is a Founder, Operator, Investor, and most importantly, a Dad.</p>
+                <div class="bio-introduction">
+                    <p>Alan Curtis is a Founder, Operator, Investor, and most importantly, a Dad.</p>
+                    <p>As a Founder, Alan has five exits and has delivered a lifetime 300%+ IRR for investors across $100M+ raised from 75+ venture capital funds and 100+ angel investors.</p>
+                    <p>As an Operator, Alan has been COO at EigenLayer during a $7B TGE ($EIGEN), CTO of Core Scientific during $4B IPO ($CORZ) and CSO at Blockcap during a $2B merger.</p>
+                    <p>As an Investor, Alan has invested in 50+ companies (seven unicorns and five exits) and 10+ he was also the first Head of Platform at Blockchain Capital to launch post-investment support.</p>
+                    <p>As a Dad, Alan lives with his wife and two daughters outside Boulder, Colorado and is proud soccer coach, avid nail polish test subject, and amateur "rock stacker."</p>
+                </div>
 
-                <p>As a Founder, Alan has five exits and has delivered a lifetime 300%+ IRR for investors across $100M+ raised from 75+ venture capital funds and 100+ angel investors.</p>
+                <div class="bio-timeline">
+                    <div class="timeline-item">
+                        <span class="timeline-year">2025</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Founder and CEO, The Invention Network</h3>
+                            <p class="timeline-description">We help inventors win</p>
+                        </div>
+                    </div>
 
-                <p>As an Operator, Alan has been COO at EigenLayer during a $7B TGE ($EIGEN), CTO of Core Scientific during $4B IPO ($CORZ) and CSO at Blockcap during a $2B merger.</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2024</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">COO, Eigen Labs</h3>
+                            <p class="timeline-description">Led $7B TGE ($EIGEN) and launched EigenCloud</p>
+                        </div>
+                    </div>
 
-                <p>As an Investor, Alan has invested in 50+ companies (seven unicorns and five exits) and 10+ he was also the first Head of Platform at Blockchain Capital to launch post-investment support.</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2023</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Co-Founder and CEO, Rio Network</h3>
+                            <p class="timeline-description">Acquired by Eigen Labs for team and Liquid Restaking Network tech</p>
+                        </div>
+                    </div>
 
-                <p>As a Dad, Alan lives with his wife and two daughters outside Boulder, Colorado and is proud soccer coach, avid nail polish test subject, and amateur "rock stacker."</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2022-2025</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Co-Founder, ScaleIP</h3>
+                            <p class="timeline-description">Acquired by The Invention Network for team</p>
+                        </div>
+                    </div>
 
-                <h2>2025</h2>
-                <h3>Founder and CEO, The Invention Network</h3>
-                <p>We help inventors win</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2022</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Head of Platform, Blockchain Capital</h3>
+                            <p class="timeline-description">Launched post-investment support program</p>
+                        </div>
+                    </div>
 
-                <h2>2024</h2>
-                <h3>COO, Eigen Labs</h3>
-                <p>Led $7B TGE ($EIGEN) and launched EigenCloud</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2022</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Co-Founder, Multisig Media</h3>
+                            <p class="timeline-description">Acquired by Bitwave to scale media efforts</p>
+                        </div>
+                    </div>
 
-                <h2>2023</h2>
-                <h3>Co-Founder and CEO, Rio Network</h3>
-                <p>Acquired by Eigen Labs for team and Liquid Restaking Network tech</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2021</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">CTO, Core Scientific</h3>
+                            <p class="timeline-description">Turned around technology team for a $4B IPO ($CORZ)</p>
+                        </div>
+                    </div>
 
-                <h2>2022-2025</h2>
-                <h3>Co-Founder, ScaleIP</h3>
-                <p>Acquired by The Invention Network for team</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2021</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">CSO, Blockcap</h3>
+                            <p class="timeline-description">Led integrations into Core Scientific after a $2B merger</p>
+                        </div>
+                    </div>
 
-                <h2>2022</h2>
-                <h3>Head of Platform, Blockchain Capital</h3>
-                <p>Launched post-investment support program</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2017-2021</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Co-Founder and CEO, RADAR</h3>
+                            <p class="timeline-description">Acquired by Blockcap for staking and trading businesses</p>
+                        </div>
+                    </div>
 
-                <h2>2022</h2>
-                <h3>Co-Founder, Multisig Media</h3>
-                <p>Acquired by Bitwave to scale media efforts</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2016</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Co-Founder and CEO, The Horse and I</h3>
+                            <p class="timeline-description">Acquired by The Right Horse for technology platform</p>
+                        </div>
+                    </div>
 
-                <h2>2021</h2>
-                <h3>CTO, Core Scientific</h3>
-                <p>Turned around technology team for a $4B IPO ($CORZ)</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2014-2017</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Program Director, Innosphere</h3>
+                            <p class="timeline-description">Managed accelerator: admissions, curriculum, and digital health vertical</p>
+                        </div>
+                    </div>
 
-                <h2>2021</h2>
-                <h3>CSO, Blockcap</h3>
-                <p>Led integrations into Core Scientific after a $2B merger</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2010-2016</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Bachelor and Master's Degree, Economics, Business Administration, and Public Health</h3>
+                            <p class="timeline-description">Survived, barely</p>
+                        </div>
+                    </div>
 
-                <h2>2017-2021</h2>
-                <h3>Co-Founder and CEO, RADAR</h3>
-                <p>Acquired by Blockcap for staking and trading businesses</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">2000-2010</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Grew up in Chicago suburbs</h3>
+                            <p class="timeline-description">One giant strip mall</p>
+                        </div>
+                    </div>
 
-                <h2>2016</h2>
-                <h3>Co-Founder and CEO, The Horse and I</h3>
-                <p>Acquired by The Right Horse for technology platform</p>
-
-                <h2>2014-2017</h2>
-                <h3>Program Director, Innosphere</h3>
-                <p>Managed accelerator: admissions, curriculum, and digital health vertical</p>
-
-                <h2>2010-2016</h2>
-                <h3>Bachelor and Master's Degree, Economics, Business Administration, and Public Health</h3>
-                <p>Survived, barely</p>
-
-                <h2>2000-2010</h2>
-                <h3>Grew up in Chicago suburbs</h3>
-                <p>One giant strip mall</p>
-
-                <h2>1995-2000</h2>
-                <h3>Born and raised in New Hampshire</h3>
-                <p>Live free or die</p>
+                    <div class="timeline-item">
+                        <span class="timeline-year">1995-2000</span>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Born and raised in New Hampshire</h3>
+                            <p class="timeline-description">Live free or die</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
+
+        // Add scroll animations for timeline items
+        setTimeout(() => {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            const timelineItems = container.querySelectorAll('.timeline-item');
+            timelineItems.forEach(item => {
+                observer.observe(item);
+            });
+        }, 100);
     }
 
     /**
@@ -594,6 +800,27 @@
 
                     // Scroll to top of reading pane
                     quotesContentDiv.scrollTop = 0;
+
+                    // Add scroll animations for quote items
+                    setTimeout(() => {
+                        const observerOptions = {
+                            threshold: 0.1,
+                            rootMargin: '0px 0px -50px 0px'
+                        };
+
+                        const observer = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add('visible');
+                                }
+                            });
+                        }, observerOptions);
+
+                        const quoteItems = quotesContentDiv.querySelectorAll('.quote-item');
+                        quoteItems.forEach(item => {
+                            observer.observe(item);
+                        });
+                    }, 100);
                 } else {
                     console.warn('Category not found:', categoryKey);
                 }
@@ -653,6 +880,27 @@
 
                     // Scroll to top of reading pane
                     questionsContentDiv.scrollTop = 0;
+
+                    // Add scroll animations for question items
+                    setTimeout(() => {
+                        const observerOptions = {
+                            threshold: 0.1,
+                            rootMargin: '0px 0px -50px 0px'
+                        };
+
+                        const observer = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add('visible');
+                                }
+                            });
+                        }, observerOptions);
+
+                        const questionItems = questionsContentDiv.querySelectorAll('.question-item');
+                        questionItems.forEach(item => {
+                            observer.observe(item);
+                        });
+                    }, 100);
                 } else {
                     console.warn('Section not found:', sectionKey);
                 }
@@ -710,6 +958,27 @@
 
                     // Scroll to top of reading pane
                     investmentsContentDiv.scrollTop = 0;
+
+                    // Add scroll animations for investment items
+                    setTimeout(() => {
+                        const observerOptions = {
+                            threshold: 0.1,
+                            rootMargin: '0px 0px -50px 0px'
+                        };
+
+                        const observer = new IntersectionObserver((entries) => {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    entry.target.classList.add('visible');
+                                }
+                            });
+                        }, observerOptions);
+
+                        const investmentItems = investmentsContentDiv.querySelectorAll('.investment-list li');
+                        investmentItems.forEach(item => {
+                            observer.observe(item);
+                        });
+                    }, 100);
                 } else {
                     console.warn('Category not found:', categoryKey);
                 }

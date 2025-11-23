@@ -147,22 +147,45 @@
                     card.style.display = 'none';
                 }
 
-                // Add click handler for cards with video to toggle playback
-                if (card.dataset.persona === 'founder' || card.dataset.persona === 'dad') {
-                    let isToggling = false;
-                    card.addEventListener('click', (e) => {
-                        // Toggle video on any click on the card (for better mobile UX)
-                        // Prevent if clicking the Select Role button or already toggling
-                        if (!e.target.closest('.select-role-btn') && !isToggling) {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            isToggling = true;
-                            this.toggleFounderVideo(card);  // Works for founder and dad
-                            // Reset flag after a short delay
-                            setTimeout(() => {
-                                isToggling = false;
-                            }, 300);
-                        }
+                // Add click handler for ALL cards to prevent navigation and handle video toggle
+                card.addEventListener('click', (e) => {
+                    // Always prevent any default navigation behavior on mobile
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Only allow Select Role button to pass through
+                    if (e.target.closest('.select-role-btn')) {
+                        // Don't prevent the button from working
+                        return;
+                    }
+
+                    // For cards with video, toggle playback
+                    if (card.dataset.persona === 'founder' || card.dataset.persona === 'dad' || card.dataset.persona === 'operator') {
+                        this.toggleFounderVideo(card);  // Works for founder, dad, and operator
+                    }
+                });
+
+                // Also add preventive handlers to the portrait, image and video elements
+                const portrait = card.querySelector('.character-portrait');
+                const img = card.querySelector('.character-photo');
+                const video = card.querySelector('.character-video');
+
+                if (portrait) {
+                    portrait.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                }
+                if (img) {
+                    img.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                }
+                if (video) {
+                    video.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                     });
                 }
 
@@ -280,8 +303,8 @@
             if (index === this.currentIndex) {
                 // If clicking the same card that's already active
                 const currentCard = this.cards[index];
-                if (currentCard.dataset.persona === 'founder' || currentCard.dataset.persona === 'dad') {
-                    // Toggle video playback for cards with video (founder and dad only)
+                if (currentCard.dataset.persona === 'founder' || currentCard.dataset.persona === 'dad' || currentCard.dataset.persona === 'operator') {
+                    // Toggle video playback for cards with video
                     this.toggleFounderVideo(currentCard);
                 }
                 return;
@@ -293,7 +316,7 @@
                 card.style.display = 'none';
 
                 // Stop video and remove playing class
-                if (card.dataset.persona === 'founder' || card.dataset.persona === 'dad') {
+                if (card.dataset.persona === 'founder' || card.dataset.persona === 'dad' || card.dataset.persona === 'operator') {
                     card.classList.remove('video-playing');
                     const video = card.querySelector('.character-video');
                     if (video) {
@@ -336,8 +359,8 @@
 
             // Ensure video is muted
             video.muted = true;
-            // Auto-loop only for founder, handle dad manually
-            video.loop = card.dataset.persona === 'founder';
+            // Auto-loop for founder and operator, handle dad manually
+            video.loop = card.dataset.persona === 'founder' || card.dataset.persona === 'operator';
 
             // Setup dad video to loop back at 6 seconds
             if (card.dataset.persona === 'dad' && !video.hasAttribute('data-listener-added')) {

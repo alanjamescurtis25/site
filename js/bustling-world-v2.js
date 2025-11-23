@@ -17,9 +17,9 @@ class BustlingWorldV2 {
                 image: '/assets/alan-2.jpeg',
                 content: {
                     title: 'Welcome to the War Room',
-                    welcome: "Welcome, fellow builder! I'm a five-time founder with successful exits, over $100M raised, and a passion for creating companies that matter.",
-                    focus: "Currently focusing on strategic investments, advising founders, and building the next generation of digital infrastructure.",
-                    ending: "Let's build something extraordinary together."
+                    welcome: "Welcome to my personal website! This site's \"job to be done\" is to make me as legible as possible.",
+                    focus: "A good place to start is with my bio, my user manual, or my latticework.",
+                    ending: "Thanks for stopping by and please reach out on X, LinkedIn, or email if we should be working together!"
                 }
             },
             operator: {
@@ -28,9 +28,9 @@ class BustlingWorldV2 {
                 image: '/assets/operator.png',
                 content: {
                     title: 'Strategic Operations Center',
-                    welcome: "Systems thinking meets execution. Former COO at EigenLayer and CTO at Core Scientific, I specialize in scaling operations from startup to enterprise.",
-                    focus: "Building robust systems, optimizing processes, and turning chaos into order at scale.",
-                    ending: "Let's architect systems that scale effortlessly."
+                    welcome: "Welcome to my personal website! This site's \"job to be done\" is to make me as legible as possible.",
+                    focus: "A good place to start is with my bio, my user manual, or my latticework.",
+                    ending: "Thanks for stopping by and please reach out on X, LinkedIn, or email if we should be working together!"
                 }
             },
             investor: {
@@ -39,9 +39,9 @@ class BustlingWorldV2 {
                 image: '/assets/investor.png',
                 content: {
                     title: 'The Trading Hall',
-                    welcome: "Capital allocation is both art and science. As an active investor and advisor, I help founders navigate from seed to scale.",
-                    focus: "Pattern recognition, portfolio construction, and helping exceptional founders build category-defining companies.",
-                    ending: "The best investments are partnerships. Let's explore possibilities."
+                    welcome: "Welcome to my personal website! This site's \"job to be done\" is to make me as legible as possible.",
+                    focus: "A good place to start is with my bio, my user manual, or my latticework.",
+                    ending: "Thanks for stopping by and please reach out on X, LinkedIn, or email if we should be working together!"
                 }
             },
             dad: {
@@ -50,9 +50,9 @@ class BustlingWorldV2 {
                 image: '/assets/dad.png',
                 content: {
                     title: "The Scholar's Sanctuary",
-                    welcome: "Hey there! Beyond all the titles and ventures, I'm a dad first. Life's greatest ROI comes from family, relationships, and helping others grow.",
-                    focus: "Balancing ambition with presence, sharing hard-won wisdom, and keeping perspective on what truly matters.",
-                    ending: "Success is measured in moments, not metrics. How can I help?"
+                    welcome: "Welcome to my personal website! This site's \"job to be done\" is to make me as legible as possible.",
+                    focus: "A good place to start is with my bio, my user manual, or my latticework.",
+                    ending: "Thanks for stopping by and please reach out on X, LinkedIn, or email if we should be working together!"
                 }
             }
         };
@@ -104,6 +104,19 @@ class BustlingWorldV2 {
                 }
             } else {
                 this.showMainContent();
+                // Render the card deck for returning users
+                this.renderCardDeck();
+                // Load welcome content on index page after showing main content
+                // This ensures the cards appear on refresh
+                // But only if the welcome content doesn't already exist
+                setTimeout(() => {
+                    const contentArea = document.querySelector('.content');
+                    const hasWelcomeContent = contentArea && (contentArea.querySelector('.welcome-cards') || contentArea.querySelector('.welcome-page'));
+
+                    if (!hasWelcomeContent && window.loadPageContent) {
+                        window.loadPageContent('welcome');
+                    }
+                }, 100);
             }
         }
 
@@ -139,21 +152,17 @@ class BustlingWorldV2 {
      */
     setupCharacterSelection() {
         const characterCards = document.querySelectorAll('.character-card');
-        characterCards.forEach(card => {
-            card.addEventListener('click', (e) => {
-                // Allow direct card selection on all devices
-                const persona = card.dataset.persona;
-                this.selectCharacter(persona);
-            });
+        const isMobile = window.innerWidth <= 768;
 
-            // Setup video hover effect for cards with video
-            if (card.dataset.persona === 'founder' || card.dataset.persona === 'dad') {
+        characterCards.forEach(card => {
+            // Setup video for cards with video
+            if (card.dataset.persona === 'founder' || card.dataset.persona === 'dad' || card.dataset.persona === 'operator') {
                 const video = card.querySelector('.character-video');
                 if (video) {
                     // Ensure video is muted
                     video.muted = true;
-                    // Enable auto-loop only for founder, handle dad manually
-                    video.loop = card.dataset.persona === 'founder';
+                    // Enable auto-loop for founder and operator, handle dad manually
+                    video.loop = card.dataset.persona === 'founder' || card.dataset.persona === 'operator';
 
                     // Handle dad video - loop back to start at 6 seconds
                     if (card.dataset.persona === 'dad') {
@@ -165,19 +174,78 @@ class BustlingWorldV2 {
                         });
                     }
 
-                    // Play video on hover
-                    card.addEventListener('mouseenter', () => {
-                        video.play().catch(e => {
-                            console.log('Video play failed:', e);
-                        });
-                    });
+                    if (isMobile) {
+                        // Mobile: Click on portrait toggles between image and video
+                        const portrait = card.querySelector('.character-portrait');
+                        const img = card.querySelector('.character-photo');
+                        const videoElement = card.querySelector('.character-video');
 
-                    // Pause and reset video when hover ends
-                    card.addEventListener('mouseleave', () => {
-                        video.pause();
-                        video.currentTime = 0;
-                    });
+                        // Function to handle the toggle
+                        const handleToggle = (e) => {
+                            e.preventDefault();
+                            e.stopPropagation(); // Prevent any bubbling
+
+                            if (card.classList.contains('video-playing')) {
+                                // Switch to image
+                                card.classList.remove('video-playing');
+                                video.pause();
+                                video.currentTime = 0;
+                            } else {
+                                // Switch to video
+                                card.classList.add('video-playing');
+                                video.play().catch(err => console.log('Video play failed:', err));
+                            }
+                        };
+
+                        // Add handler to portrait container and all child elements
+                        if (portrait) {
+                            portrait.addEventListener('click', handleToggle);
+                            portrait.addEventListener('touchend', handleToggle);
+                        }
+                        if (img) {
+                            img.addEventListener('click', handleToggle);
+                            img.addEventListener('touchend', handleToggle);
+                        }
+                        if (videoElement) {
+                            videoElement.addEventListener('click', handleToggle);
+                            videoElement.addEventListener('touchend', handleToggle);
+                        }
+
+                        // Prevent any navigation on the card itself for mobile
+                        card.addEventListener('click', (e) => {
+                            // Check if the click is not on the select button
+                            if (!e.target.closest('.select-role-btn')) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }
+                        });
+                    } else {
+                        // Desktop: Hover effect
+                        card.addEventListener('mouseenter', () => {
+                            video.play().catch(e => {
+                                console.log('Video play failed:', e);
+                            });
+                        });
+
+                        card.addEventListener('mouseleave', () => {
+                            video.pause();
+                            video.currentTime = 0;
+                        });
+                    }
                 }
+            }
+
+            // Desktop: Click on card navigates
+            // Mobile: Only button navigates (handled in mobile.js)
+            if (!isMobile) {
+                card.addEventListener('click', (e) => {
+                    // Don't navigate if clicking on video controls
+                    if (e.target.closest('.character-video')) {
+                        return;
+                    }
+                    const persona = card.dataset.persona;
+                    this.selectCharacter(persona);
+                });
             }
         });
     }
@@ -733,6 +801,15 @@ class BustlingWorldV2 {
                 this.updateNavigationIcons();
             }, 50);
         });
+
+        // If we're on the welcome page, reload it to update content and links
+        const activeNav = document.querySelector('.nav-link.active');
+        const isWelcomePage = !activeNav || activeNav.dataset.page === 'welcome';
+        if (isWelcomePage && window.loadPageContent) {
+            setTimeout(() => {
+                window.loadPageContent('welcome');
+            }, 100);
+        }
     }
 
     /**
