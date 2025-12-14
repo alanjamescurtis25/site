@@ -7,19 +7,25 @@
     <meta name="description" content="Collection of quotes on business, investing, leadership, and life philosophy by Alan James Curtis.">
 
     <!-- Google Noto Fonts -->
+        <!-- Google Noto Fonts - Optimized loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif:wght@300;400;500;600;700;900&family=Noto+Sans+Mono:wght@400;500;600;700&display=swap"
-        rel="stylesheet" media="print" onload="this.media='all'">
+        rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
     <noscript>
         <link
             href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif:wght@300;400;500;600;700;900&family=Noto+Sans+Mono:wght@400;500;600;700&display=swap"
             rel="stylesheet">
     </noscript>
+    <style>
+        /* Font loading optimization - prevent FOIT */
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+        .fonts-loaded body { font-family: var(--font-body, 'Noto Sans', sans-serif); }
+    </style>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/main.min.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -28,7 +34,7 @@
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="Quotes - Alan James Curtis">
     <meta property="og:description" content="Collection of quotes on business, investing, leadership, and life philosophy.">
-    <meta property="og:image" content="/assets/founder.png">
+    <meta property="og:image" content="/assets/founder.webp">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/png">
@@ -40,7 +46,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Quotes - Alan James Curtis">
     <meta name="twitter:description" content="Collection of quotes on business, investing, leadership, and life philosophy.">
-    <meta name="twitter:image" content="/assets/founder.png">
+    <meta name="twitter:image" content="/assets/founder.webp">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BFD7WNPCNP"></script>
@@ -49,6 +55,23 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-BFD7WNPCNP');
+    </script>
+
+    <script>
+        // Detect when fonts are loaded
+        if ('fonts' in document) {
+            Promise.all([
+                document.fonts.load('400 1em "Noto Sans"'),
+                document.fonts.load('400 1em "Noto Serif"')
+            ]).then(() => {
+                document.documentElement.classList.add('fonts-loaded');
+            });
+        } else {
+            // Fallback for older browsers
+            setTimeout(() => {
+                document.documentElement.classList.add('fonts-loaded');
+            }, 100);
+        }
     </script>
 </head>
 <body>
@@ -170,12 +193,12 @@
     </button>
 
     <!-- Scripts - Defer non-critical scripts -->
-    <script src="/js/utilities.js" defer></script>
-    <script src="/js/gaming-system.js" defer></script>
-    <script src="/js/mobile.js" defer></script>
-    <script src="/js/writing-content.js" defer></script>
+    <script src="/js/utilities.min.js" defer></script>
+    <script src="/js/gaming-system.min.js" defer></script>
+    <script src="/js/mobile.min.js" defer></script>
+    <script src="/js/writing-content.min.js" defer></script>
     <script src="/js/spa-navigation.js" defer></script>
-    <script src="/js/quotes-content.js" defer></script>
+    <script src="/js/quotes-content.min.js" defer></script>
     <script>
         // Initialize router with quotes data
         document.addEventListener('DOMContentLoaded', () => {

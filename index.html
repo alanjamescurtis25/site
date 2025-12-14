@@ -7,17 +7,22 @@
     <meta name="description"
         content="Founder, Operator, Investor, and Girl Dad. Five exits, $100M+ raised, COO at EigenLayer, CTO at Core Scientific.">
 
-    <!-- Google Noto Fonts -->
+    <!-- Google Noto Fonts - Optimized loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif:wght@300;400;500;600;700;900&family=Noto+Sans+Mono:wght@400;500;600;700&display=swap"
-        rel="stylesheet" media="print" onload="this.media='all'">
+        rel="stylesheet" media="print" onload="this.media='all'; this.onload=null;">
     <noscript>
         <link
             href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif:wght@300;400;500;600;700;900&family=Noto+Sans+Mono:wght@400;500;600;700&display=swap"
             rel="stylesheet">
     </noscript>
+    <style>
+        /* Font loading optimization - prevent FOIT */
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+        .fonts-loaded body { font-family: var(--font-body, 'Noto Sans', sans-serif); }
+    </style>
 
     <!-- Alternative Professional Options (commented out - uncomment to try) -->
     <!-- Option 2: Executive Traditional
@@ -33,7 +38,7 @@
     -->
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/main.min.css">
 
     <!-- Favicon -->
     <!-- <link rel="icon" type="image/png" href="/favicon.png"> -->
@@ -42,7 +47,7 @@
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="Alan James Curtis">
     <meta property="og:description" content="Founder. Operator. Investor. Girl Dad.">
-    <meta property="og:image" content="/assets/founder.png">
+    <meta property="og:image" content="/assets/founder.webp">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:type" content="image/png">
@@ -54,7 +59,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Alan James Curtis">
     <meta name="twitter:description" content="Founder. Operator. Investor. Girl Dad.">
-    <meta name="twitter:image" content="/assets/founder.png">
+    <meta name="twitter:image" content="/assets/founder.webp">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BFD7WNPCNP"></script>
@@ -80,7 +85,7 @@
                     <div class="card-background warlord-bg"></div>
                     <div class="character-frame">
                         <div class="character-portrait warlord-portrait">
-                            <img src="/assets/founder.png" alt="Founder" class="character-photo" loading="lazy">
+                            <img src="/assets/founder.webp" alt="Founder" class="character-photo" loading="lazy">
                             <video data-src="/assets/animation/founder.mp4" class="character-video" muted loop
                                 playsinline preload="auto" webkit-playsinline 
                                 x-webkit-airplay="allow"></video>
@@ -97,7 +102,7 @@
                     <div class="card-background strategist-bg"></div>
                     <div class="character-frame">
                         <div class="character-portrait strategist-portrait">
-                            <img src="/assets/operator.png" alt="Operator" class="character-photo" loading="lazy">
+                            <img src="/assets/operator.webp" alt="Operator" class="character-photo" loading="lazy">
                             <video data-src="/assets/animation/operator.mp4" class="character-video" muted loop
                                 playsinline preload="auto" webkit-playsinline
                                 x-webkit-airplay="allow"></video>
@@ -114,7 +119,7 @@
                     <div class="card-background merchant-bg"></div>
                     <div class="character-frame">
                         <div class="character-portrait merchant-portrait">
-                            <img src="/assets/investor.png" alt="Investor" class="character-photo" loading="lazy">
+                            <img src="/assets/investor.webp" alt="Investor" class="character-photo" loading="lazy">
                             <video data-src="/assets/animation/investor.mp4" class="character-video" muted loop
                                 playsinline preload="auto" webkit-playsinline
                                 x-webkit-airplay="allow"></video>
@@ -131,7 +136,7 @@
                     <div class="card-background scholar-bg"></div>
                     <div class="character-frame">
                         <div class="character-portrait scholar-portrait">
-                            <img src="/assets/dad.png" alt="Girl Dad" class="character-photo" loading="lazy">
+                            <img src="/assets/dad.webp" alt="Girl Dad" class="character-photo" loading="lazy">
                             <video data-src="/assets/animation/dad.mp4" class="character-video" muted loop playsinline
                                 preload="auto" webkit-playsinline
                                 x-webkit-airplay="allow"></video>
@@ -152,22 +157,22 @@
             <!-- Other role icons that appear on hover -->
             <div class="persona-options">
                 <button data-persona="founder" class="persona-icon-btn" title="Founder">
-                    <img class="persona-icon-img" src="/assets/founder.png" alt="Founder" loading="lazy">
+                    <img class="persona-icon-img" src="/assets/founder.webp" alt="Founder" loading="lazy">
                 </button>
                 <button data-persona="operator" class="persona-icon-btn" title="Operator">
-                    <img class="persona-icon-img" src="/assets/operator.png" alt="Operator" loading="lazy">
+                    <img class="persona-icon-img" src="/assets/operator.webp" alt="Operator" loading="lazy">
                 </button>
                 <button data-persona="investor" class="persona-icon-btn" title="Investor">
-                    <img class="persona-icon-img" src="/assets/investor.png" alt="Investor" loading="lazy">
+                    <img class="persona-icon-img" src="/assets/investor.webp" alt="Investor" loading="lazy">
                 </button>
                 <button data-persona="dad" class="persona-icon-btn" title="Girl Dad">
-                    <img class="persona-icon-img" src="/assets/dad.png" alt="Girl Dad" loading="lazy">
+                    <img class="persona-icon-img" src="/assets/dad.webp" alt="Girl Dad" loading="lazy">
                 </button>
             </div>
             <!-- Current role icon (always visible) -->
             <button class="persona-btn" aria-label="Switch Persona">
                 <span class="current-persona-avatar">
-                    <img id="currentPersonaImage" class="persona-profile-img" src="/assets/founder.png"
+                    <img id="currentPersonaImage" class="persona-profile-img" src="/assets/founder.webp"
                         alt="Current Persona" loading="eager">
                 </span>
             </button>
@@ -387,11 +392,11 @@
     </div>
 
     <!-- Core scripts - Load immediately -->
-    <script src="/js/utilities.js" defer></script>
-    <script src="/js/gaming-system.js" defer></script>
-    <script src="/js/mobile.js" defer></script>
+    <script src="/js/utilities.min.js" defer></script>
+    <script src="/js/gaming-system.min.js" defer></script>
+    <script src="/js/mobile.min.js" defer></script>
     <script src="/js/spa-navigation.js" defer></script>
-    <script src="/js/progress-system.js" defer></script>
+    <script src="/js/progress-system.min.js" defer></script>
     
     <!-- Content scripts - Lazy load when needed -->
     <script>
@@ -414,13 +419,13 @@
             
             // Determine which content script to load
             if (path.includes('writing') || hash.includes('writing')) {
-                loadContentScript('/js/writing-content.js');
+                loadContentScript('/js/writing-content.min.js');
             }
             if (path.includes('quotes') || hash.includes('quotes')) {
-                loadContentScript('/js/quotes-content.js');
+                loadContentScript('/js/quotes-content.min.js');
             }
             if (path.includes('questions') || hash.includes('questions')) {
-                loadContentScript('/js/questions-content.js');
+                loadContentScript('/js/questions-content.min.js');
             }
             if (path.includes('investments') || hash.includes('investments')) {
                 loadContentScript('/js/investments-content.js');

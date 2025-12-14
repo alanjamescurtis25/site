@@ -50,18 +50,24 @@
         // Setup browser history handlers
         setupHistoryHandlers();
 
-        // Load the current page content if we're on the index page
-        // This ensures content loads on refresh
-        if ((pathname === '/' || pathname === '/index.html') && currentPage === 'welcome') {
-            // Check if content area exists and is empty
-            const contentArea = document.querySelector('.content');
-            const hasWelcomeContent = contentArea && (contentArea.querySelector('.welcome-cards') || contentArea.classList.contains('welcome-page'));
-
-            if (contentArea && !hasWelcomeContent) {
-                // Small delay to ensure DOM is ready
+        // Load the current page content based on pathname
+        // This ensures content loads on refresh and direct URL access
+        const contentArea = document.querySelector('.content');
+        if (contentArea && currentPage) {
+            // If we're on a specific page (not welcome), always load that page's content
+            if (currentPage !== 'welcome') {
+                // Clear any existing content and load the page
                 setTimeout(() => {
-                    loadPageContent('welcome');
-                }, 50);
+                    loadPageContent(currentPage);
+                }, 100);
+            } else if (pathname === '/' || pathname === '/index.html') {
+                // Only load welcome content if we're on the index page
+                const hasWelcomeContent = contentArea.querySelector('.welcome-cards') || contentArea.classList.contains('welcome-page');
+                if (!hasWelcomeContent) {
+                    setTimeout(() => {
+                        loadPageContent('welcome');
+                    }, 100);
+                }
             }
         }
     }
@@ -101,7 +107,7 @@
             case 'writing':
                 // Lazy load writing content script if not loaded
                 if (!window.writingContent) {
-                    loadScript('/js/writing-content.js').then(() => {
+                    loadScript('/js/writing-content.min.js').then(() => {
                         loadWritingContent(contentArea);
                     });
                 } else {
@@ -111,7 +117,7 @@
             case 'quotes':
                 // Lazy load quotes content script if not loaded
                 if (!window.quotesData) {
-                    loadScript('/js/quotes-content.js').then(() => {
+                    loadScript('/js/quotes-content.min.js').then(() => {
                         loadQuotesContent(contentArea);
                     });
                 } else {
@@ -121,7 +127,7 @@
             case 'questions':
                 // Lazy load questions content script if not loaded
                 if (!window.questionsContent) {
-                    loadScript('/js/questions-content.js').then(() => {
+                    loadScript('/js/questions-content.min.js').then(() => {
                         loadQuestionsContent(contentArea);
                     });
                 } else {
@@ -1178,21 +1184,30 @@
 
     /**
      * Setup navigation click handlers
+     * Use event delegation on document for better reliability
      */
+    let navigationHandlerBound = false;
     function setupNavigationHandlers() {
-        const navLinks = document.querySelectorAll('.nav-link');
+        // Only bind once to avoid duplicates
+        if (navigationHandlerBound) return;
+        
+        // Use event delegation on document for maximum reliability
+        document.addEventListener('click', function navClickHandler(e) {
+            const link = e.target.closest('.nav-link');
+            if (!link) return;
 
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                const pageKey = link.dataset.page;
+            const pageKey = link.dataset.page;
+            if (!pageKey) return;
 
-                e.preventDefault();
+            e.preventDefault();
+            e.stopPropagation();
 
-                if (pageKey && pageKey !== currentPage) {
-                    loadPageContent(pageKey);
-                }
-            });
+            if (pageKey !== currentPage) {
+                loadPageContent(pageKey);
+            }
         });
+        
+        navigationHandlerBound = true;
     }
 
     /**
@@ -1252,10 +1267,19 @@
     window.loadPageContent = loadPageContent;
 
     // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSPANavigation);
-    } else {
-        initSPANavigation();
+    // Use multiple strategies to ensure it runs at the right time
+    function initializeSPA() {
+        // Wait a bit to ensure all DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(initSPANavigation, 50);
+            });
+        } else {
+            // DOM is already ready, but wait a bit for other scripts
+            setTimeout(initSPANavigation, 50);
+        }
     }
+    
+    initializeSPA();
 
 })();

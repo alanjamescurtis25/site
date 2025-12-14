@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Serif:wght@300;400;500;600;700;900&family=Noto+Sans+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/main.min.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -25,6 +25,23 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-BFD7WNPCNP');
+    </script>
+
+    <script>
+        // Detect when fonts are loaded
+        if ('fonts' in document) {
+            Promise.all([
+                document.fonts.load('400 1em "Noto Sans"'),
+                document.fonts.load('400 1em "Noto Serif"')
+            ]).then(() => {
+                document.documentElement.classList.add('fonts-loaded');
+            });
+        } else {
+            // Fallback for older browsers
+            setTimeout(() => {
+                document.documentElement.classList.add('fonts-loaded');
+            }, 100);
+        }
     </script>
 </head>
 <body>
@@ -182,9 +199,9 @@
         <span></span>
     </button>
 
-    <script src="/js/utilities.js" defer></script>
-    <script src="/js/gaming-system.js" defer></script>
-    <script src="/js/mobile.js" defer></script>
+    <script src="/js/utilities.min.js" defer></script>
+    <script src="/js/gaming-system.min.js" defer></script>
+    <script src="/js/mobile.min.js" defer></script>
     <script src="/js/spa-navigation.js" defer></script>
     <script>
         // Initialize after DOM loads
@@ -203,12 +220,12 @@
                 const profileImg = document.getElementById('currentPersonaImage');
                 if (profileImg) {{
                     const imageMap = {{
-                        'founder': '/assets/founder.png',
-                        'operator': '/assets/operator.png',
-                        'investor': '/assets/investor.png',
-                        'dad': '/assets/dad.png'
+                        'founder': '/assets/founder.webp',
+                        'operator': '/assets/operator.webp',
+                        'investor': '/assets/investor.webp',
+                        'dad': '/assets/dad.webp'
                     }};
-                    profileImg.src = imageMap[savedPersona] || '/assets/founder.png';
+                    profileImg.src = imageMap[savedPersona] || '/assets/founder.webp';
                 }}
             }}
         });
