@@ -635,11 +635,56 @@
                         video.src = videoSrc;
                     }
                     
-                    // Add video-playing class immediately to show video (no black screen)
-                    // Position is already fixed above via inline style, so no jumping will occur
+                    // Ensure first frame is visible before playing to avoid black screen
+                    const ensureFirstFrame = () => {
+                        return new Promise((resolve) => {
+                            // Set currentTime to 0 to show first frame
+                            video.currentTime = 0;
+                            
+                            // Wait for the frame to be rendered
+                            const onSeeked = () => {
+                                video.removeEventListener('seeked', onSeeked);
+                                // Small delay to ensure frame is rendered
+                                requestAnimationFrame(() => {
+                                    requestAnimationFrame(() => {
+                                        resolve();
+                                    });
+                                });
+                            };
+                            
+                            if (video.readyState >= 2) {
+                                // We have frame data, seek to 0 and wait for seeked event
+                                video.addEventListener('seeked', onSeeked, { once: true });
+                                // Force seek even if already at 0
+                                if (video.currentTime === 0) {
+                                    video.currentTime = 0.001;
+                                    setTimeout(() => {
+                                        video.currentTime = 0;
+                                    }, 10);
+                                }
+                            } else {
+                                // Wait for frame data first
+                                const onLoadedData = () => {
+                                    video.removeEventListener('loadeddata', onLoadedData);
+                                    video.addEventListener('seeked', onSeeked, { once: true });
+                                    if (video.currentTime === 0) {
+                                        video.currentTime = 0.001;
+                                        setTimeout(() => {
+                                            video.currentTime = 0;
+                                        }, 10);
+                                    } else {
+                                        video.currentTime = 0;
+                                    }
+                                };
+                                video.addEventListener('loadeddata', onLoadedData, { once: true });
+                            }
+                        });
+                    };
+                    
+                    // Show video element first (but paused) to display first frame
                     card.classList.add('video-playing');
                     
-                    // Re-enforce position to 25% after class change (browser reflow might reset it)
+                    // Re-enforce position to 25% after class change
                     requestAnimationFrame(() => {
                         video.style.setProperty('object-position', 'center 25%', 'important');
                         video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
@@ -647,37 +692,28 @@
                         video.style.setProperty('-webkit-transform', 'translateZ(0)', 'important');
                     });
                     
-                    // Play immediately - video should already be preloaded
-                    const playVideo = () => {
-                        video.currentTime = 0;
-                        const playPromise = video.play();
-                        if (playPromise !== undefined) {
-                            playPromise.then(() => {
-                                // Video playing
-                            }).catch(() => {
-                                card.classList.remove('video-playing');
-                                card.classList.add('video-paused');
+                    // Ensure first frame is visible, then play
+                    ensureFirstFrame().then(() => {
+                        // First frame is now visible
+                        // Force a repaint to ensure frame stays visible during play transition
+                        void video.offsetHeight;
+                        
+                        // Use requestAnimationFrame to ensure frame is painted before playing
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                // Now play - first frame should stay visible during transition
+                                const playPromise = video.play();
+                                if (playPromise !== undefined) {
+                                    playPromise.then(() => {
+                                        // Video playing - first frame should have transitioned smoothly
+                                    }).catch(() => {
+                                        card.classList.remove('video-playing');
+                                        card.classList.add('video-paused');
+                                    });
+                                }
                             });
-                        }
-                    };
-                    
-                    // Try to play immediately if ready
-                    if (video.readyState >= 2) {
-                        playVideo();
-                    } else {
-                        // Wait for minimum data, then play
-                        const playWhenReady = () => {
-                            playVideo();
-                        };
-                        video.addEventListener('loadeddata', playWhenReady, { once: true });
-                        video.addEventListener('canplay', playWhenReady, { once: true });
-                        // Fallback: play after short delay
-                        setTimeout(() => {
-                            if (video.readyState >= 2 && video.paused) {
-                                playVideo();
-                            }
-                        }, 100);
-                    }
+                        });
+                    });
                 }
             }
         }
