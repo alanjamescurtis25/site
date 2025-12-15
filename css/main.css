@@ -1760,30 +1760,15 @@ body.persona-dad .question-item::before {
     font-weight: 500;
     position: relative;
     transition: all 0.3s ease;
+    /* Prevent emoji conversion on mobile */
+    font-variant-emoji: text;
+    -webkit-font-feature-settings: "liga" off;
+    font-feature-settings: "liga" off;
 }
 
+/* Arrow is now in HTML content, not CSS ::after */
 .investment-list .external-link::after {
-    content: "↗";
-    display: inline-block;
-    margin-left: 6px;
-    font-size: 14px;
-    opacity: 0.7;
-    transition: all 0.3s ease;
-}
-
-@supports (-webkit-touch-callout: none) {
-    @media (max-width: 768px) {
-        .investment-list .external-link::after {
-            content: "\2197";
-            font-family: 'Noto Sans', sans-serif;
-            font-variant: normal;
-            text-rendering: optimizeLegibility;
-            -webkit-font-feature-settings: normal;
-            font-feature-settings: normal;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-    }
+    display: none;
 }
 
 .investment-list .external-link:hover {
@@ -1791,18 +1776,18 @@ body.persona-dad .question-item::before {
     padding-left: 4px;
 }
 
+/* Arrow is now in HTML content, hover effect removed */
 .investment-list .external-link:hover::after {
-    transform: translate(2px, -2px);
-    opacity: 1;
+    display: none;
 }
 
 .investment-status {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(0, 0, 0, 0.85);
     font-style: normal;
     margin-left: 8px;
     display: inline-block;
-    font-weight: 400;
+    font-weight: 500;
     letter-spacing: 0.02em;
 }
 
@@ -1828,9 +1813,13 @@ body.persona-dad .investment-list .external-link:hover {
     opacity: 0.8;
 }
 
+/* All personas use light theme, so investment-status uses dark color */
 body.persona-investor .investment-status,
-body.persona-dad .investment-status {
-    color: rgba(0, 0, 0, 0.5);
+body.persona-dad .investment-status,
+body.persona-founder .investment-status,
+body.persona-operator .investment-status {
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
 }
 
 /* Scroll animations for investment items */
@@ -2335,31 +2324,10 @@ body.persona-dad .empty-state {
     color: var(--theme-accent);
 }
 
+/* Arrow should be in HTML content, not CSS ::after to avoid emoji conversion on mobile */
 .article-content a[href^="http"]::after,
 .article-content a[target="_blank"]::after {
-    content: "↗";
-    display: inline-block;
-    margin-left: 6px;
-    font-size: 14px;
-    opacity: 0.7;
-        transition: all 0.3s ease;
-}
-
-@supports (-webkit-touch-callout: none) {
-    @media (max-width: 768px) {
-
-        .article-content a[href^="http"]::after,
-        .article-content a[target="_blank"]::after {
-            content: "\2197";
-            font-family: 'Noto Sans', sans-serif;
-            font-variant: normal;
-            text-rendering: optimizeLegibility;
-            -webkit-font-feature-settings: normal;
-            font-feature-settings: normal;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-    }
+    display: none;
 }
 
 .article-content a[href^="http"]:hover,
@@ -2368,11 +2336,11 @@ body.persona-dad .empty-state {
     padding-left: 4px;
 }
 
+/* Arrow is now in HTML content, hover effect removed */
 .article-content a[href^="http"]:hover::after,
 .article-content a[target="_blank"]:hover::after {
-    transform: translate(2px, -2px);
-        opacity: 1;
-    }
+    display: none;
+}
 
 .article-content strong {
         font-weight: 600;
@@ -4815,6 +4783,12 @@ body::after {
     .content-body {
         margin-top: 0 !important;
         padding-top: 0 !important;
+    }
+
+    /* Add line breaks/spacing for welcome page paragraphs on mobile */
+    .content-body p {
+        margin-bottom: 1.5em !important;
+        line-height: 1.8 !important;
     }
 
     /* Force all article and content items to start at top */

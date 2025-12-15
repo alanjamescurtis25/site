@@ -1103,7 +1103,7 @@
                         <ul class="investment-list">
                             ${category.items.map(item => `
                                 <li>
-                                    <a href="${item.url}" class="external-link" target="_blank">${item.name}</a>
+                                    <a href="${item.url}" class="external-link" target="_blank">${item.name}&nbsp;↗&#xFE0E;</a>
                                     ${item.status ? `<span class="investment-status">${item.status}</span>` : ''}
                                 </li>
                             `).join('')}
