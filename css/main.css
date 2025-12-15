@@ -636,7 +636,8 @@ body.persona-dad::after {
 /* ==================== Bio Timeline Styles - AVANT-GARDE DESIGN ==================== */
 .bio-introduction {
     margin-bottom: 4rem;
-    padding: 3rem;
+    padding: 3rem 0;
+    /* Remove left/right padding to match content-body alignment */
     position: relative;
     overflow: hidden;
     border-radius: 0;
@@ -700,9 +701,10 @@ body.persona-dad::after {
 }
 
 .bio-introduction p {
-    font-size: 1.1rem;
-    /* Standardized to match welcome page */
-    line-height: 1.8;
+    font-size: 16px;
+    /* Match welcome page .content-body font-size */
+    line-height: 1.75;
+    /* Match welcome page .content-body line-height */
     margin-bottom: 1rem;
     color: var(--theme-text);
     position: relative;
@@ -947,7 +949,6 @@ body.persona-dad .timeline-content {
 @media (max-width: 768px) {
     .bio-introduction {
         transform: none;
-        padding: 2rem;
     }
 
     .bio-introduction>* {
@@ -1289,6 +1290,10 @@ body.persona-dad .page-header {
     line-height: 1.75;
     color: var(--theme-text, #D8D8D8);
     letter-spacing: 0;
+    /* Match reading-pane padding for consistent alignment with writing pages */
+    /* .content has padding: 40px, so we add 20px to match .reading-pane's padding: 0 20px */
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .intro-text {
@@ -4760,6 +4765,7 @@ body::after {
         margin-bottom: 5px !important;
         /* Very small margin */
         padding-bottom: 5px !important;
+        padding-left: 15px !important;
         /* Very small padding */
         margin-top: 0 !important;
         /* No negative margin to prevent cutoff */
