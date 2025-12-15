@@ -571,6 +571,53 @@
                     video.preload = 'auto';
                     video.load();
                     
+                    // Capture first frame to canvas to prevent black screen on play (same as founder)
+                    const captureFirstFrame = () => {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = video.videoWidth || 1920;
+                            canvas.height = video.videoHeight || 1080;
+                            const ctx = canvas.getContext('2d');
+                            
+                            // Draw first frame to canvas
+                            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            
+                            // Convert to data URL
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                            
+                            // Store as data attribute for later use
+                            video.setAttribute('data-first-frame', dataUrl);
+                            
+                            // Create img element to show first frame
+                            const firstFrameImg = document.createElement('img');
+                            firstFrameImg.className = 'character-video-first-frame';
+                            firstFrameImg.src = dataUrl;
+                            firstFrameImg.style.cssText = `
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                object-position: center 25%;
+                                z-index: 1;
+                                pointer-events: none;
+                            `;
+                            
+                            // Insert before video
+                            const portrait = newCard.querySelector('.character-portrait');
+                            if (portrait) {
+                                portrait.insertBefore(firstFrameImg, video);
+                            }
+                            
+                            // Store reference
+                            video._firstFrameImg = firstFrameImg;
+                        } catch (e) {
+                            // Canvas capture failed, fall back to normal method
+                            console.warn('Failed to capture first frame:', e);
+                        }
+                    };
+                    
                     // Setup preview for the newly loaded video
                     const setupPreview = () => {
                         video.style.setProperty('object-position', 'center 25%', 'important');
@@ -584,12 +631,28 @@
                         video.pause();
                         
                         if (video.readyState >= 2) {
-                            video.style.setProperty('opacity', '1', 'important');
-                            video.style.setProperty('visibility', 'visible', 'important');
+                            video.currentTime = 0.1;
+                            setTimeout(() => {
+                                video.currentTime = 0;
+                                // Re-enforce position to 25%
+                                video.style.setProperty('object-position', 'center 25%', 'important');
+                                video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
+                                
+                                // Capture first frame after it's rendered (same as founder)
+                                setTimeout(() => {
+                                    captureFirstFrame();
+                                }, 50);
+                                
+                                video.style.setProperty('opacity', '1', 'important');
+                                video.style.setProperty('visibility', 'visible', 'important');
+                            }, 50);
                         } else {
                             const showWhenReady = () => {
                                 if (video.readyState >= 2) {
                                     video.currentTime = 0;
+                                    setTimeout(() => {
+                                        captureFirstFrame();
+                                    }, 50);
                                     video.style.setProperty('opacity', '1', 'important');
                                     video.style.setProperty('visibility', 'visible', 'important');
                                 }
@@ -604,6 +667,76 @@
                     } else {
                         video.addEventListener('loadedmetadata', setupPreview, { once: true });
                         video.addEventListener('loadeddata', setupPreview, { once: true });
+                    }
+                } else if (video && !video._firstFrameImg) {
+                    // Video is already loaded but first frame not captured yet
+                    // Capture first frame now
+                    const captureFirstFrame = () => {
+                        try {
+                            if (video.readyState >= 2 && video.videoWidth > 0) {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = video.videoWidth;
+                                canvas.height = video.videoHeight;
+                                const ctx = canvas.getContext('2d');
+                                
+                                video.currentTime = 0;
+                                
+                                // Draw first frame to canvas
+                                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                
+                                // Convert to data URL
+                                const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                                
+                                // Store as data attribute
+                                video.setAttribute('data-first-frame', dataUrl);
+                                
+                                // Create img element to show first frame
+                                const firstFrameImg = document.createElement('img');
+                                firstFrameImg.className = 'character-video-first-frame';
+                                firstFrameImg.src = dataUrl;
+                                firstFrameImg.style.cssText = `
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    object-fit: cover;
+                                    object-position: center 25%;
+                                    z-index: 1;
+                                    pointer-events: none;
+                                `;
+                                
+                                // Insert before video
+                                const portrait = newCard.querySelector('.character-portrait');
+                                if (portrait) {
+                                    portrait.insertBefore(firstFrameImg, video);
+                                }
+                                
+                                // Store reference
+                                video._firstFrameImg = firstFrameImg;
+                            }
+                        } catch (e) {
+                            console.warn('Failed to capture first frame:', e);
+                        }
+                    };
+                    
+                    // Wait for video to be ready, then capture
+                    if (video.readyState >= 2 && video.videoWidth > 0) {
+                        video.currentTime = 0;
+                        setTimeout(() => {
+                            captureFirstFrame();
+                        }, 100);
+                    } else {
+                        const captureWhenReady = () => {
+                            if (video.readyState >= 2 && video.videoWidth > 0) {
+                                video.currentTime = 0;
+                                setTimeout(() => {
+                                    captureFirstFrame();
+                                }, 100);
+                            }
+                        };
+                        video.addEventListener('loadeddata', captureWhenReady, { once: true });
+                        video.addEventListener('canplay', captureWhenReady, { once: true });
                     }
                 }
             }
