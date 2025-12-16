@@ -159,7 +159,6 @@
                             
                             video.muted = true;
                             video.playsInline = true;
-                            video.preload = 'auto'; // Preload entire video for instant playback
                             video.setAttribute('webkit-playsinline', 'true');
                             video.setAttribute('playsinline', 'true');
                             
@@ -167,53 +166,119 @@
                             video.setAttribute('x-webkit-airplay', 'allow');
                             video.setAttribute('webkit-playsinline', 'true');
                             
-                            const setupPreview = () => {
-                                // CRITICAL: Fix video position to 25% via inline style with !important
-                                // This prevents browser reflow from causing position jumps in Chrome/Safari
-                                video.style.setProperty('object-position', 'center 25%', 'important');
-                                video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
-                                video.style.setProperty('transform', 'translateZ(0)', 'important');
-                                video.style.setProperty('-webkit-transform', 'translateZ(0)', 'important');
-                                video.style.setProperty('transition', 'none', 'important');
-                                video.style.setProperty('-webkit-transition', 'none', 'important');
+                            // Only preload first card's video to speed up initial load
+                            // Other cards will load when they become visible
+                            if (index === 0) {
+                                // First card: preload video for instant playback
+                                video.preload = 'auto';
+                                video.load();
                                 
-                                video.currentTime = 0;
-                                video.pause();
+                                // Capture first frame to canvas to prevent black screen on play
+                                const captureFirstFrame = () => {
+                                    try {
+                                        const canvas = document.createElement('canvas');
+                                        canvas.width = video.videoWidth || 1920;
+                                        canvas.height = video.videoHeight || 1080;
+                                        const ctx = canvas.getContext('2d');
+                                        
+                                        // Draw first frame to canvas
+                                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                        
+                                        // Convert to data URL
+                                        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                                        
+                                        // Store as data attribute for later use
+                                        video.setAttribute('data-first-frame', dataUrl);
+                                        
+                                        // Create img element to show first frame
+                                        const firstFrameImg = document.createElement('img');
+                                        firstFrameImg.className = 'character-video-first-frame';
+                                        firstFrameImg.src = dataUrl;
+                                        firstFrameImg.style.cssText = `
+                                            position: absolute;
+                                            top: 0;
+                                            left: 0;
+                                            width: 100%;
+                                            height: 100%;
+                                            object-fit: cover;
+                                            object-position: center 25%;
+                                            z-index: 1;
+                                            pointer-events: none;
+                                        `;
+                                        
+                                        // Insert before video
+                                        const portrait = card.querySelector('.character-portrait');
+                                        if (portrait) {
+                                            portrait.insertBefore(firstFrameImg, video);
+                                        }
+                                        
+                                        // Store reference
+                                        video._firstFrameImg = firstFrameImg;
+                                    } catch (e) {
+                                        // Canvas capture failed, fall back to normal method
+                                        console.warn('Failed to capture first frame:', e);
+                                    }
+                                };
                                 
-                                // Wait for first frame to be ready, then show video (prevents poster/first frame flash)
-                                if (video.readyState >= 2) {
-                                    video.currentTime = 0.1; // Small offset to ensure frame is shown
-                                    setTimeout(() => {
-                                        video.currentTime = 0;
-                                        // Re-enforce position to 25% (browser reflow might reset it)
-                                        video.style.setProperty('object-position', 'center 25%', 'important');
-                                        video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
-                                        // Now show the video - first frame is ready
-                                        video.style.setProperty('opacity', '1', 'important');
-                                        video.style.setProperty('visibility', 'visible', 'important');
-                                    }, 50);
-                                } else {
-                                    // Wait for video to be ready
-                                    const showWhenReady = () => {
-                                        if (video.readyState >= 2) {
+                                const setupPreview = () => {
+                                    // CRITICAL: Fix video position to 25% via inline style with !important
+                                    // This prevents browser reflow from causing position jumps in Chrome/Safari
+                                    video.style.setProperty('object-position', 'center 25%', 'important');
+                                    video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
+                                    video.style.setProperty('transform', 'translateZ(0)', 'important');
+                                    video.style.setProperty('-webkit-transform', 'translateZ(0)', 'important');
+                                    video.style.setProperty('transition', 'none', 'important');
+                                    video.style.setProperty('-webkit-transition', 'none', 'important');
+                                    
+                                    video.currentTime = 0;
+                                    video.pause();
+                                    
+                                    // Wait for first frame to be ready, then capture it
+                                    if (video.readyState >= 2) {
+                                        video.currentTime = 0.1;
+                                        setTimeout(() => {
                                             video.currentTime = 0;
+                                            // Re-enforce position to 25%
+                                            video.style.setProperty('object-position', 'center 25%', 'important');
+                                            video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
+                                            
+                                            // Capture first frame after it's rendered
+                                            setTimeout(() => {
+                                                captureFirstFrame();
+                                            }, 50);
+                                            
+                                            // Show the video
                                             video.style.setProperty('opacity', '1', 'important');
                                             video.style.setProperty('visibility', 'visible', 'important');
-                                        }
-                                    };
-                                    video.addEventListener('loadeddata', showWhenReady, { once: true });
-                                    video.addEventListener('canplay', showWhenReady, { once: true });
+                                        }, 50);
+                                    } else {
+                                        // Wait for video to be ready
+                                        const showWhenReady = () => {
+                                            if (video.readyState >= 2) {
+                                                video.currentTime = 0;
+                                                setTimeout(() => {
+                                                    captureFirstFrame();
+                                                }, 50);
+                                                video.style.setProperty('opacity', '1', 'important');
+                                                video.style.setProperty('visibility', 'visible', 'important');
+                                            }
+                                        };
+                                        video.addEventListener('loadeddata', showWhenReady, { once: true });
+                                        video.addEventListener('canplay', showWhenReady, { once: true });
+                                    }
+                                };
+                                
+                                if (video.readyState >= 1) {
+                                    setupPreview();
+                                } else {
+                                    video.addEventListener('loadedmetadata', setupPreview, { once: true });
+                                    video.addEventListener('loadeddata', setupPreview, { once: true });
                                 }
-                            };
-                            
-                            // Load video immediately
-                            video.load();
-                            
-                            if (video.readyState >= 1) {
-                                setupPreview();
                             } else {
-                                video.addEventListener('loadedmetadata', setupPreview, { once: true });
-                                video.addEventListener('loadeddata', setupPreview, { once: true });
+                                // Other cards: only load metadata initially (much faster)
+                                video.preload = 'metadata';
+                                // Don't call video.load() - let it load metadata naturally
+                                // Video will be loaded when card becomes visible
                             }
                         }
                     }
@@ -496,87 +561,192 @@
             this.cards[index].classList.add('active');
             this.cards[index].style.display = 'flex';
 
+            // Start loading video for the newly shown card (if not already loaded)
+            const newCard = this.cards[index];
+            if (newCard.dataset.persona === 'founder' || newCard.dataset.persona === 'dad' || 
+                newCard.dataset.persona === 'operator' || newCard.dataset.persona === 'investor') {
+                const video = newCard.querySelector('.character-video');
+                if (video && video.preload !== 'auto') {
+                    // Start loading video when card becomes visible
+                    video.preload = 'auto';
+                    video.load();
+                    
+                    // Capture first frame to canvas to prevent black screen on play (same as founder)
+                    const captureFirstFrame = () => {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = video.videoWidth || 1920;
+                            canvas.height = video.videoHeight || 1080;
+                            const ctx = canvas.getContext('2d');
+                            
+                            // Draw first frame to canvas
+                            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            
+                            // Convert to data URL
+                            const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                            
+                            // Store as data attribute for later use
+                            video.setAttribute('data-first-frame', dataUrl);
+                            
+                            // Create img element to show first frame
+                            const firstFrameImg = document.createElement('img');
+                            firstFrameImg.className = 'character-video-first-frame';
+                            firstFrameImg.src = dataUrl;
+                            firstFrameImg.style.cssText = `
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                object-position: center 25%;
+                                z-index: 1;
+                                pointer-events: none;
+                            `;
+                            
+                            // Insert before video
+                            const portrait = newCard.querySelector('.character-portrait');
+                            if (portrait) {
+                                portrait.insertBefore(firstFrameImg, video);
+                            }
+                            
+                            // Store reference
+                            video._firstFrameImg = firstFrameImg;
+                        } catch (e) {
+                            // Canvas capture failed, fall back to normal method
+                            console.warn('Failed to capture first frame:', e);
+                        }
+                    };
+                    
+                    // Setup preview for the newly loaded video
+                    const setupPreview = () => {
+                        video.style.setProperty('object-position', 'center 25%', 'important');
+                        video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
+                        video.style.setProperty('transform', 'translateZ(0)', 'important');
+                        video.style.setProperty('-webkit-transform', 'translateZ(0)', 'important');
+                        video.style.setProperty('transition', 'none', 'important');
+                        video.style.setProperty('-webkit-transition', 'none', 'important');
+                        
+                        video.currentTime = 0;
+                        video.pause();
+                        
+                        if (video.readyState >= 2) {
+                            video.currentTime = 0.1;
+                            setTimeout(() => {
+                                video.currentTime = 0;
+                                // Re-enforce position to 25%
+                                video.style.setProperty('object-position', 'center 25%', 'important');
+                                video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
+                                
+                                // Capture first frame after it's rendered (same as founder)
+                                setTimeout(() => {
+                                    captureFirstFrame();
+                                }, 50);
+                                
+                                video.style.setProperty('opacity', '1', 'important');
+                                video.style.setProperty('visibility', 'visible', 'important');
+                            }, 50);
+                        } else {
+                            const showWhenReady = () => {
+                                if (video.readyState >= 2) {
+                                    video.currentTime = 0;
+                                    setTimeout(() => {
+                                        captureFirstFrame();
+                                    }, 50);
+                                    video.style.setProperty('opacity', '1', 'important');
+                                    video.style.setProperty('visibility', 'visible', 'important');
+                                }
+                            };
+                            video.addEventListener('loadeddata', showWhenReady, { once: true });
+                            video.addEventListener('canplay', showWhenReady, { once: true });
+                        }
+                    };
+                    
+                    if (video.readyState >= 1) {
+                        setupPreview();
+                    } else {
+                        video.addEventListener('loadedmetadata', setupPreview, { once: true });
+                        video.addEventListener('loadeddata', setupPreview, { once: true });
+                    }
+                } else if (video && !video._firstFrameImg) {
+                    // Video is already loaded but first frame not captured yet
+                    // Capture first frame now
+                    const captureFirstFrame = () => {
+                        try {
+                            if (video.readyState >= 2 && video.videoWidth > 0) {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = video.videoWidth;
+                                canvas.height = video.videoHeight;
+                                const ctx = canvas.getContext('2d');
+                                
+                                video.currentTime = 0;
+                                
+                                // Draw first frame to canvas
+                                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                
+                                // Convert to data URL
+                                const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                                
+                                // Store as data attribute
+                                video.setAttribute('data-first-frame', dataUrl);
+                                
+                                // Create img element to show first frame
+                                const firstFrameImg = document.createElement('img');
+                                firstFrameImg.className = 'character-video-first-frame';
+                                firstFrameImg.src = dataUrl;
+                                firstFrameImg.style.cssText = `
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    object-fit: cover;
+                                    object-position: center 25%;
+                                    z-index: 1;
+                                    pointer-events: none;
+                                `;
+                                
+                                // Insert before video
+                                const portrait = newCard.querySelector('.character-portrait');
+                                if (portrait) {
+                                    portrait.insertBefore(firstFrameImg, video);
+                                }
+                                
+                                // Store reference
+                                video._firstFrameImg = firstFrameImg;
+                            }
+                        } catch (e) {
+                            console.warn('Failed to capture first frame:', e);
+                        }
+                    };
+                    
+                    // Wait for video to be ready, then capture
+                    if (video.readyState >= 2 && video.videoWidth > 0) {
+                        video.currentTime = 0;
+                        setTimeout(() => {
+                            captureFirstFrame();
+                        }, 100);
+                    } else {
+                        const captureWhenReady = () => {
+                            if (video.readyState >= 2 && video.videoWidth > 0) {
+                                video.currentTime = 0;
+                                setTimeout(() => {
+                                    captureFirstFrame();
+                                }, 100);
+                            }
+                        };
+                        video.addEventListener('loadeddata', captureWhenReady, { once: true });
+                        video.addEventListener('canplay', captureWhenReady, { once: true });
+                    }
+                }
+            }
+
             // Animate the numbers from 0 to target value
             this.animateCardNumbers(this.cards[index]);
 
             this.currentIndex = index;
 
-            // Setup video preview for new card - preload for instant playback
-            const newCard = this.cards[index];
-            if (newCard.dataset.persona === 'founder' || newCard.dataset.persona === 'dad' || newCard.dataset.persona === 'operator' || newCard.dataset.persona === 'investor') {
-                newCard.classList.remove('video-playing', 'video-paused');
-                const video = newCard.querySelector('.character-video');
-                if (video) {
-                    // CRITICAL: Fix video position to 25% via inline style with !important
-                    // This prevents browser reflow from causing position jumps in Chrome/Safari
-                    video.style.setProperty('object-position', 'center 25%', 'important');
-                    video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
-                    video.style.setProperty('transform', 'translateZ(0)', 'important');
-                    video.style.setProperty('-webkit-transform', 'translateZ(0)', 'important');
-                    video.style.setProperty('transition', 'none', 'important');
-                    video.style.setProperty('-webkit-transition', 'none', 'important');
-                    
-                    const videoSrc = video.getAttribute('data-src') || video.getAttribute('src');
-                    if (videoSrc) {
-                        if (video.getAttribute('data-src') && video.src !== videoSrc) {
-                            video.src = videoSrc;
-                        }
-                        video.muted = true;
-                        video.playsInline = true;
-                        video.preload = 'auto'; // Preload for instant playback
-                        video.setAttribute('webkit-playsinline', 'true');
-                        video.setAttribute('playsinline', 'true');
-                        video.setAttribute('x-webkit-airplay', 'allow');
-                        
-                        const setupPreview = () => {
-                            // CRITICAL: Fix video position to 25% via inline style with !important
-                            video.style.setProperty('object-position', 'center 25%', 'important');
-                            video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
-                            video.style.setProperty('transform', 'translateZ(0)', 'important');
-                            video.style.setProperty('-webkit-transform', 'translateZ(0)', 'important');
-                            video.style.setProperty('transition', 'none', 'important');
-                            video.style.setProperty('-webkit-transition', 'none', 'important');
-                            
-                            video.currentTime = 0;
-                            video.pause();
-                            
-                            // Wait for first frame to be ready, then show video (prevents poster/first frame flash)
-                            if (video.readyState >= 2) {
-                                video.currentTime = 0.1;
-                                setTimeout(() => {
-                                    video.currentTime = 0;
-                                    // Re-enforce position to 25% (browser reflow might reset it)
-                                    video.style.setProperty('object-position', 'center 25%', 'important');
-                                    video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
-                                    // Now show the video - first frame is ready
-                                    video.style.setProperty('opacity', '1', 'important');
-                                    video.style.setProperty('visibility', 'visible', 'important');
-                                }, 50);
-                            } else {
-                                // Wait for video to be ready
-                                const showWhenReady = () => {
-                                    if (video.readyState >= 2) {
-                                        video.currentTime = 0;
-                                        video.style.setProperty('opacity', '1', 'important');
-                                        video.style.setProperty('visibility', 'visible', 'important');
-                                    }
-                                };
-                                video.addEventListener('loadeddata', showWhenReady, { once: true });
-                                video.addEventListener('canplay', showWhenReady, { once: true });
-                            }
-                        };
-                        
-                        video.load();
-                        
-                        if (video.readyState >= 1) {
-                            setupPreview();
-                        } else {
-                            video.addEventListener('loadedmetadata', setupPreview, { once: true });
-                            video.addEventListener('loadeddata', setupPreview, { once: true });
-                        }
-                    }
-                }
-            }
+            // Video loading is now handled above when card becomes visible
         }
 
         toggleFounderVideo(card) {  // Works for founder, dad, operator, and investor videos
@@ -626,7 +796,7 @@
                     card.classList.remove('video-paused');
                 }
 
-                // Start video playback - optimized for instant playback
+                // Start video playback - optimized for instant playback without black screen
                 const videoSrc = video.getAttribute('data-src') || video.getAttribute('src');
                 
                 if (videoSrc) {
@@ -635,11 +805,17 @@
                         video.src = videoSrc;
                     }
                     
-                    // Add video-playing class immediately to show video (no black screen)
-                    // Position is already fixed above via inline style, so no jumping will occur
+                    // CRITICAL: The issue is that video.play() causes a black screen flash
+                    // Solution: Ensure video is at frame 0 and painted BEFORE calling play()
+                    // Then call play() in a way that minimizes the black screen
+                    
+                    // First, ensure we're at frame 0 and it's rendered
+                    video.currentTime = 0;
+                    
+                    // Show video element (but paused) to display first frame
                     card.classList.add('video-playing');
                     
-                    // Re-enforce position to 25% after class change (browser reflow might reset it)
+                    // Re-enforce position to 25% after class change
                     requestAnimationFrame(() => {
                         video.style.setProperty('object-position', 'center 25%', 'important');
                         video.style.setProperty('-webkit-object-position', 'center 25%', 'important');
@@ -647,36 +823,127 @@
                         video.style.setProperty('-webkit-transform', 'translateZ(0)', 'important');
                     });
                     
-                    // Play immediately - video should already be preloaded
-                    const playVideo = () => {
-                        video.currentTime = 0;
-                        const playPromise = video.play();
-                        if (playPromise !== undefined) {
-                            playPromise.then(() => {
-                                // Video playing
-                            }).catch(() => {
-                                card.classList.remove('video-playing');
-                                card.classList.add('video-paused');
-                            });
+                    // CRITICAL FIX: Use first frame image overlay to prevent black screen
+                    // Capture first frame if not already captured
+                    const ensureFirstFrameImage = () => {
+                        // Check if first frame image already exists
+                        let firstFrameImg = video._firstFrameImg || card.querySelector('.character-video-first-frame');
+                        
+                        if (!firstFrameImg && video.readyState >= 2) {
+                            // Capture first frame to canvas
+                            try {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = video.videoWidth || 1920;
+                                canvas.height = video.videoHeight || 1080;
+                                const ctx = canvas.getContext('2d');
+                                
+                                // Ensure we're at frame 0
+                                video.currentTime = 0;
+                                
+                                // Draw first frame to canvas
+                                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                                
+                                // Convert to data URL
+                                const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                                
+                                // Create img element to show first frame
+                                firstFrameImg = document.createElement('img');
+                                firstFrameImg.className = 'character-video-first-frame';
+                                firstFrameImg.src = dataUrl;
+                                firstFrameImg.style.cssText = `
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    object-fit: cover;
+                                    object-position: center 25%;
+                                    z-index: 1;
+                                    pointer-events: none;
+                                `;
+                                
+                                // Insert before video
+                                const portrait = card.querySelector('.character-portrait');
+                                if (portrait) {
+                                    portrait.insertBefore(firstFrameImg, video);
+                                }
+                                
+                                // Store reference
+                                video._firstFrameImg = firstFrameImg;
+                            } catch (e) {
+                                console.warn('Failed to capture first frame:', e);
+                            }
+                        }
+                        
+                        return firstFrameImg;
+                    };
+                    
+                    // Wait for first frame to be ready, then play with image overlay
+                    const playWhenReady = () => {
+                        // Ensure we're at frame 0
+                        if (video.currentTime !== 0) {
+                            video.currentTime = 0;
+                        }
+                        
+                        // Capture first frame if not already captured
+                        const firstFrameImg = ensureFirstFrameImage();
+                        
+                        // Wait for frame to be ready
+                        if (video.readyState >= 2) {
+                            // Frame data is available
+                            // Show first frame image overlay
+                            if (firstFrameImg) {
+                                firstFrameImg.style.display = 'block';
+                                firstFrameImg.style.opacity = '1';
+                            }
+                            
+                            // Now play - first frame image will cover any black screen
+                            const playPromise = video.play();
+                            if (playPromise !== undefined) {
+                                playPromise.then(() => {
+                                    // Video is playing - hide first frame image when video actually starts
+                                    const hideFirstFrame = () => {
+                                        if (firstFrameImg && video.currentTime > 0.1) {
+                                            // Video is playing, hide first frame image
+                                            firstFrameImg.style.opacity = '0';
+                                            firstFrameImg.style.transition = 'opacity 0.2s';
+                                            setTimeout(() => {
+                                                if (firstFrameImg) {
+                                                    firstFrameImg.style.display = 'none';
+                                                }
+                                            }, 200);
+                                        }
+                                    };
+                                    
+                                    // Hide first frame when video starts playing
+                                    video.addEventListener('timeupdate', hideFirstFrame, { once: true });
+                                    video.addEventListener('playing', hideFirstFrame, { once: true });
+                                    
+                                    // Fallback: hide after short delay
+                                    setTimeout(hideFirstFrame, 300);
+                                }).catch(() => {
+                                    card.classList.remove('video-playing');
+                                    card.classList.add('video-paused');
+                                    if (firstFrameImg) {
+                                        firstFrameImg.style.display = 'none';
+                                    }
+                                });
+                            }
+                        } else {
+                            // Wait for frame data
+                            video.addEventListener('loadeddata', playWhenReady, { once: true });
+                            video.addEventListener('canplay', playWhenReady, { once: true });
                         }
                     };
                     
-                    // Try to play immediately if ready
+                    // Wait for video to be ready
                     if (video.readyState >= 2) {
-                        playVideo();
+                        // Frame data is available
+                        playWhenReady();
                     } else {
-                        // Wait for minimum data, then play
-                        const playWhenReady = () => {
-                            playVideo();
-                        };
+                        // Wait for frame data
                         video.addEventListener('loadeddata', playWhenReady, { once: true });
                         video.addEventListener('canplay', playWhenReady, { once: true });
-                        // Fallback: play after short delay
-                        setTimeout(() => {
-                            if (video.readyState >= 2 && video.paused) {
-                                playVideo();
-                            }
-                        }, 100);
                     }
                 }
             }

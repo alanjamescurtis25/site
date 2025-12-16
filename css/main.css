@@ -91,14 +91,15 @@
 
 html {
     overflow-x: hidden;
-    background-color: transparent;
-    /* Allow background images to show through */
+    background-color: #EFEBE4;
+    /* Default background color - matches investor-bg used by all personas */
 }
 
 body {
     font-family: var(--font-body);
     overflow-x: hidden;
-    background: transparent;
+    background: #EFEBE4;
+    /* Default background color - matches investor-bg used by all personas */
     position: relative;
     min-height: 100vh;
 }
@@ -636,7 +637,8 @@ body.persona-dad::after {
 /* ==================== Bio Timeline Styles - AVANT-GARDE DESIGN ==================== */
 .bio-introduction {
     margin-bottom: 4rem;
-    padding: 3rem;
+    padding: 3rem 0;
+    /* Remove left/right padding to match content-body alignment */
     position: relative;
     overflow: hidden;
     border-radius: 0;
@@ -700,9 +702,10 @@ body.persona-dad::after {
 }
 
 .bio-introduction p {
-    font-size: 1.1rem;
-    /* Standardized to match welcome page */
-    line-height: 1.8;
+    font-size: 16px;
+    /* Match welcome page .content-body font-size */
+    line-height: 1.75;
+    /* Match welcome page .content-body line-height */
     margin-bottom: 1rem;
     color: var(--theme-text);
     position: relative;
@@ -947,7 +950,6 @@ body.persona-dad .timeline-content {
 @media (max-width: 768px) {
     .bio-introduction {
         transform: none;
-        padding: 2rem;
     }
 
     .bio-introduction>* {
@@ -1289,6 +1291,10 @@ body.persona-dad .page-header {
     line-height: 1.75;
     color: var(--theme-text, #D8D8D8);
     letter-spacing: 0;
+    /* Match reading-pane padding for consistent alignment with writing pages */
+    /* .content has padding: 40px, so we add 20px to match .reading-pane's padding: 0 20px */
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .intro-text {
@@ -1760,30 +1766,15 @@ body.persona-dad .question-item::before {
     font-weight: 500;
     position: relative;
     transition: all 0.3s ease;
+    /* Prevent emoji conversion on mobile */
+    font-variant-emoji: text;
+    -webkit-font-feature-settings: "liga" off;
+    font-feature-settings: "liga" off;
 }
 
+/* Arrow is now in HTML content, not CSS ::after */
 .investment-list .external-link::after {
-    content: "↗";
-    display: inline-block;
-    margin-left: 6px;
-    font-size: 14px;
-    opacity: 0.7;
-    transition: all 0.3s ease;
-}
-
-@supports (-webkit-touch-callout: none) {
-    @media (max-width: 768px) {
-        .investment-list .external-link::after {
-            content: "\2197";
-            font-family: 'Noto Sans', sans-serif;
-            font-variant: normal;
-            text-rendering: optimizeLegibility;
-            -webkit-font-feature-settings: normal;
-            font-feature-settings: normal;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-    }
+    display: none;
 }
 
 .investment-list .external-link:hover {
@@ -1791,18 +1782,18 @@ body.persona-dad .question-item::before {
     padding-left: 4px;
 }
 
+/* Arrow is now in HTML content, hover effect removed */
 .investment-list .external-link:hover::after {
-    transform: translate(2px, -2px);
-    opacity: 1;
+    display: none;
 }
 
 .investment-status {
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(0, 0, 0, 0.85);
     font-style: normal;
     margin-left: 8px;
     display: inline-block;
-    font-weight: 400;
+    font-weight: 500;
     letter-spacing: 0.02em;
 }
 
@@ -1828,9 +1819,13 @@ body.persona-dad .investment-list .external-link:hover {
     opacity: 0.8;
 }
 
+/* All personas use light theme, so investment-status uses dark color */
 body.persona-investor .investment-status,
-body.persona-dad .investment-status {
-    color: rgba(0, 0, 0, 0.5);
+body.persona-dad .investment-status,
+body.persona-founder .investment-status,
+body.persona-operator .investment-status {
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
 }
 
 /* Scroll animations for investment items */
@@ -2335,31 +2330,10 @@ body.persona-dad .empty-state {
     color: var(--theme-accent);
 }
 
+/* Arrow should be in HTML content, not CSS ::after to avoid emoji conversion on mobile */
 .article-content a[href^="http"]::after,
 .article-content a[target="_blank"]::after {
-    content: "↗";
-    display: inline-block;
-    margin-left: 6px;
-    font-size: 14px;
-    opacity: 0.7;
-        transition: all 0.3s ease;
-}
-
-@supports (-webkit-touch-callout: none) {
-    @media (max-width: 768px) {
-
-        .article-content a[href^="http"]::after,
-        .article-content a[target="_blank"]::after {
-            content: "\2197";
-            font-family: 'Noto Sans', sans-serif;
-            font-variant: normal;
-            text-rendering: optimizeLegibility;
-            -webkit-font-feature-settings: normal;
-            font-feature-settings: normal;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-    }
+    display: none;
 }
 
 .article-content a[href^="http"]:hover,
@@ -2368,11 +2342,11 @@ body.persona-dad .empty-state {
     padding-left: 4px;
 }
 
+/* Arrow is now in HTML content, hover effect removed */
 .article-content a[href^="http"]:hover::after,
 .article-content a[target="_blank"]:hover::after {
-    transform: translate(2px, -2px);
-        opacity: 1;
-    }
+    display: none;
+}
 
 .article-content strong {
         font-weight: 600;
@@ -4506,47 +4480,74 @@ body::after {
         background: linear-gradient(90deg, var(--dad-accent) 0%, rgba(255, 127, 80, 0.9) 100%);
     }
 
+    /* Mobile top navigation bar background */
+    body::before {
+        content: '' !important;
+        display: block !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 60px !important;
+        background: #EFEBE4 !important;
+        z-index: 1000 !important;
+        pointer-events: none !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+    
     /* Mobile role title display - next to hamburger on the left */
     .mobile-role-title {
         display: flex !important;
-        position: fixed;
-        top: 22px;
-        left: 59px;
-        /* Position next to hamburger - moved 1px closer */
-        z-index: 1001;
-        align-items: center;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: fixed !important;
+        top: 18px !important;
+        left: 55px !important;
+        z-index: 1001 !important;
+        align-items: center !important;
     }
 
     .mobile-role-title .role-text {
-        font-family: 'Noto Serif', serif;
-        color: var(--color-primary);
-        font-size: 16px;
-        font-weight: 600;
-        text-transform: capitalize;
-        letter-spacing: 1px;
+        font-family: 'Noto Serif', serif !important;
+        color: #A0A453;
+        /* Default founder color - will be overridden by persona-specific styles */
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        text-transform: capitalize !important;
+        letter-spacing: 1px !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 
-    /* Hide role title during character selection */
-    body.character-select-active .mobile-role-title,
-    #characterSelect:not(.hidden)~* .mobile-role-title {
+    /* Hide role title and top bar during character selection */
+    body.character-select-active .mobile-role-title {
         display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+    
+    body.character-select-active::before {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
     }
 
     /* Persona-specific role title colors - each role uses its own color */
     body.persona-founder .mobile-role-title .role-text {
-        color: var(--founder-accent);
+        color: #A0A453 !important;
     }
 
     body.persona-operator .mobile-role-title .role-text {
-        color: var(--operator-accent);
+        color: #D99A00 !important;
     }
 
     body.persona-investor .mobile-role-title .role-text {
-        color: var(--investor-accent);
+        color: #C39F47 !important;
     }
 
     body.persona-dad .mobile-role-title .role-text {
-        color: var(--dad-accent);
+        color: #FF7F50 !important;
     }
 
 
@@ -4792,6 +4793,7 @@ body::after {
         margin-bottom: 5px !important;
         /* Very small margin */
         padding-bottom: 5px !important;
+        padding-left: 15px !important;
         /* Very small padding */
         margin-top: 0 !important;
         /* No negative margin to prevent cutoff */
@@ -4815,6 +4817,12 @@ body::after {
     .content-body {
         margin-top: 0 !important;
         padding-top: 0 !important;
+    }
+
+    /* Add line breaks/spacing for welcome page paragraphs on mobile */
+    .content-body p {
+        margin-bottom: 1.5em !important;
+        line-height: 1.8 !important;
     }
 
     /* Force all article and content items to start at top */

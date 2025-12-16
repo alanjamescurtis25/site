@@ -8,6 +8,8 @@
 
     let currentPage = null;
     let writingSPAInitialized = false;
+    let isInitialLoad = true; // Track if this is the initial page load
+    
     
     /**
      * Lazy load script
@@ -31,29 +33,65 @@
     }
 
     /**
+     * Parse hash to extract page and subpage
+     * @returns {{ page: string|null, subpage: string|null }}
+     */
+    function parseHash() {
+        const hash = window.location.hash.substring(1); // Remove '#'
+        if (!hash) {
+            return { page: null, subpage: null };
+        }
+        
+        const parts = hash.split('/');
+        const page = parts[0] || null;
+        const subpage = parts[1] || null;
+        
+        return { page, subpage };
+    }
+
+    /**
      * Initialize SPA Navigation
      */
     function initSPANavigation() {
+        
         // Determine current page from URL or active nav
         const pathname = window.location.pathname;
-        const activeNav = document.querySelector('.nav-link.active');
+        const { page: hashPage, subpage: hashSubpage } = parseHash();
+        
 
-        if (activeNav) {
-            currentPage = activeNav.dataset.page || extractPageFromPath(pathname);
+        // Hash takes priority over pathname
+        if (hashPage) {
+            currentPage = hashPage;
         } else {
-            currentPage = extractPageFromPath(pathname);
+            const activeNav = document.querySelector('.nav-link.active');
+            if (activeNav) {
+                currentPage = activeNav.dataset.page || extractPageFromPath(pathname);
+            } else {
+                currentPage = extractPageFromPath(pathname);
+            }
         }
 
         // Setup navigation handlers
         setupNavigationHandlers();
 
-        // Setup browser history handlers
+        // Setup browser history handlers (includes hashchange)
         setupHistoryHandlers();
 
-        // Load the current page content if we're on the index page
-        // This ensures content loads on refresh
-        if ((pathname === '/' || pathname === '/index.html') && currentPage === 'welcome') {
-            // Check if content area exists and is empty
+        // Handle initial load based on hash
+        const isIndexPage = pathname === '/' || pathname === '/index.html';
+        
+        if (isIndexPage && hashPage) {
+            // If there's a hash, load that page instead of welcome
+            
+            // Update active nav first
+            updateActiveNav(hashPage);
+            
+            // Load the page content
+            loadPageContentFromHash(hashPage, hashSubpage);
+            
+            isInitialLoad = false;
+        } else if (isIndexPage && !hashPage && currentPage === 'welcome') {
+            // No hash, load welcome page only if content area is empty
             const contentArea = document.querySelector('.content');
             const hasWelcomeContent = contentArea && (contentArea.querySelector('.welcome-cards') || contentArea.classList.contains('welcome-page'));
 
@@ -61,9 +99,79 @@
                 // Small delay to ensure DOM is ready
                 setTimeout(() => {
                     loadPageContent('welcome');
+                    isInitialLoad = false;
                 }, 50);
+            } else {
+                isInitialLoad = false;
             }
+        } else {
+            isInitialLoad = false;
         }
+    }
+    
+    /**
+     * Load page content based on hash (page + optional subpage)
+     */
+    function loadPageContentFromHash(pageKey, subpageKey) {
+        
+        const contentArea = document.querySelector('.content');
+        if (!contentArea) {
+            return;
+        }
+
+        // Update active navigation
+        updateActiveNav(pageKey);
+
+        // Load the main page content
+        loadPageContentInternal(pageKey, contentArea, () => {
+            // After page loads, load subpage if present
+            if (subpageKey) {
+                loadSubpage(pageKey, subpageKey);
+            }
+        });
+        
+        currentPage = pageKey;
+    }
+    
+    /**
+     * Load a subpage (article, category, section, etc.)
+     */
+    function loadSubpage(pageKey, subpageKey) {
+        
+        // Wait for page content to be fully loaded, then click the subpage link
+        const maxAttempts = 20;
+        let attempts = 0;
+        
+        const tryLoadSubpage = () => {
+            attempts++;
+            
+            let targetLink = null;
+            
+            switch (pageKey) {
+                case 'writing':
+                    targetLink = document.querySelector(`[data-article="${subpageKey}"]`);
+                    break;
+                case 'quotes':
+                    targetLink = document.querySelector(`[data-category="${subpageKey}"]`);
+                    break;
+                case 'questions':
+                    targetLink = document.querySelector(`[data-section="${subpageKey}"]`);
+                    break;
+                case 'investments':
+                    targetLink = document.querySelector(`[data-investment="${subpageKey}"]`);
+                    break;
+            }
+            
+            if (targetLink) {
+                targetLink.click();
+            } else if (attempts < maxAttempts) {
+                setTimeout(tryLoadSubpage, 100);
+            } else {
+            }
+        };
+        
+        // Start trying after a short delay
+        setTimeout(tryLoadSubpage, 150);
     }
 
     /**
@@ -78,13 +186,84 @@
         if (pathname.includes('investments')) return 'investments';
         return 'welcome';
     }
+    
+    /**
+     * Internal function to load page content (without URL update)
+     * Used by loadPageContentFromHash to avoid double URL updates
+     */
+    function loadPageContentInternal(pageKey, contentArea, callback) {
+        
+        const loadComplete = () => {
+            if (callback) callback();
+        };
+        
+        switch(pageKey) {
+            case 'welcome':
+                loadWelcomeContent(contentArea);
+                loadComplete();
+                break;
+            case 'bio':
+                loadBioContent(contentArea);
+                loadComplete();
+                break;
+            case 'writing':
+                if (!window.writingContent) {
+                    loadScript('/js/writing-content.js').then(() => {
+                        loadWritingContent(contentArea);
+                        loadComplete();
+                    });
+                } else {
+                    loadWritingContent(contentArea);
+                    loadComplete();
+                }
+                break;
+            case 'quotes':
+                if (!window.quotesData) {
+                    loadScript('/js/quotes-content.js').then(() => {
+                        loadQuotesContent(contentArea);
+                        loadComplete();
+                    });
+                } else {
+                    loadQuotesContent(contentArea);
+                    loadComplete();
+                }
+                break;
+            case 'questions':
+                if (!window.questionsContent) {
+                    loadScript('/js/questions-content.js').then(() => {
+                        loadQuestionsContent(contentArea);
+                        loadComplete();
+                    });
+                } else {
+                    loadQuestionsContent(contentArea);
+                    loadComplete();
+                }
+                break;
+            case 'investments':
+                if (!window.investmentsContent) {
+                    loadScript('/js/investments-content.js').then(() => {
+                        loadInvestmentsContent(contentArea);
+                        loadComplete();
+                    });
+                } else {
+                    loadInvestmentsContent(contentArea);
+                    loadComplete();
+                }
+                break;
+            default:
+                loadComplete();
+        }
+    }
 
     /**
      * Load page content dynamically
      */
     function loadPageContent(pageKey) {
+        
         const contentArea = document.querySelector('.content');
-        if (!contentArea) return;
+        if (!contentArea) {
+            return;
+        }
 
         // Update active navigation immediately (Safari optimization)
         updateActiveNav(pageKey);
@@ -142,9 +321,9 @@
 
             currentPage = pageKey;
 
-            // Update URL without reload
+            // Update URL without reload (only for main pages without subpage)
             const newUrl = `#${pageKey}`;
-            if (window.location.hash !== newUrl) {
+            if (window.location.hash !== newUrl && !window.location.hash.includes('/')) {
                 history.pushState({ page: pageKey }, '', newUrl);
             }
 
@@ -188,10 +367,21 @@
      * Update active navigation state
      */
     function updateActiveNav(pageKey) {
+        
         const navLinks = document.querySelectorAll('.nav-link');
+        let foundMatch = false;
+        
         navLinks.forEach(link => {
-            link.classList.toggle('active', link.dataset.page === pageKey);
+            const isMatch = link.dataset.page === pageKey;
+            link.classList.remove('active'); // Always remove first
+            if (isMatch) {
+                link.classList.add('active');
+                foundMatch = true;
+            }
         });
+        
+        if (!foundMatch) {
+        }
 
         // Update navigation icons after changing active state
         if (window.gamingSystem && window.gamingSystem.updateNavigationIcons) {
@@ -732,6 +922,7 @@
      * Initialize Writing article handlers
      */
     function initWritingHandlers() {
+        
         const postLinks = document.querySelectorAll('.post-list a');
         const writingContentDiv = document.getElementById('writing-content');
 
@@ -740,9 +931,9 @@
         }
 
         if (!window.writingContent) {
-            console.warn('Writing content data not loaded');
             return;
         }
+
 
         postLinks.forEach(link => {
             link.addEventListener('click', (e) => {
@@ -838,28 +1029,25 @@
                         }, 150);
                     }
                 } else {
-                    console.warn('Article not found:', articleKey);
                 }
             });
         });
 
-        console.log('Writing handlers initialized with', postLinks.length, 'article links');
     }
 
     /**
      * Initialize Quotes handlers
      */
     function initQuotesHandlers() {
+        
         const categoryLinks = document.querySelectorAll('.post-list a');
         const quotesContentDiv = document.getElementById('quotes-content');
 
         if (!quotesContentDiv) {
-            console.warn('Quotes content div not found');
             return;
         }
 
         if (!window.quotesContent) {
-            console.warn('Quotes content data not loaded');
             return;
         }
 
@@ -952,28 +1140,25 @@
                         });
                     }, 100);
                 } else {
-                    console.warn('Category not found:', categoryKey);
                 }
             });
         });
 
-        console.log('Quotes handlers initialized with', categoryLinks.length, 'category links');
     }
 
     /**
      * Initialize Questions handlers
      */
     function initQuestionsHandlers() {
+        
         const sectionLinks = document.querySelectorAll('.post-list a');
         const questionsContentDiv = document.getElementById('questions-content');
 
         if (!questionsContentDiv) {
-            console.warn('Questions content div not found');
             return;
         }
 
         if (!window.questionsContent) {
-            console.warn('Questions content data not loaded');
             return;
         }
 
@@ -1063,28 +1248,25 @@
                         });
                     }, 100);
                 } else {
-                    console.warn('Section not found:', sectionKey);
                 }
             });
         });
 
-        console.log('Questions handlers initialized with', sectionLinks.length, 'section links');
     }
 
     /**
      * Initialize Investments handlers
      */
     function initInvestmentsHandlers() {
+        
         const categoryLinks = document.querySelectorAll('.post-list a');
         const investmentsContentDiv = document.getElementById('investments-content');
 
         if (!investmentsContentDiv) {
-            console.warn('Investments content div not found');
             return;
         }
 
         if (!window.investmentsContent) {
-            console.warn('Investments content data not loaded');
             return;
         }
 
@@ -1103,7 +1285,7 @@
                         <ul class="investment-list">
                             ${category.items.map(item => `
                                 <li>
-                                    <a href="${item.url}" class="external-link" target="_blank">${item.name}</a>
+                                    <a href="${item.url}" class="external-link" target="_blank">${item.name}&nbsp;↗&#xFE0E;</a>
                                     ${item.status ? `<span class="investment-status">${item.status}</span>` : ''}
                                 </li>
                             `).join('')}
@@ -1169,7 +1351,6 @@
                         });
                     }, 100);
                 } else {
-                    console.warn('Category not found:', categoryKey);
                 }
             });
         });
@@ -1199,53 +1380,60 @@
      * Setup browser history handlers
      */
     function setupHistoryHandlers() {
-        // Handle browser back/forward
+        
+        // Handle browser back/forward (popstate)
         window.addEventListener('popstate', (e) => {
+            
             if (e.state && e.state.page) {
-                loadPageContent(e.state.page);
+                const pageKey = e.state.page;
+                const subpageKey = e.state.article || e.state.category || e.state.section || e.state.investment;
+                
+                
+                if (subpageKey) {
+                    loadPageContentFromHash(pageKey, subpageKey);
+                } else {
+                    loadPageContent(pageKey);
+                }
             } else {
                 // Check hash
-                const hash = window.location.hash.substring(1);
-                if (hash) {
-                    const pageKey = hash.split('/')[0];
-                    if (pageKey) {
-                        loadPageContent(pageKey);
+                const { page, subpage } = parseHash();
+                if (page) {
+                    if (subpage) {
+                        loadPageContentFromHash(page, subpage);
+                    } else {
+                        loadPageContent(page);
                     }
                 }
             }
             // Scroll to top on browser navigation
             scrollToTop();
         });
-
-        // Handle initial hash
-        const hash = window.location.hash.substring(1);
-        if (hash) {
-            const parts = hash.split('/');
-            const pageKey = parts[0] || null;
-            const articleKey = parts[1] || null;
-
-            if (pageKey && pageKey !== currentPage) {
-                loadPageContent(pageKey);
-
-                // If there's an article, load it after the page loads
-                if (pageKey === 'writing' && articleKey) {
-                    setTimeout(() => {
-                        // Handle different naming conventions (e.g., lattice-work vs latticework)
-                        let targetLink = document.querySelector(`[data-article="${articleKey}"]`);
-
-                        // If not found, try without hyphens
-                        if (!targetLink && articleKey.includes('-')) {
-                            const articleWithoutHyphens = articleKey.replace(/-/g, '');
-                            targetLink = document.querySelector(`[data-article="${articleWithoutHyphens}"]`);
-                        }
-
-                        if (targetLink) {
-                            targetLink.click();
-                        }
-                    }, 200);
-                }
+        
+        // Handle hashchange event (for direct URL changes)
+        window.addEventListener('hashchange', () => {
+            const { page, subpage } = parseHash();
+            
+            if (!page) {
+                loadPageContent('welcome');
+                return;
             }
-        }
+            
+            // Check if this is just a subpage change within the same page
+            if (page === currentPage && subpage) {
+                loadSubpage(page, subpage);
+            } else if (page !== currentPage) {
+                if (subpage) {
+                    loadPageContentFromHash(page, subpage);
+                } else {
+                    loadPageContent(page);
+                }
+            } else if (page === currentPage && !subpage) {
+                updateActiveNav(page);
+            }
+        });
+
+        // NOTE: Initial hash handling is now done in initSPANavigation()
+        // to avoid conflicts with gaming-system.js
     }
 
     // Expose loadPageContent globally for character selection

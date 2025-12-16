@@ -79,7 +79,14 @@ class GamingSystem {
      */
     init() {
         const path = window.location.pathname;
+        const hash = window.location.hash;
         const isIndexPage = path === '/' || path === '/index.html' || path.endsWith('/index.html');
+        
+        // Parse hash to check if there's a specific page to load
+        const hashParts = hash ? hash.substring(1).split('/') : [];
+        const hashPage = hashParts[0] || null;
+        const hashSubpage = hashParts[1] || null;
+        
 
         // Check if reset parameter is in URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -94,8 +101,25 @@ class GamingSystem {
         }
 
         // Check first visit status
+        
         if (this.isFirstVisit) {
-            if (isIndexPage) {
+            // If there's a hash (deep link), auto-select founder and skip character selection
+            if (hashPage && hashPage !== 'welcome') {
+                // Auto-select founder for deep links
+                Storage.markVisited();
+                Storage.setPersona('founder');
+                this.setPersona('founder');
+                this.hideCharacterSelection();
+                this.updateRoleSelectionActive('founder');
+                
+                // Always show main content for deep links
+                this.showMainContent();
+                
+                if (isIndexPage) {
+                    this.renderCardDeck();
+                    // Let spa-navigation.js handle the hash routing
+                }
+            } else if (isIndexPage) {
                 this.showCharacterSelection();
             } else {
                 // If first visit on a non-index page, redirect to index for character selection
@@ -120,26 +144,33 @@ class GamingSystem {
                 this.showMainContent();
                 // Render the card deck for returning users
                 this.renderCardDeck();
-                // Load welcome content on index page after showing main content
-                // This ensures the cards appear on refresh
-                // But only if the welcome content doesn't already exist
-                // Wait for spa-navigation.js to load
-                const tryLoadWelcome = (attempts = 0) => {
-                    const contentArea = document.querySelector('.content');
-                    const hasWelcomeContent = contentArea && (contentArea.querySelector('.welcome-cards') || contentArea.querySelector('.welcome-page'));
+                
+                // IMPORTANT: Only load welcome if there's NO hash or hash is 'welcome'
+                // Let spa-navigation.js handle hash-based routing
+                if (!hashPage || hashPage === 'welcome') {
+                    // Load welcome content on index page after showing main content
+                    // This ensures the cards appear on refresh
+                    // But only if the welcome content doesn't already exist
+                    // Wait for spa-navigation.js to load
+                    const tryLoadWelcome = (attempts = 0) => {
+                        const contentArea = document.querySelector('.content');
+                        const hasWelcomeContent = contentArea && (contentArea.querySelector('.welcome-cards') || contentArea.querySelector('.welcome-page'));
 
-                    if (!hasWelcomeContent) {
-                        if (window.loadPageContent) {
-                        window.loadPageContent('welcome');
-                        } else if (attempts < 10) {
-                            // Retry if spa-navigation.js hasn't loaded yet
-                            setTimeout(() => tryLoadWelcome(attempts + 1), 100);
-                    }
-                    }
-                };
-                setTimeout(() => tryLoadWelcome(), 200);
+                        if (!hasWelcomeContent) {
+                            if (window.loadPageContent) {
+                                window.loadPageContent('welcome');
+                            } else if (attempts < 10) {
+                                // Retry if spa-navigation.js hasn't loaded yet
+                                setTimeout(() => tryLoadWelcome(attempts + 1), 100);
+                            }
+                        }
+                    };
+                    setTimeout(() => tryLoadWelcome(), 200);
+                }
             }
         }
+        
+        // Log body classes
 
         this.setupEventListeners();
         this.setupMobileMenu();
@@ -154,11 +185,13 @@ class GamingSystem {
         // This ensures the sword appears on the correct page
         // Check hash on initial load - wait for spa-navigation to process first
         const checkHashAndUpdate = () => {
-            const hash = window.location.hash;
-            if (hash) {
+            const currentHash = window.location.hash;
+            
+            if (currentHash) {
                 // Extract page from hash
-                const hashParts = hash.substring(1).split('/');
-                const pageKey = hashParts[0];
+                const parts = currentHash.substring(1).split('/');
+                const pageKey = parts[0];
+                
                 
                 // Find and activate the correct nav link
                 const navLinks = document.querySelectorAll('.nav-link');
@@ -871,6 +904,7 @@ class GamingSystem {
             modal.classList.add('hidden');
             // Remove the character-select-active class
             document.body.classList.remove('character-select-active');
+        } else {
         }
     }
 
@@ -1258,7 +1292,9 @@ class GamingSystem {
      * @param {string} persona - The persona to set
      */
     setPersona(persona) {
-        if (!this.personaData[persona]) return;
+        if (!this.personaData[persona]) {
+            return;
+        }
 
         // Check if persona is actually changing
         const previousPersona = this.currentPersona;
@@ -1437,30 +1473,37 @@ class GamingSystem {
         const hash = window.location.hash;
         const navLinks = document.querySelectorAll('.nav-link');
 
+
         // Extract page from hash (e.g., #writing/user-manual -> writing)
-        let currentPage = null;
+        let currentPageFromHash = null;
         if (hash) {
             const hashParts = hash.substring(1).split('/');
-            currentPage = hashParts[0]; // Get the first part (writing, bio, etc.)
+            currentPageFromHash = hashParts[0]; // Get the first part (writing, bio, etc.)
         }
 
+        let activeSet = false;
         navLinks.forEach(link => {
             const href = link.getAttribute('href');
             const dataPage = link.dataset.page;
             link.classList.remove('active');
 
-            // Check if this is the current page based on hash
-            if (currentPage && dataPage === currentPage) {
+            // Check if this is the current page based on hash (priority)
+            if (currentPageFromHash && dataPage === currentPageFromHash) {
                 link.classList.add('active');
+                activeSet = true;
             }
-            // Fallback to pathname check
-            else if (currentPath === href ||
+            // Fallback to pathname check (only if no hash match)
+            else if (!currentPageFromHash && (currentPath === href ||
                 (currentPath === '/' && href === '/') ||
                 (currentPath === '/index.html' && href === '/') ||
-                (currentPath.includes(href) && href !== '/')) {
+                (currentPath.includes(href) && href !== '/'))) {
                 link.classList.add('active');
+                activeSet = true;
             }
         });
+        
+        if (!activeSet) {
+        }
     }
 
     /**
@@ -1722,6 +1765,7 @@ class GamingSystem {
 
         if (mainContainer) {
             mainContainer.style.opacity = '1';
+        } else {
         }
 
         if (personaSwitcher) {
@@ -1732,6 +1776,7 @@ class GamingSystem {
         if (cardDeck && Device.isDesktop()) {
             cardDeck.classList.remove('hidden');
         }
+        
     }
 }
 

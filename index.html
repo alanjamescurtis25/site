@@ -99,7 +99,7 @@
                         <div class="character-portrait strategist-portrait">
                             <img src="/assets/operator.png" alt="Operator" class="character-photo" loading="lazy">
                             <video data-src="/assets/animation/operator.mp4" class="character-video" muted loop
-                                playsinline preload="auto" webkit-playsinline
+                                playsinline preload="metadata" webkit-playsinline
                                 x-webkit-airplay="allow"></video>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                         <div class="character-portrait merchant-portrait">
                             <img src="/assets/investor.png" alt="Investor" class="character-photo" loading="lazy">
                             <video data-src="/assets/animation/investor.mp4" class="character-video" muted loop
-                                playsinline preload="auto" webkit-playsinline
+                                playsinline preload="metadata" webkit-playsinline
                                 x-webkit-airplay="allow"></video>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                         <div class="character-portrait scholar-portrait">
                             <img src="/assets/dad.png" alt="Girl Dad" class="character-photo" loading="lazy">
                             <video data-src="/assets/animation/dad.mp4" class="character-video" muted loop playsinline
-                                preload="auto" webkit-playsinline
+                                preload="metadata" webkit-playsinline
                                 x-webkit-airplay="allow"></video>
                         </div>
                     </div>
@@ -236,13 +236,13 @@
         <span></span>
     </button>
 
+    <!-- Mobile role title display (outside mainContainer to avoid opacity issues) -->
+    <div class="mobile-role-title" id="mobileRoleTitle">
+        <span class="role-text">Founder</span>
+    </div>
+
     <!-- Main Site Container -->
     <div class="container" id="mainContainer">
-        <!-- Mobile role title display -->
-        <div class="mobile-role-title" id="mobileRoleTitle">
-            <span class="role-text">Founder</span>
-        </div>
-
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
