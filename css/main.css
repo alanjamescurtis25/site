@@ -91,14 +91,15 @@
 
 html {
     overflow-x: hidden;
-    background-color: transparent;
-    /* Allow background images to show through */
+    background-color: #EFEBE4;
+    /* Default background color - matches investor-bg used by all personas */
 }
 
 body {
     font-family: var(--font-body);
     overflow-x: hidden;
-    background: transparent;
+    background: #EFEBE4;
+    /* Default background color - matches investor-bg used by all personas */
     position: relative;
     min-height: 100vh;
 }
@@ -4479,47 +4480,74 @@ body::after {
         background: linear-gradient(90deg, var(--dad-accent) 0%, rgba(255, 127, 80, 0.9) 100%);
     }
 
+    /* Mobile top navigation bar background */
+    body::before {
+        content: '' !important;
+        display: block !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 60px !important;
+        background: #EFEBE4 !important;
+        z-index: 1000 !important;
+        pointer-events: none !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+    
     /* Mobile role title display - next to hamburger on the left */
     .mobile-role-title {
         display: flex !important;
-        position: fixed;
-        top: 22px;
-        left: 59px;
-        /* Position next to hamburger - moved 1px closer */
-        z-index: 1001;
-        align-items: center;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: fixed !important;
+        top: 18px !important;
+        left: 55px !important;
+        z-index: 1001 !important;
+        align-items: center !important;
     }
 
     .mobile-role-title .role-text {
-        font-family: 'Noto Serif', serif;
-        color: var(--color-primary);
-        font-size: 16px;
-        font-weight: 600;
-        text-transform: capitalize;
-        letter-spacing: 1px;
+        font-family: 'Noto Serif', serif !important;
+        color: #A0A453;
+        /* Default founder color - will be overridden by persona-specific styles */
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        text-transform: capitalize !important;
+        letter-spacing: 1px !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 
-    /* Hide role title during character selection */
-    body.character-select-active .mobile-role-title,
-    #characterSelect:not(.hidden)~* .mobile-role-title {
+    /* Hide role title and top bar during character selection */
+    body.character-select-active .mobile-role-title {
         display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+    
+    body.character-select-active::before {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
     }
 
     /* Persona-specific role title colors - each role uses its own color */
     body.persona-founder .mobile-role-title .role-text {
-        color: var(--founder-accent);
+        color: #A0A453 !important;
     }
 
     body.persona-operator .mobile-role-title .role-text {
-        color: var(--operator-accent);
+        color: #D99A00 !important;
     }
 
     body.persona-investor .mobile-role-title .role-text {
-        color: var(--investor-accent);
+        color: #C39F47 !important;
     }
 
     body.persona-dad .mobile-role-title .role-text {
-        color: var(--dad-accent);
+        color: #FF7F50 !important;
     }
 
 
